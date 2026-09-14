@@ -1,9 +1,7 @@
 module Main
 
-%default total
-
 -- A multiplicity-0 value may affect checking but cannot supply runtime data.
-keep_runtime_value : (0 compile_time_number : ℕ) → ℕ → ℕ
+keep_runtime_value : (0 compile_time_number : Number) → Number → Number
 keep_runtime_value compile_time_number runtime_number = ?runtime_number_only
 
 main : IO ()

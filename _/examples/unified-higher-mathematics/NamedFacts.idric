@@ -2,7 +2,6 @@ module NamedFacts
 
 import TopologyFacts
 
-%default total
 %unbound_implicits off
 
 -- A deliberately tiny boundary between ordinary type checking and named
@@ -13,37 +12,37 @@ import TopologyFacts
 public export
 record FactProvenance where
   constructor MkFactProvenance
-  factNamespace : String
-  factName : String
-  factVersion : String
+  fact_namespace : Text
+  fact_name : Text
+  fact_version : Text
   -- A declared code-source locator, not a checked citation.
-  factSource : String
+  fact_source : Text
 
 public export
 data NamedFact :
-    (hypothesis : Type) ->
-    (conclusion : hypothesis -> Type) ->
+    (hypothesis : Type) →
+    (conclusion : hypothesis → Type) →
     Type where
   DeclareNamedFact :
-    {hypothesis : Type} ->
-    {conclusion : hypothesis -> Type} ->
-    FactProvenance ->
-    ((witness : hypothesis) -> conclusion witness) ->
+    {hypothesis : Type} →
+    {conclusion : hypothesis → Type} →
+    FactProvenance →
+    ((witness : hypothesis) → conclusion witness) →
     NamedFact hypothesis conclusion
 
 public export
-data TypedContext : Type -> Type where
+data TypedContext : Type → Type where
   ContextContains :
-    {hypothesis : Type} ->
-    (witness : hypothesis) ->
+    {hypothesis : Type} →
+    (witness : hypothesis) →
     TypedContext hypothesis
 
 public export
-contextWitness :
-  {hypothesis : Type} ->
-  TypedContext hypothesis ->
+context_witness :
+  {hypothesis : Type} →
+  TypedContext hypothesis →
   hypothesis
-contextWitness (ContextContains witness) = witness
+context_witness (ContextContains witness) = witness
 
 public export
 data FactOrigin = NamedFactLookup FactProvenance
@@ -51,54 +50,54 @@ data FactOrigin = NamedFactLookup FactProvenance
 -- This constructor records that the value came through explicit named-fact
 -- application, not from ordinary unification or dependent-index normalization.
 public export
-data FactAnswer : Type -> Type where
+data FactAnswer : Type → Type where
   FromNamedFact :
-    {result : Type} ->
-    FactProvenance ->
-    result ->
+    {result : Type} →
+    FactProvenance →
+    result →
     FactAnswer result
 
 public export
-factConclusion : {result : Type} -> FactAnswer result -> result
-factConclusion (FromNamedFact _ conclusion) = conclusion
+fact_conclusion : {result : Type} → FactAnswer result → result
+fact_conclusion (FromNamedFact _ conclusion) = conclusion
 
 public export
-answerOrigin : {result : Type} -> FactAnswer result -> FactOrigin
-answerOrigin (FromNamedFact provenance _) = NamedFactLookup provenance
+answer_origin : {result : Type} → FactAnswer result → FactOrigin
+answer_origin (FromNamedFact provenance _) = NamedFactLookup provenance
 
 public export
-factExplanation : {result : Type} -> FactAnswer result -> String
-factExplanation (FromNamedFact provenance _) =
+fact_explanation : {result : Type} → FactAnswer result → Text
+fact_explanation (FromNamedFact provenance _) =
   "named fact "
-    ++ factNamespace provenance
+    ++ fact_namespace provenance
     ++ "."
-    ++ factName provenance
+    ++ fact_name provenance
     ++ "@"
-    ++ factVersion provenance
+    ++ fact_version provenance
 
 public export
-answerProvenance : {result : Type} -> FactAnswer result -> FactProvenance
-answerProvenance (FromNamedFact provenance _) = provenance
+answer_provenance : {result : Type} → FactAnswer result → FactProvenance
+answer_provenance (FromNamedFact provenance _) = provenance
 
 public export
-lookupNamedFact :
-  {hypothesis : Type} ->
-  {conclusion : hypothesis -> Type} ->
-  (fact : NamedFact hypothesis conclusion) ->
-  (context : TypedContext hypothesis) ->
-  FactAnswer (conclusion (contextWitness context))
-lookupNamedFact
+lookup_named_fact :
+  {hypothesis : Type} →
+  {conclusion : hypothesis → Type} →
+  (fact : NamedFact hypothesis conclusion) →
+  (context : TypedContext hypothesis) →
+  FactAnswer (conclusion (context_witness context))
+lookup_named_fact
   (DeclareNamedFact provenance derive)
   (ContextContains witness) =
     FromNamedFact provenance (derive witness)
 
 public export
-jordanSeparationFact : NamedFact EmbeddedCircleInS2 JordanSeparation
-jordanSeparationFact =
+jordan_separation_fact : NamedFact EmbeddedCircleInS2 JordanSeparation
+jordan_separation_fact =
   DeclareNamedFact
     (MkFactProvenance
       "topology"
       "jordan-separation"
       "1"
-      "TopologyFacts.jordanSeparation")
-    jordanSeparation
+      "TopologyFacts.jordan_separation")
+    jordan_separation

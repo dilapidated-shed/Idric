@@ -6,4 +6,6 @@ ascii bind
 True
 True
 11
+["Idris", "keeps", "Data.String"]
+["Data.Text", "is", "source", "vocabulary"]
 -> => → ⇒ ← ≤

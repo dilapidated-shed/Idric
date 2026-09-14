@@ -1,6 +1,5 @@
 module PresheafRestriction
 
-%default total
 %unbound_implicits off
 
 -- A finite restriction experiment, separate from the Euclidean geometry
@@ -11,20 +10,20 @@ public export
 data Open = Whole | Patch | Point
 
 public export
-data Included : Open -> Open -> Type where
-  Same       : {u : Open} -> Included u u
+data Included : Open → Open → Type where
+  Same       : {u : Open} → Included u u
   PatchWhole : Included Patch Whole
   PointPatch : Included Point Patch
   PointWhole : Included Point Whole
 
 public export
-data Section : Open -> Type where
-  WholeSection : Integer -> Section Whole
-  PatchSection : Integer -> Section Patch
-  PointSection : Integer -> Section Point
+data Section : Open → Type where
+  WholeSection : Integer → Section Whole
+  PatchSection : Integer → Section Patch
+  PointSection : Integer → Section Point
 
 public export
-restrict : {u, v : Open} -> Included v u -> Section u -> Section v
+restrict : {u, v : Open} → Included v u → Section u → Section v
 restrict Same section = section
 restrict PatchWhole (WholeSection value) = PatchSection value
 restrict PointPatch (PatchSection value) = PointSection value
@@ -34,70 +33,70 @@ restrict PointWhole (WholeSection value) = PointSection value
 -- open.  It does not construct a balanced tensor product, sums of elementary
 -- tensors, or a quotient by bilinearity relations.
 public export
-data ElementaryTensorSection : Open -> Type where
+data ElementaryTensorSection : Open → Type where
   TensorSection :
-    {u : Open} ->
-    Section u -> Section u -> ElementaryTensorSection u
+    {u : Open} →
+    Section u → Section u → ElementaryTensorSection u
 
 public export
-restrictTensor :
-  {u, v : Open} ->
-  Included v u ->
-  ElementaryTensorSection u ->
+restrict_tensor :
+  {u, v : Open} →
+  Included v u →
+  ElementaryTensorSection u →
   ElementaryTensorSection v
-restrictTensor Same tensor = tensor
-restrictTensor inclusion (TensorSection left right) =
+restrict_tensor Same tensor = tensor
+restrict_tensor inclusion (TensorSection left right) =
   TensorSection
     (restrict inclusion left)
     (restrict inclusion right)
 
 public export
-tensorRestrictionPointwise :
-  {u, v : Open} ->
-  (inclusion : Included v u) ->
-  (left : Section u) ->
-  (right : Section u) ->
-  restrictTensor inclusion (TensorSection left right)
+tensor_restriction_pointwise :
+  {u, v : Open} →
+  (inclusion : Included v u) →
+  (left : Section u) →
+  (right : Section u) →
+  restrict_tensor inclusion (TensorSection left right)
     = TensorSection (restrict inclusion left) (restrict inclusion right)
-tensorRestrictionPointwise Same left right = Refl
-tensorRestrictionPointwise
+tensor_restriction_pointwise Same left right = Refl
+tensor_restriction_pointwise
   PatchWhole (WholeSection left) (WholeSection right) = Refl
-tensorRestrictionPointwise
+tensor_restriction_pointwise
   PointPatch (PatchSection left) (PatchSection right) = Refl
-tensorRestrictionPointwise
+tensor_restriction_pointwise
   PointWhole (WholeSection left) (WholeSection right) = Refl
 
 public export
-composeIncluded :
-  {u, v, w : Open} -> Included w v -> Included v u -> Included w u
-composeIncluded Same inclusion = inclusion
-composeIncluded PatchWhole Same = PatchWhole
-composeIncluded PointPatch Same = PointPatch
-composeIncluded PointPatch PatchWhole = PointWhole
-composeIncluded PointWhole Same = PointWhole
+compose_included :
+  {u, v, w : Open} → Included w v → Included v u → Included w u
+compose_included Same inclusion = inclusion
+compose_included PatchWhole Same = PatchWhole
+compose_included PointPatch Same = PointPatch
+compose_included PointPatch PatchWhole = PointWhole
+compose_included PointWhole Same = PointWhole
 
 -- Identity restriction reduces definitionally, including when the formal pair
 -- is opaque to the caller.
 public export
-tensorRestrictionIdentity :
-  {u : Open} ->
-  (tensor : ElementaryTensorSection u) ->
-  restrictTensor Same tensor = tensor
-tensorRestrictionIdentity tensor = Refl
+tensor_restriction_identity :
+  {u : Open} →
+  (tensor : ElementaryTensorSection u) →
+  restrict_tensor Same tensor = tensor
+tensor_restriction_identity tensor = Refl
 
 public export
-tensorRestrictionComposition :
-  {u, v, w : Open} ->
-  (wv : Included w v) ->
-  (vu : Included v u) ->
-  (tensor : ElementaryTensorSection u) ->
-  restrictTensor wv (restrictTensor vu tensor)
-    = restrictTensor (composeIncluded wv vu) tensor
-tensorRestrictionComposition Same vu tensor = Refl
-tensorRestrictionComposition PatchWhole Same tensor = Refl
-tensorRestrictionComposition PointPatch Same tensor = Refl
-tensorRestrictionComposition
+tensor_restriction_composition :
+  {u, v, w : Open} →
+  (wv : Included w v) →
+  (vu : Included v u) →
+  (tensor : ElementaryTensorSection u) →
+  restrict_tensor wv (restrict_tensor vu tensor)
+    = restrict_tensor (compose_included wv vu) tensor
+tensor_restriction_composition Same vu tensor = Refl
+tensor_restriction_composition PatchWhole Same tensor = Refl
+tensor_restriction_composition PointPatch Same tensor = Refl
+tensor_restriction_composition
   PointPatch
   PatchWhole
   (TensorSection (WholeSection left) (WholeSection right)) = Refl
-tensorRestrictionComposition PointWhole Same tensor = Refl
+tensor_restriction_composition PointWhole Same tensor = Refl

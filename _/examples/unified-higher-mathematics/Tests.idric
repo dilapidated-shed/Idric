@@ -6,7 +6,6 @@ import TopologyFacts
 import PresheafRestriction
 import NamedFacts
 
-%default total
 %unbound_implicits off
 
 -- These tests specify the reconciliation before its implementation. Rank
@@ -18,42 +17,42 @@ import NamedFacts
 -- --------------------------------------------------------------------------
 
 plane_pairing_test :
-  contract (planeCovector 5 7) (planeVector 3 4) = 43
+  contract (plane_covector 5 7) (plane_vector 3 4) = 43
 plane_pairing_test = Refl
 
 contraction_linear_in_vector_test :
   contract
-    (planeCovector 5 7)
-    (addVector (planeVector 3 4) (planeVector 2 (-1)))
-  = contract (planeCovector 5 7) (planeVector 3 4)
-      + contract (planeCovector 5 7) (planeVector 2 (-1))
+    (plane_covector 5 7)
+    (add_vector (plane_vector 3 4) (plane_vector 2 (-1)))
+  = contract (plane_covector 5 7) (plane_vector 3 4)
+      + contract (plane_covector 5 7) (plane_vector 2 (-1))
 contraction_linear_in_vector_test = Refl
 
 contraction_linear_in_covector_test :
   contract
-    (addCovector (planeCovector 5 7) (planeCovector (-2) 1))
-    (planeVector 3 4)
-  = contract (planeCovector 5 7) (planeVector 3 4)
-      + contract (planeCovector (-2) 1) (planeVector 3 4)
+    (add_covector (plane_covector 5 7) (plane_covector (-2) 1))
+    (plane_vector 3 4)
+  = contract (plane_covector 5 7) (plane_vector 3 4)
+      + contract (plane_covector (-2) 1) (plane_vector 3 4)
 contraction_linear_in_covector_test = Refl
 
 contraction_respects_vector_scaling_test :
   contract
-    (planeCovector 5 7)
-    (scaleVector 3 (planeVector 3 4))
-  = 3 * contract (planeCovector 5 7) (planeVector 3 4)
+    (plane_covector 5 7)
+    (scale_vector 3 (plane_vector 3 4))
+  = 3 * contract (plane_covector 5 7) (plane_vector 3 4)
 contraction_respects_vector_scaling_test = Refl
 
 contraction_respects_covector_scaling_test :
   contract
-    (scaleCovector 3 (planeCovector 5 7))
-    (planeVector 3 4)
-  = 3 * contract (planeCovector 5 7) (planeVector 3 4)
+    (scale_covector 3 (plane_covector 5 7))
+    (plane_vector 3 4)
+  = 3 * contract (plane_covector 5 7) (plane_vector 3 4)
 contraction_respects_covector_scaling_test = Refl
 
 failing "Mismatch between: PlaneName and ImagePlaneName."
-  equal_rank_named_spaces_do_not_unify : ExactVectorSample imagePlaneSpace
-  equal_rank_named_spaces_do_not_unify = planeVector 1 2
+  equal_rank_named_spaces_do_not_unify : ExactVectorSample image_plane_space
+  equal_rank_named_spaces_do_not_unify = plane_vector 1 2
 
 failing "Mismatch between: 0 and 1."
   one_name_cannot_claim_a_different_rank : FiniteSpace
@@ -63,54 +62,54 @@ failing "Mismatch between: 0 and 1."
 failing "Mismatch between: RealThreeName and PlaneName."
   mismatched_dimension_contraction : Integer
   mismatched_dimension_contraction =
-    contract (planeCovector 1 2) (threeVector 3 4 5)
+    contract (plane_covector 1 2) (three_vector 3 4 5)
 
 failing "Mismatch between: ImagePlaneName and PlaneName."
   equal_rank_mismatched_space_contraction : Integer
   equal_rank_mismatched_space_contraction =
-    contract (planeCovector 1 2) (imagePlaneVector 3 4)
+    contract (plane_covector 1 2) (image_plane_vector 3 4)
 
-failing "Mismatch between: ExactVectorSample planeSpace and ExactCovectorSample"
+failing "Mismatch between: ExactVectorSample plane_space and ExactCovectorSample"
   vector_vector_contraction_without_euclidean_structure : Integer
   vector_vector_contraction_without_euclidean_structure =
-    contract (planeVector 1 2) (planeVector 3 4)
+    contract (plane_vector 1 2) (plane_vector 3 4)
 
 -- --------------------------------------------------------------------------
 -- Explicit Euclidean structure
 -- --------------------------------------------------------------------------
 
 metric_lowers_vector_test :
-  lowerIndex planeEuclidean (planeVector 3 4) = planeCovector 3 4
+  lower_index plane_euclidean (plane_vector 3 4) = plane_covector 3 4
 metric_lowers_vector_test = Refl
 
 metric_raises_covector_test :
-  raiseIndex planeEuclidean (planeCovector 3 4) = planeVector 3 4
+  raise_index plane_euclidean (plane_covector 3 4) = plane_vector 3 4
 metric_raises_covector_test = Refl
 
 metric_dot_test :
-  dot planeEuclidean (planeVector 3 4) (planeVector 5 7) = 43
+  dot plane_euclidean (plane_vector 3 4) (plane_vector 5 7) = 43
 metric_dot_test = Refl
 
 metric_squared_norm_test :
-  squaredNorm planeEuclidean (planeVector 3 4) = 25
+  squared_norm plane_euclidean (plane_vector 3 4) = 25
 metric_squared_norm_test = Refl
 
 metric_norm_test :
-  norm planeEuclidean (planeVector 3 4) = SquareRoot 25
+  norm plane_euclidean (plane_vector 3 4) = SquareRoot 25
 metric_norm_test = Refl
 
 metric_squared_distance_test :
-  squaredDistance
-    planeEuclidean
-    (planeVector 5 7)
-    (planeVector 2 3) = 25
+  squared_distance
+    plane_euclidean
+    (plane_vector 5 7)
+    (plane_vector 2 3) = 25
 metric_squared_distance_test = Refl
 
 metric_distance_test :
   distance
-    planeEuclidean
-    (planeVector 5 7)
-    (planeVector 2 3) = SquareRoot 25
+    plane_euclidean
+    (plane_vector 5 7)
+    (plane_vector 2 3) = SquareRoot 25
 metric_distance_test = Refl
 
 -- --------------------------------------------------------------------------
@@ -118,34 +117,34 @@ metric_distance_test = Refl
 -- --------------------------------------------------------------------------
 
 named_index_contraction_test :
-  contractIndex
-    (LowerIndex (planeCovector 5 7))
-    (UpperIndex (planeVector 3 4)) = 43
+  contract_index
+    (LowerIndex (plane_covector 5 7))
+    (UpperIndex (plane_vector 3 4)) = 43
 named_index_contraction_test = Refl
 
 failing "Mismatch between: Lower and Upper."
   same_variance_index_contraction : Integer
   same_variance_index_contraction =
-    contractIndex
-      (LowerIndex (planeCovector 5 7))
-      (LowerIndex (planeCovector 3 4))
+    contract_index
+      (LowerIndex (plane_covector 5 7))
+      (LowerIndex (plane_covector 3 4))
 
 failing "Mismatch between: ImagePlaneName and PlaneName."
   equal_rank_named_index_space_mismatch : Integer
   equal_rank_named_index_space_mismatch =
-    contractIndex
-      (LowerIndex (planeCovector 5 7))
-      (UpperIndex (imagePlaneVector 3 4))
+    contract_index
+      (LowerIndex (plane_covector 5 7))
+      (UpperIndex (image_plane_vector 3 4))
 
 metric_driven_index_lowering_test :
-  contractIndex
-    (lowerIndexed planeEuclidean (UpperIndex (planeVector 5 7)))
-    (UpperIndex (planeVector 3 4)) = 43
+  contract_index
+    (lower_indexed plane_euclidean (UpperIndex (plane_vector 5 7)))
+    (UpperIndex (plane_vector 3 4)) = 43
 metric_driven_index_lowering_test = Refl
 
 metric_driven_index_raising_test :
-  raiseIndexed planeEuclidean (LowerIndex (planeCovector 3 4))
-    = UpperIndex (planeVector 3 4)
+  raise_indexed plane_euclidean (LowerIndex (plane_covector 3 4))
+    = UpperIndex (plane_vector 3 4)
 metric_driven_index_raising_test = Refl
 
 -- --------------------------------------------------------------------------
@@ -161,200 +160,200 @@ metric_driven_index_raising_test = Refl
 -- state all 128 coordinates; semantic clients use the named constructors and
 -- checked contraction/metric operations above.
 
-lastCoordinate : (n : ℕ) -> Integer -> RawExactCoordinates (S n)
-lastCoordinate Z value = UnsafeCoordinateCons value UnsafeCoordinateNil
-lastCoordinate (S n) value =
-  UnsafeCoordinateCons 0 (lastCoordinate n value)
+last_coordinate : (n : Number) → Integer → RawExactCoordinates (S n)
+last_coordinate Z value = UnsafeCoordinateCons value UnsafeCoordinateNil
+last_coordinate (S n) value =
+  UnsafeCoordinateCons 0 (last_coordinate n value)
 
 r128_sample_tail : RawExactCoordinates 126
 r128_sample_tail =
-  unsafeAddCoordinates
-    (UnsafeCoordinateCons 12 (unsafeZeroCoordinates 125))
-    (lastCoordinate 125 9)
+  unsafe_add_coordinates
+    (UnsafeCoordinateCons 12 (unsafe_zero_coordinates 125))
+    (last_coordinate 125 9)
 
 r128_companion_tail : RawExactCoordinates 126
 r128_companion_tail =
-  unsafeAddCoordinates
-    (UnsafeCoordinateCons 7 (unsafeZeroCoordinates 125))
-    (lastCoordinate 125 11)
+  unsafe_add_coordinates
+    (UnsafeCoordinateCons 7 (unsafe_zero_coordinates 125))
+    (last_coordinate 125 11)
 
-r128_sample : ExactVectorSample real128Space
+r128_sample : ExactVectorSample real128_space
 r128_sample =
   UnsafeVectorCoordinates
     (UnsafeCoordinateCons 3 (UnsafeCoordinateCons 4 r128_sample_tail))
 
-r128_companion : ExactVectorSample real128Space
+r128_companion : ExactVectorSample real128_space
 r128_companion =
   UnsafeVectorCoordinates
     (UnsafeCoordinateCons 5 (UnsafeCoordinateCons (-2) r128_companion_tail))
 
 reflection_in_r128_type_test :
-  OrthogonalTransform real128Euclidean Reversing
-reflection_in_r128_type_test = firstAxisReflection real128Euclidean
+  OrthogonalTransform real128_euclidean Reversing
+reflection_in_r128_type_test = first_axis_reflection real128_euclidean
 
-quarter_turn_in_r128_type_test : SpecialOrthogonal real128Euclidean
-quarter_turn_in_r128_type_test = firstPlaneQuarterTurn real128Euclidean
+quarter_turn_in_r128_type_test : SpecialOrthogonal real128_euclidean
+quarter_turn_in_r128_type_test = first_plane_quarter_turn real128_euclidean
 
-two_reflections_land_in_so128_test : SpecialOrthogonal real128Euclidean
+two_reflections_land_in_so128_test : SpecialOrthogonal real128_euclidean
 two_reflections_land_in_so128_test =
-  twoReflections
-    (firstAxisReflection real128Euclidean)
-    (firstAxisReflection real128Euclidean)
+  two_reflections
+    (first_axis_reflection real128_euclidean)
+    (first_axis_reflection real128_euclidean)
 
 r128_orthogonal_identity_action_test :
-  applyOrthogonalExact OrthogonalIdentity r128_sample = r128_sample
+  apply_orthogonal_exact OrthogonalIdentity r128_sample = r128_sample
 r128_orthogonal_identity_action_test = Refl
 
 r128_two_reflections_action_test :
-  applySpecialOrthogonalExact
+  apply_special_orthogonal_exact
     two_reflections_land_in_so128_test
     r128_sample = r128_sample
 r128_two_reflections_action_test = Refl
 
 orthogonal_composition_order_test :
-  applyOrthogonalExact
-    (composeOrthogonal
-      (firstAxisReflection planeEuclidean)
-      (soTransform (firstPlaneQuarterTurn planeEuclidean)))
-    (planeVector 2 3) = planeVector 3 2
+  apply_orthogonal_exact
+    (compose_orthogonal
+      (first_axis_reflection plane_euclidean)
+      (special_orthogonal_transform (first_plane_quarter_turn plane_euclidean)))
+    (plane_vector 2 3) = plane_vector 3 2
 orthogonal_composition_order_test = Refl
 
 r128_reflection_exact_image_test :
-  applyFirstAxisReflection real128Euclidean r128_sample
+  apply_first_axis_reflection real128_euclidean r128_sample
     = UnsafeVectorCoordinates
         (UnsafeCoordinateCons (-3) (UnsafeCoordinateCons 4 r128_sample_tail))
 r128_reflection_exact_image_test = Refl
 
 r128_quarter_turn_exact_image_test :
-  applyFirstPlaneQuarterTurn real128Euclidean r128_sample
+  apply_first_plane_quarter_turn real128_euclidean r128_sample
     = UnsafeVectorCoordinates
         (UnsafeCoordinateCons (-4) (UnsafeCoordinateCons 3 r128_sample_tail))
 r128_quarter_turn_exact_image_test = Refl
 
 r128_reflection_preserves_squared_norm_test :
-  squaredNorm
-    real128Euclidean
-    (applyFirstAxisReflection real128Euclidean r128_sample) = 250
+  squared_norm
+    real128_euclidean
+    (apply_first_axis_reflection real128_euclidean r128_sample) = 250
 r128_reflection_preserves_squared_norm_test = Refl
 
 r128_quarter_turn_preserves_squared_norm_test :
-  squaredNorm
-    real128Euclidean
-    (applyFirstPlaneQuarterTurn real128Euclidean r128_sample) = 250
+  squared_norm
+    real128_euclidean
+    (apply_first_plane_quarter_turn real128_euclidean r128_sample) = 250
 r128_quarter_turn_preserves_squared_norm_test = Refl
 
 r128_reflection_preserves_dot_test :
   dot
-    real128Euclidean
-    (applyFirstAxisReflection real128Euclidean r128_sample)
-    (applyFirstAxisReflection real128Euclidean r128_companion) = 190
+    real128_euclidean
+    (apply_first_axis_reflection real128_euclidean r128_sample)
+    (apply_first_axis_reflection real128_euclidean r128_companion) = 190
 r128_reflection_preserves_dot_test = Refl
 
 r128_quarter_turn_preserves_dot_test :
   dot
-    real128Euclidean
-    (applyFirstPlaneQuarterTurn real128Euclidean r128_sample)
-    (applyFirstPlaneQuarterTurn real128Euclidean r128_companion) = 190
+    real128_euclidean
+    (apply_first_plane_quarter_turn real128_euclidean r128_sample)
+    (apply_first_plane_quarter_turn real128_euclidean r128_companion) = 190
 r128_quarter_turn_preserves_dot_test = Refl
 
 r128_reflection_is_involution_test :
-  applyFirstAxisReflection
-    real128Euclidean
-    (applyFirstAxisReflection real128Euclidean r128_sample) = r128_sample
+  apply_first_axis_reflection
+    real128_euclidean
+    (apply_first_axis_reflection real128_euclidean r128_sample) = r128_sample
 r128_reflection_is_involution_test = Refl
 
 r128_four_quarter_turns_are_identity_test :
-  applyFirstPlaneQuarterTurn real128Euclidean
-    (applyFirstPlaneQuarterTurn real128Euclidean
-      (applyFirstPlaneQuarterTurn real128Euclidean
-        (applyFirstPlaneQuarterTurn real128Euclidean r128_sample)))
+  apply_first_plane_quarter_turn real128_euclidean
+    (apply_first_plane_quarter_turn real128_euclidean
+      (apply_first_plane_quarter_turn real128_euclidean
+        (apply_first_plane_quarter_turn real128_euclidean r128_sample)))
     = r128_sample
 r128_four_quarter_turns_are_identity_test = Refl
 
-lastCoordinateValue : {n : ℕ} -> RawExactCoordinates (S n) -> Integer
-lastCoordinateValue (UnsafeCoordinateCons value UnsafeCoordinateNil) = value
-lastCoordinateValue
-  (UnsafeCoordinateCons _ rest@(UnsafeCoordinateCons _ _)) = lastCoordinateValue rest
+last_coordinate_value : {n : Number} → RawExactCoordinates (S n) → Integer
+last_coordinate_value (UnsafeCoordinateCons value UnsafeCoordinateNil) = value
+last_coordinate_value
+  (UnsafeCoordinateCons _ rest@(UnsafeCoordinateCons _ _)) = last_coordinate_value rest
 
 r128_reflection_preserves_coordinate_128_test :
-  lastCoordinateValue
-    (unsafeCoordinatesOfVector
-      (applyFirstAxisReflection real128Euclidean r128_sample)) = 9
+  last_coordinate_value
+    (unsafe_coordinates_of_vector
+      (apply_first_axis_reflection real128_euclidean r128_sample)) = 9
 r128_reflection_preserves_coordinate_128_test = Refl
 
 r128_quarter_turn_preserves_coordinate_128_test :
-  lastCoordinateValue
-    (unsafeCoordinatesOfVector
-      (applyFirstPlaneQuarterTurn real128Euclidean r128_sample)) = 9
+  last_coordinate_value
+    (unsafe_coordinates_of_vector
+      (apply_first_plane_quarter_turn real128_euclidean r128_sample)) = 9
 r128_quarter_turn_preserves_coordinate_128_test = Refl
 
 -- --------------------------------------------------------------------------
 -- Surviving geometry and topology facts from #45
 -- --------------------------------------------------------------------------
 
-north_pole_is_s2_test : UnitSpherePoint realThreeEuclidean
-north_pole_is_s2_test = northPoleS2
+north_pole_is_s2_test : UnitSpherePoint real_three_euclidean
+north_pole_is_s2_test = north_pole_s2
 
-sphere_s0_h0_rank_test : sphereIntegralCohomologyRank 0 0 = 2
+sphere_s0_h0_rank_test : sphere_integral_cohomology_rank 0 0 = 2
 sphere_s0_h0_rank_test = Refl
 
-sphere_s2_h0_rank_test : sphereIntegralCohomologyRank 2 0 = 1
+sphere_s2_h0_rank_test : sphere_integral_cohomology_rank 2 0 = 1
 sphere_s2_h0_rank_test = Refl
 
-sphere_s2_h1_rank_test : sphereIntegralCohomologyRank 2 1 = 0
+sphere_s2_h1_rank_test : sphere_integral_cohomology_rank 2 1 = 0
 sphere_s2_h1_rank_test = Refl
 
-sphere_s2_h2_rank_test : sphereIntegralCohomologyRank 2 2 = 1
+sphere_s2_h2_rank_test : sphere_integral_cohomology_rank 2 2 = 1
 sphere_s2_h2_rank_test = Refl
 
-odd_sphere_euler_test : sphereEulerCharacteristic 3 = 0
+odd_sphere_euler_test : sphere_euler_characteristic 3 = 0
 odd_sphere_euler_test = Refl
 
-even_sphere_euler_test : sphereEulerCharacteristic 4 = 2
+even_sphere_euler_test : sphere_euler_characteristic 4 = 2
 even_sphere_euler_test = Refl
 
-quaternion_i_j_test : quaternionMultiply quatI quatJ = quatK
+quaternion_i_j_test : quaternion_multiply quaternion_i quaternion_j = quaternion_k
 quaternion_i_j_test = Refl
 
 quaternion_j_i_test :
-  quaternionMultiply quatJ quatI = quaternionNegate quatK
+  quaternion_multiply quaternion_j quaternion_i = quaternion_negate quaternion_k
 quaternion_j_i_test = Refl
 
-quaternion_i_norm_test : quaternionNormSquared quatI = 1
+quaternion_i_norm_test : quaternion_norm_squared quaternion_i = 1
 quaternion_i_norm_test = Refl
 
-unit_quaternion_rotation_is_so3_test : SpecialOrthogonal realThreeEuclidean
-unit_quaternion_rotation_is_so3_test = quaternionRotation unitQuatI
+unit_quaternion_rotation_is_so3_test : SpecialOrthogonal real_three_euclidean
+unit_quaternion_rotation_is_so3_test = quaternion_rotation unit_quaternion_i
 
 unit_quaternion_rotation_action_test :
-  applySpecialOrthogonalExact
-    (quaternionRotation unitQuatI)
-    (threeVector 0 1 0) = threeVector 0 (-1) 0
+  apply_special_orthogonal_exact
+    (quaternion_rotation unit_quaternion_i)
+    (three_vector 0 1 0) = three_vector 0 (-1) 0
 unit_quaternion_rotation_action_test = Refl
 
-cp3_real_dimension_test : cpRealDimension 3 = 6
+cp3_real_dimension_test : cp_real_dimension 3 = 6
 cp3_real_dimension_test = Refl
 
-cp3_hopf_sphere_dimension_test : cpHopfSphereDimension 3 = 7
+cp3_hopf_sphere_dimension_test : cp_hopf_sphere_dimension 3 = 7
 cp3_hopf_sphere_dimension_test = Refl
 
-cp2_h0_rank_test : cpIntegralCohomologyRank 2 0 = 1
+cp2_h0_rank_test : cp_integral_cohomology_rank 2 0 = 1
 cp2_h0_rank_test = Refl
 
-cp2_h2_rank_test : cpIntegralCohomologyRank 2 2 = 1
+cp2_h2_rank_test : cp_integral_cohomology_rank 2 2 = 1
 cp2_h2_rank_test = Refl
 
-cp2_h4_rank_test : cpIntegralCohomologyRank 2 4 = 1
+cp2_h4_rank_test : cp_integral_cohomology_rank 2 4 = 1
 cp2_h4_rank_test = Refl
 
-cp2_h3_rank_test : cpIntegralCohomologyRank 2 3 = 0
+cp2_h3_rank_test : cp_integral_cohomology_rank 2 3 = 0
 cp2_h3_rank_test = Refl
 
-cp2_h6_rank_test : cpIntegralCohomologyRank 2 6 = 0
+cp2_h6_rank_test : cp_integral_cohomology_rank 2 6 = 0
 cp2_h6_rank_test = Refl
 
 r3_one_point_compactifies_to_s3_test :
-  compactifiedSphereDimension (euclideanOnePointCompactification 3) = 3
+  compactified_sphere_dimension (euclidean_one_point_compactification 3) = 3
 r3_one_point_compactifies_to_s3_test = Refl
 
 -- --------------------------------------------------------------------------
@@ -365,77 +364,77 @@ whole_tensor : ElementaryTensorSection Whole
 whole_tensor = TensorSection (WholeSection 2) (WholeSection 3)
 
 tensor_restriction_infers_open_test : ElementaryTensorSection Patch
-tensor_restriction_infers_open_test = restrictTensor PatchWhole whole_tensor
+tensor_restriction_infers_open_test = restrict_tensor PatchWhole whole_tensor
 
 tensor_restriction_identity_test :
-  restrictTensor Same tensor_restriction_infers_open_test
+  restrict_tensor Same tensor_restriction_infers_open_test
     = tensor_restriction_infers_open_test
 tensor_restriction_identity_test = Refl
 
 tensor_restriction_composition_test :
-  restrictTensor PointPatch (restrictTensor PatchWhole whole_tensor)
-    = restrictTensor PointWhole whole_tensor
+  restrict_tensor PointPatch (restrict_tensor PatchWhole whole_tensor)
+    = restrict_tensor PointWhole whole_tensor
 tensor_restriction_composition_test = Refl
 
 tensor_restriction_componentwise_test :
-  restrictTensor PatchWhole whole_tensor
+  restrict_tensor PatchWhole whole_tensor
     = TensorSection (PatchSection 2) (PatchSection 3)
 tensor_restriction_componentwise_test =
-  tensorRestrictionPointwise PatchWhole (WholeSection 2) (WholeSection 3)
+  tensor_restriction_pointwise PatchWhole (WholeSection 2) (WholeSection 3)
 
 -- --------------------------------------------------------------------------
 -- Tiny provenance-aware named-fact boundary
 -- --------------------------------------------------------------------------
 
 jordan_context : TypedContext EmbeddedCircleInS2
-jordan_context = ContextContains jordanCurveExample
+jordan_context = ContextContains jordan_curve_example
 
-jordan_lookup_test : FactAnswer (JordanSeparation jordanCurveExample)
-jordan_lookup_test = lookupNamedFact jordanSeparationFact jordan_context
+jordan_lookup_test : FactAnswer (JordanSeparation jordan_curve_example)
+jordan_lookup_test = lookup_named_fact jordan_separation_fact jordan_context
 
-unrelated_context : TypedContext (ExactVectorSample planeSpace)
-unrelated_context = ContextContains (planeVector 1 2)
+unrelated_context : TypedContext (ExactVectorSample plane_space)
+unrelated_context = ContextContains (plane_vector 1 2)
 
-failing "Mismatch between: ExactVectorSample planeSpace and EmbeddedCircleInS2."
+failing "Mismatch between: ExactVectorSample plane_space and EmbeddedCircleInS2."
   named_fact_rejects_unrelated_context :
-    FactAnswer (JordanSeparation jordanCurveExample)
+    FactAnswer (JordanSeparation jordan_curve_example)
   named_fact_rejects_unrelated_context =
-    lookupNamedFact jordanSeparationFact unrelated_context
+    lookup_named_fact jordan_separation_fact unrelated_context
 
 jordan_lookup_conclusion_test :
-  complementComponentCount (factConclusion jordan_lookup_test) = 2
+  complement_component_count (fact_conclusion jordan_lookup_test) = 2
 jordan_lookup_conclusion_test = Refl
 
 jordan_lookup_explanation_test :
-  factExplanation jordan_lookup_test
+  fact_explanation jordan_lookup_test
     = "named fact topology.jordan-separation@1"
 jordan_lookup_explanation_test = Refl
 
 jordan_lookup_origin_test :
-  answerOrigin jordan_lookup_test
+  answer_origin jordan_lookup_test
     = NamedFactLookup
         (MkFactProvenance
           "topology"
           "jordan-separation"
           "1"
-          "TopologyFacts.jordanSeparation")
+          "TopologyFacts.jordan_separation")
 jordan_lookup_origin_test = Refl
 
 jordan_lookup_namespace_test :
-  factNamespace (answerProvenance jordan_lookup_test) = "topology"
+  fact_namespace (answer_provenance jordan_lookup_test) = "topology"
 jordan_lookup_namespace_test = Refl
 
 jordan_lookup_name_test :
-  factName (answerProvenance jordan_lookup_test) = "jordan-separation"
+  fact_name (answer_provenance jordan_lookup_test) = "jordan-separation"
 jordan_lookup_name_test = Refl
 
 jordan_lookup_version_test :
-  factVersion (answerProvenance jordan_lookup_test) = "1"
+  fact_version (answer_provenance jordan_lookup_test) = "1"
 jordan_lookup_version_test = Refl
 
 jordan_lookup_source_test :
-  factSource (answerProvenance jordan_lookup_test)
-    = "TopologyFacts.jordanSeparation"
+  fact_source (answer_provenance jordan_lookup_test)
+    = "TopologyFacts.jordan_separation"
 jordan_lookup_source_test = Refl
 
 main : IO ()

@@ -2,60 +2,59 @@ module EuclideanGeometry
 
 import MathematicalSpaces
 
-%default total
 %unbound_implicits off
 
 -- A finite coordinate space does not acquire a dot product merely from its
 -- rank.  This value records the additional choice of the standard coordinate
 -- Euclidean structure on one particular named space.
 public export
-data EuclideanStructure : FiniteSpace -> Type where
+data EuclideanStructure : FiniteSpace → Type where
   StandardCoordinate :
-    {rank : ℕ} ->
-    {name : SpaceName rank} ->
+    {rank : Number} →
+    {name : SpaceName rank} →
     EuclideanStructure (NamedFiniteSpace name)
 
 public export
-planeEuclidean : EuclideanStructure planeSpace
-planeEuclidean = StandardCoordinate
+plane_euclidean : EuclideanStructure plane_space
+plane_euclidean = StandardCoordinate
 
 public export
-realThreeEuclidean : EuclideanStructure realThreeSpace
-realThreeEuclidean = StandardCoordinate
+real_three_euclidean : EuclideanStructure real_three_space
+real_three_euclidean = StandardCoordinate
 
 public export
-real128Euclidean : EuclideanStructure real128Space
-real128Euclidean = StandardCoordinate
+real128_euclidean : EuclideanStructure real128_space
+real128_euclidean = StandardCoordinate
 
 -- The standard-coordinate metric is the explicit identification between a
 -- vector and its dual coordinate covector.  No such operation is exported
 -- without a EuclideanStructure argument.
 public export
-lowerIndex :
-  {space : FiniteSpace} ->
-  EuclideanStructure space -> ExactVectorSample space -> ExactCovectorSample space
-lowerIndex StandardCoordinate (UnsafeVectorCoordinates coordinates) =
+lower_index :
+  {space : FiniteSpace} →
+  EuclideanStructure space → ExactVectorSample space → ExactCovectorSample space
+lower_index StandardCoordinate (UnsafeVectorCoordinates coordinates) =
   UnsafeCovectorCoordinates coordinates
 
 public export
-raiseIndex :
-  {space : FiniteSpace} ->
-  EuclideanStructure space -> ExactCovectorSample space -> ExactVectorSample space
-raiseIndex StandardCoordinate (UnsafeCovectorCoordinates coordinates) =
+raise_index :
+  {space : FiniteSpace} →
+  EuclideanStructure space → ExactCovectorSample space → ExactVectorSample space
+raise_index StandardCoordinate (UnsafeCovectorCoordinates coordinates) =
   UnsafeVectorCoordinates coordinates
 
 public export
 dot :
-  {space : FiniteSpace} ->
-  EuclideanStructure space ->
-  ExactVectorSample space -> ExactVectorSample space -> Integer
-dot structure left right = contract (lowerIndex structure left) right
+  {space : FiniteSpace} →
+  EuclideanStructure space →
+  ExactVectorSample space → ExactVectorSample space → Integer
+dot structure left right = contract (lower_index structure left) right
 
 public export
-squaredNorm :
-  {space : FiniteSpace} ->
-  EuclideanStructure space -> ExactVectorSample space -> Integer
-squaredNorm structure value = dot structure value value
+squared_norm :
+  {space : FiniteSpace} →
+  EuclideanStructure space → ExactVectorSample space → Integer
+squared_norm structure value = dot structure value value
 
 -- SquareRoot is deliberately symbolic.  The exact integer radicand remains
 -- visible, and this small semantic layer makes no floating-point choice.
@@ -64,44 +63,44 @@ data ExactSquareRoot = SquareRoot Integer
 
 public export
 norm :
-  {space : FiniteSpace} ->
-  EuclideanStructure space -> ExactVectorSample space -> ExactSquareRoot
-norm structure value = SquareRoot (squaredNorm structure value)
+  {space : FiniteSpace} →
+  EuclideanStructure space → ExactVectorSample space → ExactSquareRoot
+norm structure value = SquareRoot (squared_norm structure value)
 
 public export
-squaredDistance :
-  {space : FiniteSpace} ->
-  EuclideanStructure space ->
-  ExactVectorSample space -> ExactVectorSample space -> Integer
-squaredDistance structure left right =
-  squaredNorm structure (differenceVector left right)
+squared_distance :
+  {space : FiniteSpace} →
+  EuclideanStructure space →
+  ExactVectorSample space → ExactVectorSample space → Integer
+squared_distance structure left right =
+  squared_norm structure (difference_vector left right)
 
 public export
 distance :
-  {space : FiniteSpace} ->
-  EuclideanStructure space ->
-  ExactVectorSample space -> ExactVectorSample space -> ExactSquareRoot
+  {space : FiniteSpace} →
+  EuclideanStructure space →
+  ExactVectorSample space → ExactVectorSample space → ExactSquareRoot
 distance structure left right =
-  SquareRoot (squaredDistance structure left right)
+  SquareRoot (squared_distance structure left right)
 
 -- Variance changes are metric operations.  Merely wrapping a value with an
 -- index-variance tag never changes an exact vector sample into an exact
 -- covector sample or conversely.
 public export
-lowerIndexed :
-  {space : FiniteSpace} ->
-  EuclideanStructure space ->
-  IndexedValue Upper space -> IndexedValue Lower space
-lowerIndexed structure (UpperIndex value) =
-  LowerIndex (lowerIndex structure value)
+lower_indexed :
+  {space : FiniteSpace} →
+  EuclideanStructure space →
+  IndexedValue Upper space → IndexedValue Lower space
+lower_indexed structure (UpperIndex value) =
+  LowerIndex (lower_index structure value)
 
 public export
-raiseIndexed :
-  {space : FiniteSpace} ->
-  EuclideanStructure space ->
-  IndexedValue Lower space -> IndexedValue Upper space
-raiseIndexed structure (LowerIndex value) =
-  UpperIndex (raiseIndex structure value)
+raise_indexed :
+  {space : FiniteSpace} →
+  EuclideanStructure space →
+  IndexedValue Lower space → IndexedValue Upper space
+raise_indexed structure (LowerIndex value) =
+  UpperIndex (raise_index structure value)
 
 -- --------------------------------------------------------------------------
 -- Exact quaternion samples
@@ -111,16 +110,16 @@ public export
 data Quaternion = Q Integer Integer Integer Integer
 
 public export
-quaternionNegate : Quaternion -> Quaternion
-quaternionNegate (Q a b c d) = Q (-a) (-b) (-c) (-d)
+quaternion_negate : Quaternion → Quaternion
+quaternion_negate (Q a b c d) = Q (-a) (-b) (-c) (-d)
 
 public export
-quaternionConjugate : Quaternion -> Quaternion
-quaternionConjugate (Q a b c d) = Q a (-b) (-c) (-d)
+quaternion_conjugate : Quaternion → Quaternion
+quaternion_conjugate (Q a b c d) = Q a (-b) (-c) (-d)
 
 public export
-quaternionMultiply : Quaternion -> Quaternion -> Quaternion
-quaternionMultiply (Q a b c d) (Q e f g h) =
+quaternion_multiply : Quaternion → Quaternion → Quaternion
+quaternion_multiply (Q a b c d) (Q e f g h) =
   Q
     (a * e - b * f - c * g - d * h)
     (a * f + b * e + c * h - d * g)
@@ -128,48 +127,48 @@ quaternionMultiply (Q a b c d) (Q e f g h) =
     (a * h + b * g - c * f + d * e)
 
 public export
-quaternionNormSquared : Quaternion -> Integer
-quaternionNormSquared (Q a b c d) =
+quaternion_norm_squared : Quaternion → Integer
+quaternion_norm_squared (Q a b c d) =
   a * a + b * b + c * c + d * d
 
 public export
-quatOne : Quaternion
-quatOne = Q 1 0 0 0
+quaternion_one : Quaternion
+quaternion_one = Q 1 0 0 0
 
 public export
-quatI : Quaternion
-quatI = Q 0 1 0 0
+quaternion_i : Quaternion
+quaternion_i = Q 0 1 0 0
 
 public export
-quatJ : Quaternion
-quatJ = Q 0 0 1 0
+quaternion_j : Quaternion
+quaternion_j = Q 0 0 1 0
 
 public export
-quatK : Quaternion
-quatK = Q 0 0 0 1
+quaternion_k : Quaternion
+quaternion_k = Q 0 0 0 1
 
 public export
 data UnitQuaternion : Type where
   UnitQuaternionValue :
-    (value : Quaternion) ->
-    quaternionNormSquared value = 1 ->
+    (value : Quaternion) →
+    quaternion_norm_squared value = 1 →
     UnitQuaternion
 
 public export
-unitQuatOne : UnitQuaternion
-unitQuatOne = UnitQuaternionValue quatOne Refl
+unit_quaternion_one : UnitQuaternion
+unit_quaternion_one = UnitQuaternionValue quaternion_one Refl
 
 public export
-unitQuatI : UnitQuaternion
-unitQuatI = UnitQuaternionValue quatI Refl
+unit_quaternion_i : UnitQuaternion
+unit_quaternion_i = UnitQuaternionValue quaternion_i Refl
 
 public export
-unitQuatJ : UnitQuaternion
-unitQuatJ = UnitQuaternionValue quatJ Refl
+unit_quaternion_j : UnitQuaternion
+unit_quaternion_j = UnitQuaternionValue quaternion_j Refl
 
 public export
-unitQuatK : UnitQuaternion
-unitQuatK = UnitQuaternionValue quatK Refl
+unit_quaternion_k : UnitQuaternion
+unit_quaternion_k = UnitQuaternionValue quaternion_k Refl
 
 -- --------------------------------------------------------------------------
 -- O(space), SO(space), and the exact #47 generators
@@ -179,11 +178,11 @@ public export
 data Orientation = Preserving | Reversing
 
 public export
-composeOrientation : Orientation -> Orientation -> Orientation
-composeOrientation Preserving Preserving = Preserving
-composeOrientation Preserving Reversing = Reversing
-composeOrientation Reversing Preserving = Reversing
-composeOrientation Reversing Reversing = Preserving
+compose_orientation : Orientation → Orientation → Orientation
+compose_orientation Preserving Preserving = Preserving
+compose_orientation Preserving Reversing = Reversing
+compose_orientation Reversing Preserving = Reversing
+compose_orientation Reversing Reversing = Preserving
 
 -- The Euclidean value itself is an index.  Thus an orthogonal transform is
 -- not transferable to another named rank-equal space or to another metric.
@@ -194,90 +193,90 @@ composeOrientation Reversing Reversing = Preserving
 -- general metric-preservation theorem inside Idric.
 public export
 data OrthogonalTransform :
-    {space : FiniteSpace} ->
-    EuclideanStructure space -> Orientation -> Type where
+    {space : FiniteSpace} →
+    EuclideanStructure space → Orientation → Type where
   OrthogonalIdentity :
-    {space : FiniteSpace} ->
-    {structure : EuclideanStructure space} ->
+    {space : FiniteSpace} →
+    {structure : EuclideanStructure space} →
     OrthogonalTransform structure Preserving
   FirstAxisReflectionTransform :
-    {n : ℕ} ->
-    {name : SpaceName (S n)} ->
+    {n : Number} →
+    {name : SpaceName (S n)} →
     OrthogonalTransform
       {space = NamedFiniteSpace name}
       StandardCoordinate
       Reversing
   FirstPlaneQuarterTurnTransform :
-    {n : ℕ} ->
-    {name : SpaceName (S (S n))} ->
+    {n : Number} →
+    {name : SpaceName (S (S n))} →
     OrthogonalTransform
       {space = NamedFiniteSpace name}
       StandardCoordinate
       Preserving
   QuaternionRotationTransform :
-    UnitQuaternion ->
-    OrthogonalTransform realThreeEuclidean Preserving
+    UnitQuaternion →
+    OrthogonalTransform real_three_euclidean Preserving
   ComposeOrthogonal :
-    {space : FiniteSpace} ->
-    {structure : EuclideanStructure space} ->
-    {left : Orientation} ->
-    {right : Orientation} ->
-    OrthogonalTransform structure left ->
-    OrthogonalTransform structure right ->
-    OrthogonalTransform structure (composeOrientation left right)
+    {space : FiniteSpace} →
+    {structure : EuclideanStructure space} →
+    {left : Orientation} →
+    {right : Orientation} →
+    OrthogonalTransform structure left →
+    OrthogonalTransform structure right →
+    OrthogonalTransform structure (compose_orientation left right)
 
 public export
 data SpecialOrthogonal :
-    {space : FiniteSpace} -> EuclideanStructure space -> Type where
+    {space : FiniteSpace} → EuclideanStructure space → Type where
   InSO :
-    {space : FiniteSpace} ->
-    {structure : EuclideanStructure space} ->
-    OrthogonalTransform structure Preserving ->
+    {space : FiniteSpace} →
+    {structure : EuclideanStructure space} →
+    OrthogonalTransform structure Preserving →
     SpecialOrthogonal structure
 
 public export
-firstAxisReflection :
-  {n : ℕ} ->
-  {name : SpaceName (S n)} ->
-  (structure : EuclideanStructure (NamedFiniteSpace name)) ->
+first_axis_reflection :
+  {n : Number} →
+  {name : SpaceName (S n)} →
+  (structure : EuclideanStructure (NamedFiniteSpace name)) →
   OrthogonalTransform structure Reversing
-firstAxisReflection StandardCoordinate = FirstAxisReflectionTransform
+first_axis_reflection StandardCoordinate = FirstAxisReflectionTransform
 
 public export
-firstPlaneQuarterTurn :
-  {n : ℕ} ->
-  {name : SpaceName (S (S n))} ->
-  (structure : EuclideanStructure (NamedFiniteSpace name)) ->
+first_plane_quarter_turn :
+  {n : Number} →
+  {name : SpaceName (S (S n))} →
+  (structure : EuclideanStructure (NamedFiniteSpace name)) →
   SpecialOrthogonal structure
-firstPlaneQuarterTurn StandardCoordinate =
+first_plane_quarter_turn StandardCoordinate =
   InSO FirstPlaneQuarterTurnTransform
 
 public export
-composeOrthogonal :
-  {space : FiniteSpace} ->
-  {structure : EuclideanStructure space} ->
-  {left : Orientation} ->
-  {right : Orientation} ->
-  OrthogonalTransform structure left ->
-  OrthogonalTransform structure right ->
-  OrthogonalTransform structure (composeOrientation left right)
-composeOrthogonal = ComposeOrthogonal
+compose_orthogonal :
+  {space : FiniteSpace} →
+  {structure : EuclideanStructure space} →
+  {left : Orientation} →
+  {right : Orientation} →
+  OrthogonalTransform structure left →
+  OrthogonalTransform structure right →
+  OrthogonalTransform structure (compose_orientation left right)
+compose_orthogonal = ComposeOrthogonal
 
 public export
-twoReflections :
-  {space : FiniteSpace} ->
-  {structure : EuclideanStructure space} ->
-  OrthogonalTransform structure Reversing ->
-  OrthogonalTransform structure Reversing ->
+two_reflections :
+  {space : FiniteSpace} →
+  {structure : EuclideanStructure space} →
+  OrthogonalTransform structure Reversing →
+  OrthogonalTransform structure Reversing →
   SpecialOrthogonal structure
-twoReflections left right = InSO (ComposeOrthogonal left right)
+two_reflections left right = InSO (ComposeOrthogonal left right)
 
 public export
-soTransform :
-  {space : FiniteSpace} ->
-  {structure : EuclideanStructure space} ->
-  SpecialOrthogonal structure -> OrthogonalTransform structure Preserving
-soTransform (InSO transform) = transform
+special_orthogonal_transform :
+  {space : FiniteSpace} →
+  {structure : EuclideanStructure space} →
+  SpecialOrthogonal structure → OrthogonalTransform structure Preserving
+special_orthogonal_transform (InSO transform) = transform
 
 -- Exact integer-coordinate samples are a test representation inside the named
 -- real coordinate spaces.  Every closed O/SO term has one evaluator on those
@@ -285,8 +284,8 @@ soTransform (InSO transform) = transform
 -- disconnected marker values.
 
 public export %inline
-vectorAsPureQuaternion : ExactVectorSample realThreeSpace -> Quaternion
-vectorAsPureQuaternion
+vector_as_pure_quaternion : ExactVectorSample real_three_space → Quaternion
+vector_as_pure_quaternion
     (UnsafeVectorCoordinates
       (UnsafeCoordinateCons first
         (UnsafeCoordinateCons second
@@ -294,85 +293,85 @@ vectorAsPureQuaternion
   Q 0 first second third
 
 public export %inline
-vectorPart : Quaternion -> ExactVectorSample realThreeSpace
-vectorPart (Q _ first second third) = threeVector first second third
+vector_part : Quaternion → ExactVectorSample real_three_space
+vector_part (Q _ first second third) = three_vector first second third
 
 public export %inline
-rotateByUnitQuaternion :
-  UnitQuaternion ->
-  ExactVectorSample realThreeSpace -> ExactVectorSample realThreeSpace
-rotateByUnitQuaternion (UnitQuaternionValue value _) vector =
-  vectorPart
-    (quaternionMultiply
-      (quaternionMultiply value (vectorAsPureQuaternion vector))
-      (quaternionConjugate value))
+rotate_by_unit_quaternion :
+  UnitQuaternion →
+  ExactVectorSample real_three_space → ExactVectorSample real_three_space
+rotate_by_unit_quaternion (UnitQuaternionValue value _) vector =
+  vector_part
+    (quaternion_multiply
+      (quaternion_multiply value (vector_as_pure_quaternion vector))
+      (quaternion_conjugate value))
 
 public export
-applyOrthogonalExact :
-  {space : FiniteSpace} ->
-  {structure : EuclideanStructure space} ->
-  {orientation : Orientation} ->
-  OrthogonalTransform structure orientation ->
-  ExactVectorSample space ->
+apply_orthogonal_exact :
+  {space : FiniteSpace} →
+  {structure : EuclideanStructure space} →
+  {orientation : Orientation} →
+  OrthogonalTransform structure orientation →
+  ExactVectorSample space →
   ExactVectorSample space
-applyOrthogonalExact OrthogonalIdentity vector = vector
-applyOrthogonalExact
+apply_orthogonal_exact OrthogonalIdentity vector = vector
+apply_orthogonal_exact
     FirstAxisReflectionTransform
     (UnsafeVectorCoordinates (UnsafeCoordinateCons first rest)) =
   UnsafeVectorCoordinates (UnsafeCoordinateCons (-first) rest)
-applyOrthogonalExact
+apply_orthogonal_exact
     FirstPlaneQuarterTurnTransform
     (UnsafeVectorCoordinates UnsafeCoordinateNil) impossible
-applyOrthogonalExact
+apply_orthogonal_exact
     FirstPlaneQuarterTurnTransform
     (UnsafeVectorCoordinates (UnsafeCoordinateCons _ UnsafeCoordinateNil)) impossible
-applyOrthogonalExact
+apply_orthogonal_exact
     FirstPlaneQuarterTurnTransform
     (UnsafeVectorCoordinates
       (UnsafeCoordinateCons first (UnsafeCoordinateCons second rest))) =
   UnsafeVectorCoordinates
     (UnsafeCoordinateCons (-second) (UnsafeCoordinateCons first rest))
-applyOrthogonalExact
+apply_orthogonal_exact
     (QuaternionRotationTransform quaternion)
     vector =
-  rotateByUnitQuaternion quaternion vector
+  rotate_by_unit_quaternion quaternion vector
 -- ComposeOrthogonal left right denotes conventional function composition:
 -- apply right first, then left.
-applyOrthogonalExact (ComposeOrthogonal left right) vector =
-  applyOrthogonalExact left (applyOrthogonalExact right vector)
+apply_orthogonal_exact (ComposeOrthogonal left right) vector =
+  apply_orthogonal_exact left (apply_orthogonal_exact right vector)
 
 public export
-applySpecialOrthogonalExact :
-  {space : FiniteSpace} ->
-  {structure : EuclideanStructure space} ->
-  SpecialOrthogonal structure ->
-  ExactVectorSample space ->
+apply_special_orthogonal_exact :
+  {space : FiniteSpace} →
+  {structure : EuclideanStructure space} →
+  SpecialOrthogonal structure →
+  ExactVectorSample space →
   ExactVectorSample space
-applySpecialOrthogonalExact (InSO transform) vector =
-  applyOrthogonalExact transform vector
+apply_special_orthogonal_exact (InSO transform) vector =
+  apply_orthogonal_exact transform vector
 
 -- Named generator wrappers remain for the #47 API, but now delegate through
 -- the connected OrthogonalTransform evaluator.
 public export
-applyFirstAxisReflection :
-  {n : ℕ} ->
-  {name : SpaceName (S n)} ->
-  (structure : EuclideanStructure (NamedFiniteSpace name)) ->
-  ExactVectorSample (NamedFiniteSpace name) ->
+apply_first_axis_reflection :
+  {n : Number} →
+  {name : SpaceName (S n)} →
+  (structure : EuclideanStructure (NamedFiniteSpace name)) →
+  ExactVectorSample (NamedFiniteSpace name) →
   ExactVectorSample (NamedFiniteSpace name)
-applyFirstAxisReflection structure =
-  applyOrthogonalExact (firstAxisReflection structure)
+apply_first_axis_reflection structure =
+  apply_orthogonal_exact (first_axis_reflection structure)
 
 public export
-applyFirstPlaneQuarterTurn :
-  {n : ℕ} ->
-  {name : SpaceName (S (S n))} ->
-  (structure : EuclideanStructure (NamedFiniteSpace name)) ->
-  ExactVectorSample (NamedFiniteSpace name) ->
+apply_first_plane_quarter_turn :
+  {n : Number} →
+  {name : SpaceName (S (S n))} →
+  (structure : EuclideanStructure (NamedFiniteSpace name)) →
+  ExactVectorSample (NamedFiniteSpace name) →
   ExactVectorSample (NamedFiniteSpace name)
-applyFirstPlaneQuarterTurn structure =
-  applySpecialOrthogonalExact (firstPlaneQuarterTurn structure)
+apply_first_plane_quarter_turn structure =
+  apply_special_orthogonal_exact (first_plane_quarter_turn structure)
 
 public export
-quaternionRotation : UnitQuaternion -> SpecialOrthogonal realThreeEuclidean
-quaternionRotation value = InSO (QuaternionRotationTransform value)
+quaternion_rotation : UnitQuaternion → SpecialOrthogonal real_three_euclidean
+quaternion_rotation value = InSO (QuaternionRotationTransform value)

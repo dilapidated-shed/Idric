@@ -2,30 +2,28 @@ module Main
 
 import Data.Vect
 
-%default total
-
 choice placement_kind one_of
   new_zero
   new_pole
 
 choice placed_point one_of
-  zero_at ℕ
-  pole_at ℕ
+  zero_at Number
+  pole_at Number
 
-make_point : placement_kind → ℕ → placed_point
+make_point : placement_kind → Number → placed_point
 make_point new_zero coordinate = zero_at coordinate
 make_point new_pole coordinate = pole_at coordinate
 
 place :
   (kind : placement_kind) →
-  (coordinate : ℕ) →
+  (coordinate : Number) →
   (points : Vect n placed_point) →
   (updated : Vect (S n) placed_point **
     Vect.head updated = make_point kind coordinate)
 place kind coordinate points =
   (make_point kind coordinate :: points ** Refl)
 
-describe_point : placed_point → String
+describe_point : placed_point → Text
 describe_point (zero_at coordinate) = "zero at " ++ show coordinate
 describe_point (pole_at coordinate) = "pole at " ++ show coordinate
 

@@ -1,12 +1,10 @@
 module Main
 
-%default total
-
 choice touch_beginning one_of
-  near_existing ℕ
+  near_existing Number
   empty_domain
 
-describe : touch_beginning → String
+describe : touch_beginning → Text
 describe (near_existing index) = "near point " ++ show index
 
 main : IO ()

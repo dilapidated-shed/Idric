@@ -1,5 +1,5 @@
 module WegertSource
 
 export
-project_name : String
+project_name : Text
 project_name = "Wegert"

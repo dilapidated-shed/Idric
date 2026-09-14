@@ -1,11 +1,9 @@
 module Main
 
-%default total
-
 self_equal : (value : a) → value = value
 self_equal value = ?identity_proof
 
-two_plus_two : the ℕ (2 + 2) = 4
+two_plus_two : the Number (2 + 2) = 4
 two_plus_two = ?arithmetic_proof
 
 main : IO ()

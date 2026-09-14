@@ -2,10 +2,8 @@ module Main
 
 import Data.Vect
 
-%default total
-
 -- Idris 2 still exposes its length-indexed list as Data.Vect.Vect.
-numbers : List ℕ
+numbers : List Number
 numbers = [2, 4, 6]
 
 exactly_three : Vect 3 ℕ

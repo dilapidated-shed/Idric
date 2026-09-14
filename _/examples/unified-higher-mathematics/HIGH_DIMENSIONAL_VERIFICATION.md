@@ -31,7 +31,7 @@ y = (5, -2, 7, 0, ..., 0, 11).
 ```
 
 Let `H` negate the first coordinate and let `G` make the first-plane
-quarter-turn `(a, b) -> (-b, a)`.  The exact expected images are
+quarter-turn `(a, b) → (-b, a)`.  The exact expected images are
 
 ```text
 H x = (-3, 4, 12, 0, ..., 0, 9)
@@ -65,7 +65,7 @@ Mathematically, `det(H) = -1` and `det(G) = 1`.  The Idric layer does not
 calculate arbitrary determinants.  It records the corresponding orientation
 in closed transform constructors: `H` is `Reversing`, while `G` is
 `Preserving` and is exposed through `SpecialOrthogonal`.  The same closed
-syntax is interpreted by `applyOrthogonalExact`, removing the former API
+syntax is interpreted by `apply_orthogonal_exact`, removing the former API
 disconnect between marker terms and separately selected evaluators.  This is
 not a compiler-derived determinant or general orthogonality proof; the exact
 oracles and independent signed-permutation check cover these closed maps.
@@ -92,7 +92,7 @@ squared norms, dot products, involution, fourth-power identity, and the
 preserved 128th coordinate by compiler normalization.
 Orientation is represented in the closed transform type: `H` is
 `Reversing`, `G` is in `SpecialOrthogonal`, and composition of two reflections
-has a `SpecialOrthogonal real128Euclidean` result.
+has a `SpecialOrthogonal real128_euclidean` result.
 
 These tests preserve #47's exact high-dimensional behavior.  A Markdown
 calculation, successful parsing alone, or an external numerical result does
