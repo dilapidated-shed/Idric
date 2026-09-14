@@ -22,29 +22,6 @@ interface Num ty where
 
 %allow_overloads fromInteger
 
-||| Source-facing Idriç addition. Most ordinary numeric representations obtain
-||| this operation from `Num`; types with stricter invariants can provide a
-||| result-preserving implementation without inventing a literal conversion.
-public export
-interface IdricAddition ty where
-  constructor MkIdricAddition
-  (+~+) : ty -> ty -> ty
-
-public export %hint
-idricAdditionFromNum : Num ty => IdricAddition ty
-idricAdditionFromNum = MkIdricAddition (+)
-
-||| Source-facing Idriç multiplication, separated from literal construction
-||| for the same reason as `IdricAddition`.
-public export
-interface IdricMultiplication ty where
-  constructor MkIdricMultiplication
-  (*~*) : ty -> ty -> ty
-
-public export %hint
-idricMultiplicationFromNum : Num ty => IdricMultiplication ty
-idricMultiplicationFromNum = MkIdricMultiplication (*)
-
 ||| The `Neg` interface defines operations on numbers which can be negative.
 public export
 interface Num ty => Neg ty where
@@ -52,21 +29,6 @@ interface Num ty => Neg ty where
   ||| The underlying of unary minus. `-5` desugars to `negate (fromInteger 5)`.
   negate : ty -> ty
   (-) : ty -> ty -> ty
-
-||| Source-facing Idriç subtraction permits the result type to be wider than
-||| its operands. In particular, `Number - Number` produces `±Number`.
-public export
-interface IdricSubtraction operand result | operand where
-  constructor MkIdricSubtraction
-  (-~-) : operand -> operand -> result
-
-public export %hint
-idricSubtractionFromNeg : Neg ty => IdricSubtraction ty ty
-idricSubtractionFromNeg = MkIdricSubtraction (-)
-
-public export
-idricNegate : Neg ty => ty -> ty
-idricNegate = negate
 
 ||| A convenience alias for `(-)`, this function enables partial application of subtraction on the
 ||| right-hand operand as

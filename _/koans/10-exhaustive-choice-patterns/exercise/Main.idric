@@ -1,7 +1,7 @@
 module Main
 
 choice touch_beginning one_of
-  near_existing Cardinality
+  near_existing Number
   empty_domain
 
 describe : touch_beginning → Text

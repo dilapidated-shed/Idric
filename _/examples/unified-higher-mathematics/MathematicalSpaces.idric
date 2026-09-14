@@ -2,17 +2,25 @@ module MathematicalSpaces
 
 %unbound_implicits off
 
+-- Signed whole numbers keep their Idriç-facing name in this exact sample.
+-- Integer is only the inherited bootstrap representation at this boundary.
+public export
+±Number : Type
+±Number = Integer
+
+-- Coordinate rank is a semantic name for the current Number-indexed shape.
+-- It is not a separate Cardinality type.
+public export
+CoordinateRank : Type
+CoordinateRank = Number
+
 -- This module is the small common semantic core shared by the Euclidean,
--- indexed-contraction, and topology experiments.  Space names are indexed by
+-- indexed-contraction, and topology experiments. Space names are indexed by
 -- their known rank, so one name cannot be paired with contradictory ranks.
 -- Rank equality alone is still not space equality.
 
 public export
-CoordinateRank : Type
-CoordinateRank = Cardinality
-
-public export
-data SpaceName : CoordinateRank → Type where
+data SpaceName : Number → Type where
   PlaneName      : SpaceName 2
   ImagePlaneName : SpaceName 2
   RealThreeName  : SpaceName 3
@@ -20,10 +28,10 @@ data SpaceName : CoordinateRank → Type where
 
 public export
 data FiniteSpace : Type where
-  NamedFiniteSpace : {rank : CoordinateRank} → SpaceName rank → FiniteSpace
+  NamedFiniteSpace : {rank : Number} → SpaceName rank → FiniteSpace
 
 public export
-space_rank : FiniteSpace → CoordinateRank
+space_rank : FiniteSpace → Number
 space_rank (NamedFiniteSpace {rank} _) = rank
 
 public export
@@ -47,34 +55,34 @@ real128_space : FiniteSpace
 real128_space = NamedFiniteSpace Real128Name
 
 -- ±Number coordinates are exact executable samples of the named real
--- coordinate spaces.  ExactVectorSample and ExactCovectorSample below
+-- coordinate spaces. ExactVectorSample and ExactCovectorSample below
 -- represent only this sample language; they are not definitions of the
--- complete real scalar field or of every vector in the ambient space.  This
+-- complete real scalar field or of every vector in the ambient space. This
 -- preserves the R^128 oracle without pretending ±Number is the field of reals.
 
--- UNSAFE REPRESENTATION BOUNDARY.  The raw coordinates, their constructors,
+-- UNSAFE REPRESENTATION BOUNDARY. The raw coordinates, their constructors,
 -- and every operation that exposes or rebuilds them are deliberately named
--- Raw... or Unsafe... .  They remain public only so the exact #47 fixture and
+-- Raw... or Unsafe... . They remain public only so the exact #47 fixture and
 -- the closed transform interpreter can be compiler-normalized across modules.
 -- Using this boundary, a caller can explicitly discard a role or space name by
--- destructing and rebuilding coordinates.  The ordinary semantic API below
+-- destructing and rebuilding coordinates. The ordinary semantic API below
 -- never performs such a conversion implicitly.
 
 public export
-data RawExactCoordinates : CoordinateRank → Type where
+data RawExactCoordinates : Number → Type where
   UnsafeCoordinateNil : RawExactCoordinates Z
   UnsafeCoordinateCons :
-    {n : CoordinateRank} →
+    {n : Number} →
     ±Number → RawExactCoordinates n → RawExactCoordinates (S n)
 
 public export
-unsafe_zero_coordinates : (n : CoordinateRank) → RawExactCoordinates n
+unsafe_zero_coordinates : (n : Number) → RawExactCoordinates n
 unsafe_zero_coordinates Z = UnsafeCoordinateNil
 unsafe_zero_coordinates (S n) = UnsafeCoordinateCons 0 (unsafe_zero_coordinates n)
 
 public export
 unsafe_add_coordinates :
-  {n : CoordinateRank} →
+  {n : Number} →
   RawExactCoordinates n → RawExactCoordinates n → RawExactCoordinates n
 unsafe_add_coordinates UnsafeCoordinateNil UnsafeCoordinateNil = UnsafeCoordinateNil
 unsafe_add_coordinates
@@ -85,14 +93,15 @@ unsafe_add_coordinates
       (unsafe_add_coordinates left_rest right_rest)
 
 public export
-unsafe_negate_coordinates : {n : CoordinateRank} → RawExactCoordinates n → RawExactCoordinates n
+unsafe_negate_coordinates :
+  {n : Number} → RawExactCoordinates n → RawExactCoordinates n
 unsafe_negate_coordinates UnsafeCoordinateNil = UnsafeCoordinateNil
 unsafe_negate_coordinates (UnsafeCoordinateCons value rest) =
   UnsafeCoordinateCons (-value) (unsafe_negate_coordinates rest)
 
 public export
 unsafe_subtract_coordinates :
-  {n : CoordinateRank} →
+  {n : Number} →
   RawExactCoordinates n → RawExactCoordinates n → RawExactCoordinates n
 unsafe_subtract_coordinates UnsafeCoordinateNil UnsafeCoordinateNil = UnsafeCoordinateNil
 unsafe_subtract_coordinates
@@ -104,7 +113,7 @@ unsafe_subtract_coordinates
 
 public export
 unsafe_scale_coordinates :
-  {n : CoordinateRank} → ±Number → RawExactCoordinates n → RawExactCoordinates n
+  {n : Number} → ±Number → RawExactCoordinates n → RawExactCoordinates n
 unsafe_scale_coordinates scalar UnsafeCoordinateNil = UnsafeCoordinateNil
 unsafe_scale_coordinates scalar (UnsafeCoordinateCons value rest) =
   UnsafeCoordinateCons
@@ -112,11 +121,11 @@ unsafe_scale_coordinates scalar (UnsafeCoordinateCons value rest) =
     (unsafe_scale_coordinates scalar rest)
 
 -- This raw pairing is the implementation escape hatch used by safe covector
--- evaluation.  Calling it on two extracted vector samples explicitly leaves
+-- evaluation. Calling it on two extracted vector samples explicitly leaves
 -- the checked vector/covector API; `dot` is the metric-requiring operation.
 public export
 unsafe_pair_coordinates :
-  {n : CoordinateRank} →
+  {n : Number} →
   RawExactCoordinates n → RawExactCoordinates n → ±Number
 unsafe_pair_coordinates UnsafeCoordinateNil UnsafeCoordinateNil = 0
 unsafe_pair_coordinates
@@ -125,12 +134,12 @@ unsafe_pair_coordinates
     left * right + unsafe_pair_coordinates left_rest right_rest
 
 -- Exact vector and covector samples are intentionally different indexed
--- datatypes.  Their shared space index enforces both nominal identity and rank.
+-- datatypes. Their shared space index enforces both nominal identity and rank.
 
 public export
 data ExactVectorSample : FiniteSpace → Type where
   UnsafeVectorCoordinates :
-    {rank : CoordinateRank} →
+    {rank : Number} →
     {name : SpaceName rank} →
     RawExactCoordinates rank →
     ExactVectorSample (NamedFiniteSpace name)
@@ -138,7 +147,7 @@ data ExactVectorSample : FiniteSpace → Type where
 public export
 data ExactCovectorSample : FiniteSpace → Type where
   UnsafeCovectorCoordinates :
-    {rank : CoordinateRank} →
+    {rank : Number} →
     {name : SpaceName rank} →
     RawExactCoordinates rank →
     ExactCovectorSample (NamedFiniteSpace name)
@@ -219,10 +228,10 @@ scale_covector :
 scale_covector scalar (UnsafeCovectorCoordinates coordinates) =
   UnsafeCovectorCoordinates (unsafe_scale_coordinates scalar coordinates)
 
--- Evaluation is the canonical vector/covector contraction.  There is no safe
+-- Evaluation is the canonical vector/covector contraction. There is no safe
 -- exact-vector-sample to exact-covector-sample conversion in this module and
 -- hence no metric-free dot product between two vector samples in the checked
--- API.  Crossing the explicitly unsafe representation boundary is not an
+-- API. Crossing the explicitly unsafe representation boundary is not an
 -- inferred mathematical operation.
 public export
 contract :
@@ -260,7 +269,8 @@ image_plane_covector first second =
     (UnsafeCoordinateCons first (UnsafeCoordinateCons second UnsafeCoordinateNil))
 
 public export
-three_vector : ±Number → ±Number → ±Number → ExactVectorSample real_three_space
+three_vector :
+  ±Number → ±Number → ±Number → ExactVectorSample real_three_space
 three_vector first second third =
   UnsafeVectorCoordinates
     (UnsafeCoordinateCons first
@@ -268,7 +278,8 @@ three_vector first second third =
         (UnsafeCoordinateCons third UnsafeCoordinateNil)))
 
 public export
-three_covector : ±Number → ±Number → ±Number → ExactCovectorSample real_three_space
+three_covector :
+  ±Number → ±Number → ±Number → ExactCovectorSample real_three_space
 three_covector first second third =
   UnsafeCovectorCoordinates
     (UnsafeCoordinateCons first

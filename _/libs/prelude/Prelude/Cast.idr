@@ -100,20 +100,6 @@ export %inline
 Cast Nat Integer where
   cast = natToInteger
 
-||| Widening a positive Idriç `Number` to `±Number` is lossless.
-export %inline
-Cast Number ±Number where
-  cast = numberAsSigned
-
-||| Explicit bootstrap representation boundaries for the signed source type.
-export %inline
-Cast ±Number Integer where
-  cast = signedAsInteger
-
-export %inline
-Cast Integer ±Number where
-  cast = SignedValue
-
 export %inline
 Cast Bits8 Integer where
   cast = prim__cast_Bits8Integer

@@ -1,0 +1,18 @@
+name: Idriç source-style drift check
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - name: Check newly added Idriç source
+        uses: isomorphisms/ai-ci/idric-style@d76e865c3742c51308ddf211ee6f5b724f4104de

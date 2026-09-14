@@ -1,4 +1,0 @@
-module NegativeIsNotNumber
-
-invalid_negative : Number
-invalid_negative = -1

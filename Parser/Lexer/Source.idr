@@ -26,7 +26,7 @@ public export
 data SourceSyntax = IdrisSyntax | IdricSyntax
 
 isIdricSyntaxSymbol : Char -> Bool
-isIdricSyntaxSymbol c = c `elem` unpack "→⇒←≤−"
+isIdricSyntaxSymbol c = c `elem` unpack "→⇒←≤"
 
 public export
 data DebugInfo
@@ -49,7 +49,6 @@ data Token
   = CharLit String
   | DoubleLit Double
   | IntegerLit Integer
-  | IdricIntegerLit Integer
   -- String
   | StringBegin Nat IsMultiline -- The escape depth and whether is multiline string
   | StringEnd
@@ -88,7 +87,6 @@ Show Token where
   show (CharLit x) = "character " ++ show x
   show (DoubleLit x) = "double " ++ show x
   show (IntegerLit x) = "literal " ++ show x
-  show (IdricIntegerLit x) = "Idriç literal " ++ show x
   -- String
   show (StringBegin hashtag Single) = "string begin"
   show (StringBegin hashtag Multi) = "multiline string begin"
@@ -121,7 +119,6 @@ Pretty Void Token where
   pretty (CharLit x) = pretty "character" <++> squotes (pretty x)
   pretty (DoubleLit x) = pretty "double" <++> pretty (show x)
   pretty (IntegerLit x) = pretty "literal" <++> pretty (show x)
-  pretty (IdricIntegerLit x) = pretty "Idriç literal" <++> pretty (show x)
   -- String
   pretty (StringBegin hashtag Single) = reflow "string begin"
   pretty (StringBegin hashtag Multi) = reflow "multiline string begin"

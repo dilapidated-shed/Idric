@@ -111,7 +111,6 @@ mutual
 
        PSearch : FC -> (depth : Nat) -> PTerm' nm
        PPrimVal : FC -> Constant -> PTerm' nm
-       PIdricInteger : FC -> Integer -> PTerm' nm
        PQuote : FC -> PTerm' nm -> PTerm' nm
        PQuoteName : FC -> Name -> PTerm' nm
        PQuoteDecl : FC -> List (PDecl' nm) -> PTerm' nm
@@ -185,7 +184,6 @@ mutual
   getPTermLoc (PForce fc _) = fc
   getPTermLoc (PSearch fc _) = fc
   getPTermLoc (PPrimVal fc _) = fc
-  getPTermLoc (PIdricInteger fc _) = fc
   getPTermLoc (PQuote fc _) = fc
   getPTermLoc (PQuoteName fc _) = fc
   getPTermLoc (PQuoteDecl fc _) = fc
@@ -913,7 +911,6 @@ parameters {0 nm : Type} (toName : nm -> Name)
   showPTermPrec d (PUnquote _ tm) = "~(" ++ showPTermPrec d tm ++ ")"
   showPTermPrec d (PRunElab _ tm) = "%runElab " ++ showPTermPrec d tm
   showPTermPrec d (PPrimVal _ c) = showPrec d c
-  showPTermPrec d (PIdricInteger _ value) = show value
   showPTermPrec _ (PHole _ _ n) = "?" ++ n
   showPTermPrec _ (PType _) = "Type"
   showPTermPrec d (PAs _ _ n p) = showPrec d n ++ "@" ++ showPTermPrec d p
@@ -1110,7 +1107,6 @@ initSyntax
     initFixities : ANameMap FixityInfo
     initFixities = fromList
       [ (UN $ Basic "-", MkFixityInfo EmptyFC Export NotBinding Prefix 10)
-      , (UN $ Basic "-~-", MkFixityInfo EmptyFC Export NotBinding Prefix 10)
       , (UN $ Basic "negate", MkFixityInfo EmptyFC Export NotBinding Prefix 10) -- for documentation purposes
       , (UN $ Basic "=", MkFixityInfo EmptyFC Export NotBinding Infix 0)
       ]
@@ -1208,3 +1204,4 @@ Show PDeclNoFC where
   show (PRunElabDecl {}) = "PRunElabDecl"
   show (PDirective {}) = "PDirective"
   show (PBuiltin {}) = "PBuiltin"
+

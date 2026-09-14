@@ -129,7 +129,7 @@ checkConflictingFixities isPrefix opn
 
             (True, ((fxName, fx) :: _), _) => do
                 -- in the prefix case, remove conflicts with infix (-)
-                let extraFixities = pre ++ (filter (\(nm, _) => not $ isNegationOperator nm) inf)
+                let extraFixities = pre ++ (filter (\(nm, _) => not $ nameRoot nm == "-") inf)
                 unless (isCompatible fx extraFixities) $ warnConflict fxName extraFixities
                 pure (mkPrec fx.fix fx.precedence, DeclaredFixity fx)
             -- Could not find any prefix operator fixities, there may still be conflicts with
@@ -138,7 +138,7 @@ checkConflictingFixities isPrefix opn
 
             (False, _, ((fxName, fx) :: _)) => do
                 -- In the infix case, remove conflicts with prefix (-)
-                let extraFixities = (filter (\(nm, _) => not $ isNegationOperator nm) pre) ++ inf
+                let extraFixities = (filter (\(nm, _) => not $ nm == UN (Basic "-")) pre) ++ inf
                 unless (isCompatible fx extraFixities) $ warnConflict fxName extraFixities
                 pure (mkPrec fx.fix fx.precedence, DeclaredFixity fx)
             -- Could not find any infix operator fixities, there may be prefix ones
@@ -151,9 +151,6 @@ checkConflictingFixities isPrefix opn
       = all (\fx' => fx.fix == fx'.fix
                   && fx.precedence == fx'.precedence
                   && fx.bindingInfo == fx'.bindingInfo) . map snd
-
-    isNegationOperator : Name -> Bool
-    isNegationOperator name = nameRoot name == "-" || nameRoot name == "-~-"
 
     -- Emits a warning using the fixity that we picked and the list of all conflicting fixities
     warnConflict : (picked : Name) -> (conflicts : List (Name, FixityInfo)) -> Core ()
@@ -433,33 +430,6 @@ mutual
           (PLam fc top Explicit (PRef fc (MN "arg" 0)) (PImplicit fc)
               (POp fc (MkFCVal op.fc $ NoBinder arg) op (PRef fc (MN "arg" 0))))
   desugarB side ps (PSearch fc depth) = pure $ Elaborable_Search fc depth
-  desugarB side ps (PIdricInteger fc value)
-      = do let vfc = virtualiseFC fc
-           let literal = Elaborable_Primitive_Value fc (BI value)
-           let positive = Elaborable_Apply vfc
-                            (Elaborable_Name vfc
-                              (NS typesNS $ UN $ Basic "positiveNumberFromInteger"))
-                            literal
-           let signed = Elaborable_Apply vfc
-                          (Elaborable_Name vfc
-                            (NS typesNS $ UN $ Basic "SignedValue"))
-                          literal
-           let cardinality = Elaborable_Apply vfc
-                               (Elaborable_Name vfc
-                                 (NS typesNS $ UN $ Basic "cardinalityFromInteger"))
-                               literal
-           case !fromIntegerName of
-                Nothing => pure $ Elaborable_Alternative fc FirstSuccess
-                                      [positive, signed, cardinality, literal]
-                Just representationLiteral =>
-                  pure $ Elaborable_Alternative fc FirstSuccess
-                    [ positive
-                    , signed
-                    , cardinality
-                    , Elaborable_Apply vfc
-                        (Elaborable_Name vfc representationLiteral)
-                        literal
-                    ]
   desugarB side ps (PPrimVal fc (BI x))
       = case !fromIntegerName of
              Nothing =>
@@ -907,17 +877,9 @@ mutual
             _     => do arg' <- desugarTree side ps (Leaf $ PPrimVal fc c)
                         pure (PApp loc (PRef opFC (UN $ Basic "negate")) arg')
 
-  desugarTree side ps (Pre loc opFC (OpSymbols $ UN $ Basic "-~-", _) $ Leaf $ PIdricInteger fc value)
-    = let newFC = fromMaybe EmptyFC (mergeFC loc fc)
-       in pure $ PIdricInteger newFC (prim__sub_Integer 0 value)
-
   desugarTree side ps (Pre loc opFC (OpSymbols $ UN $ Basic "-", _) arg)
     = do arg' <- desugarTree side ps arg
          pure (PApp loc (PRef opFC (UN $ Basic "negate")) arg')
-
-  desugarTree side ps (Pre loc opFC (OpSymbols $ UN $ Basic "-~-", _) arg)
-    = do arg' <- desugarTree side ps arg
-         pure (PApp loc (PRef opFC (UN $ Basic "idricNegate")) arg')
 
   desugarTree side ps (Pre loc opFC (op, _) arg)
       = do arg' <- desugarTree side ps arg

@@ -77,7 +77,6 @@ mapPTermM f = goPTerm where
       >>= f
     goPTerm t@(PSearch {}) = f t
     goPTerm t@(PPrimVal {}) = f t
-    goPTerm t@(PIdricInteger {}) = f t
     goPTerm (PQuote fc x) =
       PQuote fc <$> goPTerm x
       >>= f
@@ -440,7 +439,6 @@ mapPTerm f = goPTerm where
       = f $ PForce fc $ goPTerm x
     goPTerm t@(PSearch {}) = f t
     goPTerm t@(PPrimVal {}) = f t
-    goPTerm t@(PIdricInteger {}) = f t
     goPTerm (PQuote fc x)
       = f $ PQuote fc $ goPTerm x
     goPTerm t@(PQuoteName {}) = f t
@@ -637,7 +635,6 @@ substFC fc = mapPTerm $ \case
   PForce _ x => PForce fc x
   PSearch _ depth => PSearch fc depth
   PPrimVal _ x => PPrimVal fc x
-  PIdricInteger _ value => PIdricInteger fc value
   PQuote _ x => PQuote fc x
   PQuoteName _ n => PQuoteName fc n
   PQuoteDecl _ xs => PQuoteDecl fc xs

@@ -7,16 +7,16 @@ choice placement_kind one_of
   new_pole
 
 choice placed_point one_of
-  zero_at ±Number
-  pole_at ±Number
+  zero_at Number
+  pole_at Number
 
-make_point : placement_kind → ±Number → placed_point
+make_point : placement_kind → Number → placed_point
 make_point new_zero coordinate = zero_at coordinate
 make_point new_pole coordinate = pole_at coordinate
 
 place :
   (kind : placement_kind) →
-  (coordinate : ±Number) →
+  (coordinate : Number) →
   (points : Vect n placed_point) →
   (updated : Vect (S n) placed_point **
     Vect.head updated = make_point kind coordinate)
@@ -27,7 +27,7 @@ describe_point : placed_point → Text
 describe_point (zero_at coordinate) = "zero at " ++ show coordinate
 describe_point (pole_at coordinate) = "pole at " ++ show coordinate
 
-first_description : placement_kind → ±Number → Vect n placed_point → Text
+first_description : placement_kind → ℕ → Vect n placed_point → String
 first_description kind coordinate points =
   let (updated ** first_is_new) = place kind coordinate points
   in describe_point (Vect.head updated)

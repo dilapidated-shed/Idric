@@ -1,6 +1,6 @@
 # Idriç branch map
 
-This map records the branch topology as of 2026-09-08. It exists to prevent an
+This map records the branch topology as of 2026-08-27. It exists to prevent an
 old Idris bootstrap, a backend experiment, or a closed pull-request branch from
 being mistaken for the current compiler.
 
@@ -28,9 +28,9 @@ These are reviewable changes based on `Idriç`, not alternate compiler roots.
 | --- | --- | --- |
 | #6 | `float32-primitive` | Add the 32-bit floating-point primitive |
 | #10 | `termux-armv7-binary` | Build the compiler for 32-bit ARMv7 Termux |
+| #11 | `fix-idric-natural-vocabulary` | Use `ℕ` at the Idriç source boundary |
 | #13 | `depends-on-syntax` | Restrict `depends on` to dependency declarations |
 | #19 | `prelude/descriptive-io-names` | Make descriptive I/O names primary |
-| #77 | `style/idric-number-text-surface` | Define the active Idriç `Number`, `±Number`, `Text`, and `Data.Text` surface |
 
 Preserve these names while their pull requests are open. Delete each head
 branch after the change is merged or deliberately abandoned.

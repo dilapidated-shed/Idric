@@ -3,13 +3,13 @@ module Main
 import Data.Text
 import IdrisCompat
 
-unicode_function : ±Number→±Number
+unicode_function : Integer→Integer
 unicode_function = \value⇒value + 1
 
-unicode_apply : (±Number→±Number)→±Number→±Number
+unicode_apply : (Integer→Integer)→Integer→Integer
 unicode_apply = \function⇒\value⇒function value
 
-ascii_function : ±Number -> ±Number
+ascii_function : Integer -> Integer
 ascii_function = \value => value + 1
 
 unicode_order : Bool

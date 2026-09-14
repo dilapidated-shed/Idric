@@ -4,8 +4,6 @@ module Prelude.Ops
 export infix 6 ==, /=, <, <=, >, >=
 export infixl 8 +, -
 export infixl 9 *, /
-export infixl 8 +~+, -~-
-export infixl 9 *~*
 
 -- Boolean operators
 export infixr 5 &&

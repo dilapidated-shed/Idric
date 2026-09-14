@@ -194,14 +194,6 @@ Show Nat where
   show n = show (the Integer (natToInteger n))
 
 export
-Show Number where
-  show n = show (signedAsInteger (numberAsSigned n))
-
-export
-Show ±Number where
-  show n = show (signedAsInteger n)
-
-export
 Show Bool where
   show True = "True"
   show False = "False"

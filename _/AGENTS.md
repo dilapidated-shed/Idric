@@ -1,5 +1,9 @@
 # Idriç repository rules
 
+Read [../STYLE.md](../STYLE.md) before writing or reviewing Idriç-facing source.
+`STYLE.md` is the source-style authority; this file is operational repository
+guidance.
+
 Read [EDRIC.md](EDRIC.md) and [BRANCHES.md](BRANCHES.md) before changing this
 repository.
 

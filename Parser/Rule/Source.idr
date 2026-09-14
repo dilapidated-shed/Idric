@@ -126,15 +126,6 @@ intLit
     = terminal "Expected integer literal" $
                \case
                  IntegerLit i => Just i
-                 IdricIntegerLit i => Just i
-                 _ => Nothing
-
-export
-idricIntegerLit : Rule Integer
-idricIntegerLit
-    = terminal "Expected Idriç integer literal" $
-               \case
-                 IdricIntegerLit i => Just i
                  _ => Nothing
 
 export

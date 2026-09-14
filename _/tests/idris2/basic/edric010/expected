@@ -1,4 +1,0 @@
-Number and ±Number accepted values and arithmetic: PASS
-zero rejected as Number: PASS
-negative value rejected as Number: PASS
-ordinary .idr numeric inference preserved: PASS

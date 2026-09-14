@@ -24,30 +24,22 @@ The first Edric-specific syntax is the storage-neutral `choice` declaration desc
 
 ## Number and text vocabulary
 
-Idriç source spells ordinary positive whole numbers `Number` and ordinary
-signed whole numbers `±Number`. `Number` begins at one and excludes zero;
-`±Number` includes negative values, zero, and positive values. The latter is
-valid source notation in a type position. Ordinary `.idr` source remains
-unchanged. Inherited numeric names remain available to compiler, bootstrap,
-ABI, and explicit compatibility code, but are not names for new Idriç APIs,
-examples, or teaching material.
-
-Idriç literals are checked against their intended type. Positive literals may
-inhabit `Number`, while zero and negative literals cannot. All three kinds may
-inhabit `±Number`, and a `Number` can be widened with `numberAsSigned` when an
-explicit conversion is useful. Addition and multiplication of `Number`
-values remain positive; subtraction returns `±Number`. `Cardinality` names a
-zero-capable count, length, rank, or size. These are distinct source meanings
-even though the bootstrap uses inherited arbitrary-precision representations.
+Idriç source spells the unrestricted nonnegative whole-number type `Number` and
+decoded character text `Text`. In a `.idric` file the frontend lowers those
+names to the inherited Idris 2 bootstrap representations. Ordinary `.idr`
+source remains unchanged. The inherited names are implementation and
+compatibility spellings, not names for new Idriç APIs, examples, or teaching
+material.
 
 Fresh `.idric` source imports `Data.Text` when it needs the inherited text
 operations. The frontend lowers that exact module boundary to `Data.String`;
 ordinary `.idr` module names remain unchanged.
 
-`Number`, `±Number`, and `Text` describe general language values. Code should
-still use a more specific semantic type—source location, byte count, path,
-protocol field, and so on—when operations or invariants differ. The older `ℕ`
-input spelling is retired rather than retained as a competing alias.
+`Number` and `Text` describe general language values. Code should still use a
+more specific semantic type—source location, byte count, path, protocol field,
+and so on—when operations or invariants differ. The older `ℕ` input spelling is
+accepted temporarily so existing Idriç source can migrate without a flag day;
+it is not the current spelling for new source.
 
 ## Data-structure vocabulary
 
@@ -75,9 +67,9 @@ snake_case names:
 
 ```idris
 choice existing_touch_target one_of
-  fixed_value ±Number
-  zero ±Number
-  pole ±Number
+  fixed_value Number
+  zero Number
+  pole Number
 
 choice touch_beginning one_of
   near_existing existing_touch_target
@@ -228,16 +220,11 @@ A new thread working on Edric should:
 - Idriç source extension: `.idric`; `.idr` remains accepted for Idris compatibility.
 - Storage-neutral, lower snake_case `choice ... one_of` syntax: implemented for `.idric` only.
 - Ordinary `.idr` use of `choice` and `one_of` as identifiers: preserved and regression-tested.
-- Idriç source spells positive whole numbers `Number`, signed whole numbers
-  `±Number`, and decoded character text `Text`. `Number` excludes zero;
-  `±Number` admits negative values, zero, and positive values.
-- Source literals and arithmetic enforce that distinction. `Number - Number`
-  returns `±Number`, while positive values may be widened deliberately.
-- Zero-capable counts, lengths, ranks, and sizes use `Cardinality` or a more
-  specific domain type rather than being mislabeled as signed values.
+- Idriç source spells nonnegative whole numbers `Number` and decoded character
+  text `Text`; the frontend lowers both to inherited bootstrap representations.
 - Idriç source spells the inherited text-operation module `Data.Text`; the
   frontend lowers that exact module boundary to `Data.String`.
-- The older `ℕ` spelling is retired at the Idriç source boundary.
+- The older `ℕ` spelling remains a migration alias, not the current spelling.
 - Idriç source accepts `→`, `⇒`, `←`, and `≤` as compact aliases for `->`, `=>`, `<-`, and `<=`; the ASCII spellings remain accepted.
 - The aliases are filename-scoped to `.idric`; ordinary `.idr` Unicode identifiers remain unchanged.
 - Canonical Unicode pretty-printing is not yet claimed by this input-syntax slice.

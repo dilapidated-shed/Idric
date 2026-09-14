@@ -16,10 +16,10 @@ describe_placement : placement_kind → Text
 describe_placement new_zero = "new_zero"
 describe_placement new_pole = "new_pole"
 
-chain_depth : recursive_chain → Cardinality
+chain_depth : recursive_chain → Number
 chain_depth chain_end = Z
 chain_depth (chain_link chain_end) = 1
-chain_depth (chain_link (chain_link rest)) = chain_depth rest + 2
+chain_depth (chain_link (chain_link rest)) = 2 + chain_depth rest
 
 identity : a → a
 identity value = value

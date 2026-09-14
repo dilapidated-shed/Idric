@@ -6,7 +6,7 @@ import Data.Vect
 numbers : List Number
 numbers = [2, 4, 6]
 
-exactly_three : Vect 3 Number
+exactly_three : Vect 3 ℕ
 exactly_three = ?three_values
 
 prepend : a → Vect n a → Vect (S n) a
@@ -15,4 +15,4 @@ prepend value values = ?longer_list
 main : IO ()
 main = do
   printLn (List.length numbers)
-  printLn (prepend 1 exactly_three)
+  printLn (prepend 0 exactly_three)

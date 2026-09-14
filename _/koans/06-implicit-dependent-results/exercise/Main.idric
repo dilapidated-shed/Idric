@@ -2,8 +2,8 @@ module Main
 
 import Data.Vect
 
--- The zero-capable cardinality is inferred from the compatibility Vect value.
-prepend : {n : Cardinality} → a → Vect n a → Vect (S n) a
+-- n is inferred from values; the result type depends on that inferred value.
+prepend : {n : ℕ} → a → Vect n a → Vect (S n) a
 prepend item items = ?dependent_result
 
 main : IO ()

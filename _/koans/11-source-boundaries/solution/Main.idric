@@ -3,7 +3,7 @@ module Main
 import IdrisCompatibility
 
 increment : Number → Number
-increment = \value ⇒ value + 1
+increment = \value ⇒ S value
 
 boundary_value : Number
 boundary_value = increment compatibility_value

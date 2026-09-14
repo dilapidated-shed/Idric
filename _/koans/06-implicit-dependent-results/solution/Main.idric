@@ -2,7 +2,7 @@ module Main
 
 import Data.Vect
 
-prepend : {n : Cardinality} → a → Vect n a → Vect (S n) a
+prepend : {n : ℕ} → a → Vect n a → Vect (S n) a
 prepend item items = item :: items
 
 main : IO ()

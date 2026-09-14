@@ -125,11 +125,6 @@ atom fname
          pure (PType (boundToFC fname x))
   <|> do x <- bounds $ name
          pure (PRef (boundToFC fname x) x.val)
-  <|> the (Rule PTerm)
-        (do x <- bounds idricIntegerLit
-            let fc = boundToFC fname x
-            actD (decorationFromBounded fname Data x)
-            pure (PIdricInteger {nm = Name} fc x.val))
   <|> do x <- bounds $ dependentDecorate fname constant $ \c =>
                        if isPrimType c
                        then Typ
