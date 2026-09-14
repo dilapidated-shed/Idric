@@ -18,9 +18,9 @@ data Included : Open → Open → Type where
 
 public export
 data Section : Open → Type where
-  WholeSection : ±Number → Section Whole
-  PatchSection : ±Number → Section Patch
-  PointSection : ±Number → Section Point
+  WholeSection : Integer → Section Whole
+  PatchSection : Integer → Section Patch
+  PointSection : Integer → Section Point
 
 public export
 restrict : {u, v : Open} → Included v u → Section u → Section v
