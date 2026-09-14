@@ -208,10 +208,9 @@ library-level code. Existing dependent indices and ordinary equality proofs are
 enough for this slice.
 
 The source itself follows the current Idriç surface used by the higher-math
-foundation: `±Number`, `Cardinality`/`CoordinateRank`, Unicode `→`, snake_case
-operations, and implicit file totality. The compiler support for that surface is
-provided by the source-style work on which this form branch is stacked; the
-form API does not deform its mathematics around the older Idris vocabulary.
+foundation: exact signed values use `±Number`, rank/count indices use `Number`,
+and Idriç-facing source uses Unicode `→`, snake_case operations, and implicit
+file totality. No separate `Cardinality` type is introduced.
 
 A future generalization should improve the mathematical library layer first:
 law-bearing scalar/ring/field and involution structures, modules, bases, linear
