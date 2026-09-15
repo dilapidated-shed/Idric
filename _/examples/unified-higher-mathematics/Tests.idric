@@ -54,7 +54,7 @@ failing "Mismatch between: PlaneName and ImagePlaneName."
   equal_rank_named_spaces_do_not_unify : ExactVectorSample image_plane_space
   equal_rank_named_spaces_do_not_unify = plane_vector 1 2
 
-failing "Mismatch between: 0 and S"
+failing "Mismatch between: 0 and 1."
   one_name_cannot_claim_a_different_rank : FiniteSpace
   one_name_cannot_claim_a_different_rank =
     NamedFiniteSpace {rank = 3} PlaneName
@@ -294,16 +294,16 @@ r128_quarter_turn_preserves_coordinate_128_test = Refl
 north_pole_is_s2_test : UnitSpherePoint real_three_euclidean
 north_pole_is_s2_test = north_pole_s2
 
-sphere_s0_h0_rank_test : sphere_integral_cohomology_rank 0 0 = the Cardinality 2
+sphere_s0_h0_rank_test : sphere_integral_cohomology_rank 0 0 = the Number 2
 sphere_s0_h0_rank_test = Refl
 
-sphere_s2_h0_rank_test : sphere_integral_cohomology_rank 2 0 = the Cardinality 1
+sphere_s2_h0_rank_test : sphere_integral_cohomology_rank 2 0 = the Number 1
 sphere_s2_h0_rank_test = Refl
 
-sphere_s2_h1_rank_test : sphere_integral_cohomology_rank 2 1 = the Cardinality 0
+sphere_s2_h1_rank_test : sphere_integral_cohomology_rank 2 1 = the Number 0
 sphere_s2_h1_rank_test = Refl
 
-sphere_s2_h2_rank_test : sphere_integral_cohomology_rank 2 2 = the Cardinality 1
+sphere_s2_h2_rank_test : sphere_integral_cohomology_rank 2 2 = the Number 1
 sphere_s2_h2_rank_test = Refl
 
 odd_sphere_euler_test : sphere_euler_characteristic 3 = the ±Number 0
@@ -331,30 +331,30 @@ unit_quaternion_rotation_action_test :
     (three_vector 0 1 0) = three_vector 0 (-1) 0
 unit_quaternion_rotation_action_test = Refl
 
-cp3_real_dimension_test : cp_real_dimension 3 = the Cardinality 6
+cp3_real_dimension_test : cp_real_dimension 3 = the Number 6
 cp3_real_dimension_test = Refl
 
-cp3_hopf_sphere_dimension_test : cp_hopf_sphere_dimension 3 = the Cardinality 7
+cp3_hopf_sphere_dimension_test : cp_hopf_sphere_dimension 3 = the Number 7
 cp3_hopf_sphere_dimension_test = Refl
 
-cp2_h0_rank_test : cp_integral_cohomology_rank 2 0 = the Cardinality 1
+cp2_h0_rank_test : cp_integral_cohomology_rank 2 0 = the Number 1
 cp2_h0_rank_test = Refl
 
-cp2_h2_rank_test : cp_integral_cohomology_rank 2 2 = the Cardinality 1
+cp2_h2_rank_test : cp_integral_cohomology_rank 2 2 = the Number 1
 cp2_h2_rank_test = Refl
 
-cp2_h4_rank_test : cp_integral_cohomology_rank 2 4 = the Cardinality 1
+cp2_h4_rank_test : cp_integral_cohomology_rank 2 4 = the Number 1
 cp2_h4_rank_test = Refl
 
-cp2_h3_rank_test : cp_integral_cohomology_rank 2 3 = the Cardinality 0
+cp2_h3_rank_test : cp_integral_cohomology_rank 2 3 = the Number 0
 cp2_h3_rank_test = Refl
 
-cp2_h6_rank_test : cp_integral_cohomology_rank 2 6 = the Cardinality 0
+cp2_h6_rank_test : cp_integral_cohomology_rank 2 6 = the Number 0
 cp2_h6_rank_test = Refl
 
 r3_one_point_compactifies_to_s3_test :
   compactified_sphere_dimension (euclidean_one_point_compactification 3) =
-    the Cardinality 3
+    the Number 3
 r3_one_point_compactifies_to_s3_test = Refl
 
 -- --------------------------------------------------------------------------
