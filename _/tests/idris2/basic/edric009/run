@@ -13,8 +13,10 @@ cp "$example_dir/TopologyFacts.idric" "$fixture_dir/TopologyFacts.idric"
 cp "$example_dir/PresheafRestriction.idric" "$fixture_dir/PresheafRestriction.idric"
 cp "$example_dir/NamedFacts.idric" "$fixture_dir/NamedFacts.idric"
 cp "$example_dir/QuadraticForms.idric" "$fixture_dir/QuadraticForms.idric"
+cp "$example_dir/ComplexProjective.idric" "$fixture_dir/ComplexProjective.idric"
 cp "$example_dir/Tests.idric" "$fixture_dir/Tests.idric"
 cp "$example_dir/FormTests.idric" "$fixture_dir/FormTests.idric"
+cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTests.idric"
 
 # Preserve .idric all the way into the bootstrapped compiler. The previous
 # geometry runner renamed its sources to .idr; this receipt exercises the
@@ -45,4 +47,16 @@ cp "$example_dir/FormTests.idric" "$fixture_dir/FormTests.idric"
   fi
 
   ./build/exec/quadratic-hermitian-forms
+
+  if ! "$idris2" --check ComplexProjectiveTests.idric >complex-projective-typecheck.log 2>&1; then
+    cat complex-projective-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" ComplexProjectiveTests.idric -o complex-projective-semantics >complex-projective-build.log 2>&1; then
+    cat complex-projective-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/complex-projective-semantics
 )

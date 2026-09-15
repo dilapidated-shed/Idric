@@ -1,0 +1,116 @@
+module ComplexProjectiveTests
+
+import MathematicalSpaces
+import QuadraticForms
+import ComplexProjective
+
+%unbound_implicits off
+
+-- ExactComplex is used only as an exact algebraic fixture for the structural
+-- complex/projective API.  It remains the Gaussian-integral acceptance scalar
+-- defined in QuadraticForms, not the future general complex-number carrier.
+
+cp2_left : NonzeroHomogeneousCoordinates ExactComplex 2
+cp2_left =
+  UnsafeKnownNonzeroHomogeneousCoordinates $
+    ComplexCoordinate complex_one $
+      ComplexCoordinate complex_i $
+        ComplexCoordinate (Complex 2 0) NoComplexCoordinates
+
+cp2_scaled_by_two : NonzeroHomogeneousCoordinates ExactComplex 2
+cp2_scaled_by_two =
+  UnsafeKnownNonzeroHomogeneousCoordinates $
+    ComplexCoordinate (Complex 2 0) $
+      ComplexCoordinate (Complex 0 2) $
+        ComplexCoordinate (Complex 4 0) NoComplexCoordinates
+
+cp2_scale_two : NonzeroComplexScalar ExactComplex
+cp2_scale_two = UnsafeKnownNonzeroComplexScalar (Complex 2 0)
+
+cp2_real_rescaling_test :
+  projective_rescaling_witness
+    complex_multiply
+    cp2_scale_two
+    cp2_left
+    cp2_scaled_by_two
+cp2_real_rescaling_test = Refl
+
+cp2_scaled_by_i : NonzeroHomogeneousCoordinates ExactComplex 2
+cp2_scaled_by_i =
+  UnsafeKnownNonzeroHomogeneousCoordinates $
+    ComplexCoordinate complex_i $
+      ComplexCoordinate (Complex (-1) 0) $
+        ComplexCoordinate (Complex 0 2) NoComplexCoordinates
+
+cp2_scale_i : NonzeroComplexScalar ExactComplex
+cp2_scale_i = UnsafeKnownNonzeroComplexScalar complex_i
+
+cp2_phase_rescaling_test :
+  projective_rescaling_witness
+    complex_multiply
+    cp2_scale_i
+    cp2_left
+    cp2_scaled_by_i
+cp2_phase_rescaling_test = Refl
+
+affine_value : ComplexCoordinates ExactComplex 1
+affine_value =
+  ComplexCoordinate (Complex 3 (-2)) NoComplexCoordinates
+
+exact_complex_is_zero : ExactComplex → Bool
+exact_complex_is_zero (Complex 0 0) = True
+exact_complex_is_zero _ = False
+
+-- The affine embedding fixes the first homogeneous coordinate to 1, so this
+-- exact fixture only needs division by that unit.  It is intentionally not
+-- advertised as Gaussian-integer division.
+exact_divide_by_embedding_unit : ExactComplex → ExactComplex → ExactComplex
+exact_divide_by_embedding_unit numerator (Complex 1 0) = numerator
+exact_divide_by_embedding_unit numerator _ = numerator
+
+affine_embedding : ComplexProjectivePoint ExactComplex 1
+affine_embedding =
+  affine_to_projective
+    (UnsafeKnownNonzeroComplexScalar complex_one)
+    affine_value
+
+affine_chart_round_trip_test :
+  projective_first_chart
+    exact_complex_is_zero
+    exact_divide_by_embedding_unit
+    affine_embedding = Just affine_value
+affine_chart_round_trip_test = Refl
+
+cp1_infinity : ComplexProjectivePoint ExactComplex 1
+cp1_infinity =
+  UnsafeProjectiveClass $
+    UnsafeKnownNonzeroHomogeneousCoordinates $
+      ComplexCoordinate complex_zero $
+        ComplexCoordinate complex_one NoComplexCoordinates
+
+cp1_infinity_not_in_first_chart_test :
+  projective_first_chart
+    exact_complex_is_zero
+    exact_divide_by_embedding_unit
+    cp1_infinity = Nothing
+cp1_infinity_not_in_first_chart_test = Refl
+
+-- Dimension is carried by the result type itself.  Keep this acceptance
+-- diagnostic-independent: the constructors below inhabit C^2 exactly, while a
+-- C^3 consumer cannot accept this value without a type error.
+complex_dimension_two_value : ComplexCoordinates ExactComplex 2
+complex_dimension_two_value =
+  ComplexCoordinate complex_one $
+    ComplexCoordinate complex_i NoComplexCoordinates
+
+complex_dimension_two_identity :
+  ComplexCoordinates ExactComplex 2 → ComplexCoordinates ExactComplex 2
+complex_dimension_two_identity coordinates = coordinates
+
+complex_dimension_index_test :
+  complex_dimension_two_identity complex_dimension_two_value =
+    complex_dimension_two_value
+complex_dimension_index_test = Refl
+
+main : IO ()
+main = putStrLn "complex/projective structural semantics: PASS"

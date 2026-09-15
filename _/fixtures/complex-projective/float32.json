@@ -1,0 +1,127 @@
+{
+  "schema": "idric-complex-projective-corpus-v1",
+  "precision": {
+    "name": "Float32",
+    "epsilon": 1.1920928955078125e-7,
+    "rounding": "round-to-nearest-even at stored binary32 operation boundaries"
+  },
+  "complex": {
+    "add": {
+      "left": [1.25, -2.0],
+      "right": [0.5, 3.0],
+      "expected": [1.75, 1.0],
+      "comparison": "exact-binary32"
+    },
+    "multiply": {
+      "left": [1.25, -2.0],
+      "right": [0.5, 3.0],
+      "expected": [6.625, 2.75],
+      "comparison": "exact-binary32"
+    },
+    "reciprocal": {
+      "value": [3.0, 4.0],
+      "expected": [0.12, -0.16],
+      "comparison": "floating"
+    },
+    "divide": {
+      "numerator": [1.0, 2.0],
+      "denominator": [3.0, -4.0],
+      "expected": [-0.2, 0.4],
+      "comparison": "floating"
+    },
+    "conjugate": {
+      "value": [1.25, -2.0],
+      "expected": [1.25, 2.0],
+      "comparison": "exact-binary32"
+    },
+    "magnitude_squared": {
+      "value": [1.25, -2.0],
+      "expected": 5.5625,
+      "comparison": "exact-binary32"
+    },
+    "power_two": {
+      "value": [0.5, -0.25],
+      "expected": [0.1875, -0.25],
+      "comparison": "exact-binary32"
+    },
+    "polynomial": {
+      "value": [0.5, -0.25],
+      "coefficients_low_to_high": [[1.0, 0.0], [2.0, 0.0], [1.0, 0.0]],
+      "expected": [2.1875, -0.75],
+      "comparison": "exact-binary32"
+    },
+    "rational": {
+      "value": [0.5, -0.25],
+      "zero": [-0.35, 0.2],
+      "pole": [0.4, -0.25],
+      "expected": [8.5, -4.5],
+      "comparison": "floating"
+    },
+    "exponential": {
+      "value": [0.125, 0.25],
+      "expected_oracle": [1.0979216118186494, 0.2803454137118708],
+      "implementation": {
+        "kind": "complex-taylor",
+        "degree": 7,
+        "maximum_input_magnitude": 0.5
+      },
+      "comparison": "bounded-analytic-approximation"
+    },
+    "polar_round_trip": {
+      "cartesian": [1.0, 1.0],
+      "expected_magnitude_oracle": 1.4142135623730951,
+      "expected_phase_turns": 0.125,
+      "comparison": "floating"
+    }
+  },
+  "projective": {
+    "equivalent_real_scale_cp2": {
+      "left": [[1.0, 0.0], [0.0, 1.0], [2.0, 0.0]],
+      "scale": [2.0, 0.0],
+      "right": [[2.0, 0.0], [0.0, 2.0], [4.0, 0.0]],
+      "expected_equivalent": true
+    },
+    "equivalent_phase_scale_cp2": {
+      "left": [[1.0, 0.0], [0.0, 1.0], [2.0, 0.0]],
+      "scale": [0.0, 1.0],
+      "right": [[0.0, 1.0], [-1.0, 0.0], [0.0, 2.0]],
+      "expected_equivalent": true
+    },
+    "non_equivalent_cp2": {
+      "left": [[1.0, 0.0], [0.0, 1.0], [2.0, 0.0]],
+      "right": [[2.0, 0.0], [0.0, 1.0], [4.0, 0.0]],
+      "expected_equivalent": false
+    },
+    "affine_chart_cp1": {
+      "affine": [[0.5, -0.25]],
+      "embedded": [[1.0, 0.0], [0.5, -0.25]],
+      "expected_round_trip": [[0.5, -0.25]]
+    },
+    "infinity_cp1": {
+      "representative": [[0.0, 0.0], [1.0, 0.0]],
+      "first_chart_defined": false
+    }
+  },
+  "render": {
+    "width": 32,
+    "height": 32,
+    "viewport": {
+      "left": -1.0,
+      "right": 1.0,
+      "bottom": -1.0,
+      "top": 1.0
+    },
+    "divisor": {
+      "zeros": [[-0.35, 0.2]],
+      "poles": [[0.4, -0.25]]
+    },
+    "entire_q": {
+      "constant": [0.0, 0.0],
+      "linear": [0.125, 0.0],
+      "quadratic": [0.03125, 0.0]
+    },
+    "field": "f(z)=R(z)*exp(q(z))",
+    "coloring": "phase-sensitive-rgb-v1",
+    "cross_backend_pixel_equality_required": false
+  }
+}
