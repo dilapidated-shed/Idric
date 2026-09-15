@@ -1,0 +1,351 @@
+module FormTests
+
+import MathematicalSpaces
+import QuadraticForms
+
+%unbound_implicits off
+
+-- --------------------------------------------------------------------------
+-- Abstract forms and the quadratic/polar distinction
+-- --------------------------------------------------------------------------
+
+bilinear_evaluation_test :
+  evaluate_bilinear
+    (BilinearTensor plane_x plane_y)
+    (plane_vector 3 4)
+    (plane_vector 5 7) = the ±Number 21
+bilinear_evaluation_test = Refl
+
+bilinear_to_dual_test :
+  contract
+    (bilinear_covector_at
+      (BilinearTensor plane_x plane_y)
+      (plane_vector 3 4))
+    (plane_vector 5 7) = the ±Number 21
+bilinear_to_dual_test = Refl
+
+quadratic_evaluation_test :
+  evaluate_quadratic plane_positive_quadratic (plane_vector 3 4)
+    = the ±Number 25
+quadratic_evaluation_test = Refl
+
+primitive_cross_term_test :
+  evaluate_quadratic plane_cross_quadratic (plane_vector 3 4)
+    = the ±Number 12
+primitive_cross_term_test = Refl
+
+polar_cross_term_test :
+  evaluate_symmetric
+    (polar_form plane_cross_quadratic)
+    (plane_vector 1 0)
+    (plane_vector 0 1) = the ±Number 1
+polar_cross_term_test = Refl
+
+polar_difference_test :
+  polar_difference
+    plane_cross_quadratic
+    (plane_vector 1 0)
+    (plane_vector 0 1) = the ±Number 1
+polar_difference_test = Refl
+
+-- q(x,y)=xy is not identified with the diagonal of its unhalved polar form.
+-- At (1,1), q=1 while polar(q)(v,v)=2 in the exact integral model.
+quadratic_diagonal_value_test :
+  evaluate_quadratic plane_cross_quadratic (plane_vector 1 1)
+    = the ±Number 1
+quadratic_diagonal_value_test = Refl
+
+polar_diagonal_value_test :
+  evaluate_symmetric
+    (polar_form plane_cross_quadratic)
+    (plane_vector 1 1)
+    (plane_vector 1 1) = the ±Number 2
+polar_diagonal_value_test = Refl
+
+positive_diagonal_presentation :
+  DiagonalPresentation plane_positive_quadratic
+positive_diagonal_presentation =
+  SumHasDiagonalPresentation
+    (SquareHasDiagonalPresentation plane_x)
+    (SquareHasDiagonalPresentation plane_y)
+
+failing "Mismatch between"
+  odd_cross_term_has_no_integral_symmetric_presentation :
+    DiagonalPresentation plane_cross_quadratic
+  odd_cross_term_has_no_integral_symmetric_presentation =
+    SquareHasDiagonalPresentation plane_x
+
+-- --------------------------------------------------------------------------
+-- Refinements carry evidence rather than Boolean metadata
+-- --------------------------------------------------------------------------
+
+positive_definite_evidence : PositiveDefinite plane_positive_quadratic
+positive_definite_evidence = PlaneSumOfSquaresPositive
+
+positive_semidefinite_from_definite :
+  PositiveSemidefinite plane_positive_quadratic
+positive_semidefinite_from_definite =
+  positive_definite_is_semidefinite positive_definite_evidence
+
+positive_nondegenerate_from_definite :
+  QuadraticNondegenerate plane_positive_quadratic
+positive_nondegenerate_from_definite =
+  positive_definite_is_nondegenerate positive_definite_evidence
+
+positive_anisotropic_from_definite : Anisotropic plane_positive_quadratic
+positive_anisotropic_from_definite =
+  positive_definite_is_anisotropic positive_definite_evidence
+
+negative_definite_evidence : NegativeDefinite plane_negative_quadratic
+negative_definite_evidence = NegativePlaneSumOfSquares
+
+negative_semidefinite_from_definite :
+  NegativeSemidefinite plane_negative_quadratic
+negative_semidefinite_from_definite =
+  NegativeDefiniteIsSemidefinite negative_definite_evidence
+
+negative_nondegenerate_from_definite :
+  QuadraticNondegenerate plane_negative_quadratic
+negative_nondegenerate_from_definite =
+  NegativeDefiniteIsNondegenerate negative_definite_evidence
+
+negative_anisotropic_from_definite : Anisotropic plane_negative_quadratic
+negative_anisotropic_from_definite =
+  NegativeDefiniteIsAnisotropic negative_definite_evidence
+
+semidefinite_evidence : PositiveSemidefinite plane_first_square
+semidefinite_evidence = PlaneFirstSquareSemidefinite
+
+negative_semidefinite_evidence :
+  NegativeSemidefinite plane_negative_first_square
+negative_semidefinite_evidence = NegativePlaneFirstSquareSemidefinite
+
+degenerate_evidence : QuadraticDegenerate plane_first_square
+degenerate_evidence = PlaneFirstSquareDegenerate
+
+indefinite_evidence : Indefinite plane_difference_of_squares
+indefinite_evidence = PlaneDifferenceOfSquaresIndefinite
+
+isotropic_evidence : Isotropic plane_difference_of_squares
+isotropic_evidence = PlaneDifferenceOfSquaresIsotropic
+
+integral_evidence : IntegralQuadratic plane_positive_quadratic
+integral_evidence = ExactIntegralValued plane_positive_quadratic
+
+even_evidence : EvenQuadratic (QuadraticScale 2 plane_positive_quadratic)
+even_evidence = TwiceIntegralFormIsEven plane_positive_quadratic
+
+indefinite_positive_witness_test :
+  evaluate_quadratic plane_difference_of_squares (plane_vector 2 1)
+    = the ±Number 3
+indefinite_positive_witness_test = Refl
+
+indefinite_negative_witness_test :
+  evaluate_quadratic plane_difference_of_squares (plane_vector 1 2)
+    = the ±Number (-3)
+indefinite_negative_witness_test = Refl
+
+isotropic_witness_test :
+  evaluate_quadratic plane_difference_of_squares (plane_vector 1 1)
+    = the ±Number 0
+isotropic_witness_test = Refl
+
+degenerate_direction_test :
+  evaluate_quadratic plane_first_square (plane_vector 0 1)
+    = the ±Number 0
+degenerate_direction_test = Refl
+
+-- --------------------------------------------------------------------------
+-- Hermitian and sesquilinear semantics
+-- --------------------------------------------------------------------------
+
+complex_left : ExactComplexVectorSample plane_space
+complex_left = complex_plane_vector (Complex 1 1) complex_zero
+
+complex_right : ExactComplexVectorSample plane_space
+complex_right = complex_plane_vector complex_one complex_zero
+
+hermitian_conjugates_first_argument_test :
+  evaluate_hermitian
+    plane_standard_hermitian
+    complex_left
+    complex_right = Complex 1 (-1)
+hermitian_conjugates_first_argument_test = Refl
+
+hermitian_symmetry_sample_test :
+  evaluate_hermitian
+    plane_standard_hermitian
+    complex_left
+    complex_right
+  = conjugate
+      (evaluate_hermitian
+        plane_standard_hermitian
+        complex_right
+        complex_left)
+hermitian_symmetry_sample_test = Refl
+
+sesquilinear_view_test :
+  evaluate_sesquilinear
+    (hermitian_as_sesquilinear plane_standard_hermitian)
+    complex_left
+    complex_right = Complex 1 (-1)
+sesquilinear_view_test = Refl
+
+hermitian_quadratic_quantity_test :
+  hermitian_quadratic_quantity
+    plane_standard_hermitian
+    (complex_plane_vector (Complex 1 1) (Complex 2 (-1))) = the ±Number 7
+hermitian_quadratic_quantity_test = Refl
+
+hermitian_to_dual_test :
+  complex_contract
+    (hermitian_covector_at plane_standard_hermitian complex_left)
+    complex_right = Complex 1 (-1)
+hermitian_to_dual_test = Refl
+
+hermitian_positive_evidence :
+  HermitianPositiveDefinite plane_standard_hermitian
+hermitian_positive_evidence = StandardComplexPlanePositive
+
+hermitian_nondegenerate_evidence :
+  HermitianNondegenerate plane_standard_hermitian
+hermitian_nondegenerate_evidence =
+  hermitian_positive_is_nondegenerate hermitian_positive_evidence
+
+failing "Mismatch between"
+  hermitian_form_is_not_ordinary_quadratic : QuadraticForm plane_space
+  hermitian_form_is_not_ordinary_quadratic = plane_standard_hermitian
+
+failing "Mismatch between"
+  ordinary_quadratic_is_not_hermitian : HermitianForm plane_space
+  ordinary_quadratic_is_not_hermitian = plane_positive_quadratic
+
+failing "Mismatch between"
+  ordinary_vector_is_not_complex_vector : ExactComplex
+  ordinary_vector_is_not_complex_vector =
+    evaluate_hermitian
+      plane_standard_hermitian
+      (plane_vector 1 0)
+      (plane_vector 0 1)
+
+-- --------------------------------------------------------------------------
+-- Basis-dependent Gram representations
+-- --------------------------------------------------------------------------
+
+standard_weighted_gram : GramMatrix StandardPlaneBasis
+standard_weighted_gram = gram_matrix plane_weighted_symmetric StandardPlaneBasis
+
+sheared_weighted_gram : GramMatrix ShearedPlaneBasis
+sheared_weighted_gram = gram_matrix plane_weighted_symmetric ShearedPlaneBasis
+
+standard_gram_entries_test :
+  gram_entries standard_weighted_gram = SymmetricMatrix2 2 0 3
+standard_gram_entries_test = Refl
+
+sheared_gram_entries_test :
+  gram_entries sheared_weighted_gram = SymmetricMatrix2 2 2 5
+sheared_gram_entries_test = Refl
+
+ordinary_congruence_law_test :
+  congruence_from standard_weighted_gram ShearedPlaneBasis =
+    Matrix2 2 2 2 5
+ordinary_congruence_law_test = Refl
+
+basis_independent_value_from_standard_gram_test :
+  evaluate_quadratic
+    (represented_quadratic_form standard_weighted_gram)
+    (plane_vector 2 1) = the ±Number 11
+basis_independent_value_from_standard_gram_test = Refl
+
+basis_independent_value_from_sheared_gram_test :
+  evaluate_quadratic
+    (represented_quadratic_form sheared_weighted_gram)
+    (plane_vector 2 1) = the ±Number 11
+basis_independent_value_from_sheared_gram_test = Refl
+
+underlying_form_value_test :
+  evaluate_quadratic plane_weighted_quadratic (plane_vector 2 1)
+    = the ±Number 11
+underlying_form_value_test = Refl
+
+failing "Mismatch between"
+  gram_matrix_remembers_its_basis : GramMatrix StandardPlaneBasis
+  gram_matrix_remembers_its_basis = sheared_weighted_gram
+
+-- --------------------------------------------------------------------------
+-- Hermitian change of basis: P* G P, not P^T G P
+-- --------------------------------------------------------------------------
+
+standard_hermitian_gram : HermitianGramMatrix StandardComplexBasis
+standard_hermitian_gram =
+  hermitian_gram_matrix plane_standard_hermitian StandardComplexBasis
+
+sheared_hermitian_gram : HermitianGramMatrix ComplexShearedBasis
+sheared_hermitian_gram =
+  hermitian_gram_matrix plane_standard_hermitian ComplexShearedBasis
+
+standard_hermitian_gram_test :
+  hermitian_gram_entries standard_hermitian_gram =
+    HermitianEntries2 1 complex_zero 1
+standard_hermitian_gram_test = Refl
+
+sheared_hermitian_gram_test :
+  hermitian_gram_entries sheared_hermitian_gram =
+    HermitianEntries2 1 complex_i 2
+sheared_hermitian_gram_test = Refl
+
+conjugate_transpose_change_of_basis_test :
+  hermitian_congruence_from standard_hermitian_gram ComplexShearedBasis =
+    ComplexMatrix2
+      complex_one
+      complex_i
+      (Complex 0 (-1))
+      (Complex 2 0)
+conjugate_transpose_change_of_basis_test = Refl
+
+ordinary_transpose_is_different_test :
+  ordinary_transpose_congruence_oracle
+    standard_hermitian_gram
+    ComplexShearedBasis =
+      ComplexMatrix2
+        complex_one
+        complex_i
+        complex_i
+        complex_zero
+ordinary_transpose_is_different_test = Refl
+
+hermitian_basis_independent_standard_value_test :
+  hermitian_quadratic_quantity
+    (represented_hermitian_form standard_hermitian_gram)
+    (complex_plane_vector (Complex 1 1) (Complex 2 (-1))) = the ±Number 7
+hermitian_basis_independent_standard_value_test = Refl
+
+hermitian_basis_independent_sheared_value_test :
+  hermitian_quadratic_quantity
+    (represented_hermitian_form sheared_hermitian_gram)
+    (complex_plane_vector (Complex 1 1) (Complex 2 (-1))) = the ±Number 7
+hermitian_basis_independent_sheared_value_test = Refl
+
+-- --------------------------------------------------------------------------
+-- Characteristic two: quadratic and symmetric-bilinear data are not equivalent
+-- --------------------------------------------------------------------------
+
+f2_nonzero_quadratic_test :
+  f2_cross_quadratic (F2Vector F2One F2One) = F2One
+f2_nonzero_quadratic_test = Refl
+
+f2_polar_diagonal_vanishes_test :
+  f2_polar
+    (F2Vector F2One F2One)
+    (F2Vector F2One F2One) = F2Zero
+f2_polar_diagonal_vanishes_test = Refl
+
+f2_polar_cross_term_test :
+  f2_polar
+    (F2Vector F2One F2Zero)
+    (F2Vector F2Zero F2One) = F2One
+f2_polar_cross_term_test = Refl
+
+main : IO ()
+main = do
+  putStrLn "quadratic and Hermitian form semantics: PASS"

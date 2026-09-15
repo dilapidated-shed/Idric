@@ -17,7 +17,7 @@ import NamedFacts
 -- --------------------------------------------------------------------------
 
 plane_pairing_test :
-  contract (plane_covector 5 7) (plane_vector 3 4) = 43
+  contract (plane_covector 5 7) (plane_vector 3 4) = the ±Number 43
 plane_pairing_test = Refl
 
 contraction_linear_in_vector_test :
@@ -40,14 +40,14 @@ contraction_respects_vector_scaling_test :
   contract
     (plane_covector 5 7)
     (scale_vector 3 (plane_vector 3 4))
-  = 3 * contract (plane_covector 5 7) (plane_vector 3 4)
+  = the ±Number 3 * contract (plane_covector 5 7) (plane_vector 3 4)
 contraction_respects_vector_scaling_test = Refl
 
 contraction_respects_covector_scaling_test :
   contract
     (scale_covector 3 (plane_covector 5 7))
     (plane_vector 3 4)
-  = 3 * contract (plane_covector 5 7) (plane_vector 3 4)
+  = the ±Number 3 * contract (plane_covector 5 7) (plane_vector 3 4)
 contraction_respects_covector_scaling_test = Refl
 
 failing "Mismatch between: PlaneName and ImagePlaneName."
@@ -60,17 +60,17 @@ failing "Mismatch between: 0 and 1."
     NamedFiniteSpace {rank = 3} PlaneName
 
 failing "Mismatch between: RealThreeName and PlaneName."
-  mismatched_dimension_contraction : Integer
+  mismatched_dimension_contraction : ±Number
   mismatched_dimension_contraction =
     contract (plane_covector 1 2) (three_vector 3 4 5)
 
 failing "Mismatch between: ImagePlaneName and PlaneName."
-  equal_rank_mismatched_space_contraction : Integer
+  equal_rank_mismatched_space_contraction : ±Number
   equal_rank_mismatched_space_contraction =
     contract (plane_covector 1 2) (image_plane_vector 3 4)
 
 failing "Mismatch between: ExactVectorSample plane_space and ExactCovectorSample"
-  vector_vector_contraction_without_euclidean_structure : Integer
+  vector_vector_contraction_without_euclidean_structure : ±Number
   vector_vector_contraction_without_euclidean_structure =
     contract (plane_vector 1 2) (plane_vector 3 4)
 
@@ -87,11 +87,11 @@ metric_raises_covector_test :
 metric_raises_covector_test = Refl
 
 metric_dot_test :
-  dot plane_euclidean (plane_vector 3 4) (plane_vector 5 7) = 43
+  dot plane_euclidean (plane_vector 3 4) (plane_vector 5 7) = the ±Number 43
 metric_dot_test = Refl
 
 metric_squared_norm_test :
-  squared_norm plane_euclidean (plane_vector 3 4) = 25
+  squared_norm plane_euclidean (plane_vector 3 4) = the ±Number 25
 metric_squared_norm_test = Refl
 
 metric_norm_test :
@@ -102,7 +102,7 @@ metric_squared_distance_test :
   squared_distance
     plane_euclidean
     (plane_vector 5 7)
-    (plane_vector 2 3) = 25
+    (plane_vector 2 3) = the ±Number 25
 metric_squared_distance_test = Refl
 
 metric_distance_test :
@@ -119,18 +119,18 @@ metric_distance_test = Refl
 named_index_contraction_test :
   contract_index
     (LowerIndex (plane_covector 5 7))
-    (UpperIndex (plane_vector 3 4)) = 43
+    (UpperIndex (plane_vector 3 4)) = the ±Number 43
 named_index_contraction_test = Refl
 
 failing "Mismatch between: Lower and Upper."
-  same_variance_index_contraction : Integer
+  same_variance_index_contraction : ±Number
   same_variance_index_contraction =
     contract_index
       (LowerIndex (plane_covector 5 7))
       (LowerIndex (plane_covector 3 4))
 
 failing "Mismatch between: ImagePlaneName and PlaneName."
-  equal_rank_named_index_space_mismatch : Integer
+  equal_rank_named_index_space_mismatch : ±Number
   equal_rank_named_index_space_mismatch =
     contract_index
       (LowerIndex (plane_covector 5 7))
@@ -139,7 +139,7 @@ failing "Mismatch between: ImagePlaneName and PlaneName."
 metric_driven_index_lowering_test :
   contract_index
     (lower_indexed plane_euclidean (UpperIndex (plane_vector 5 7)))
-    (UpperIndex (plane_vector 3 4)) = 43
+    (UpperIndex (plane_vector 3 4)) = the ±Number 43
 metric_driven_index_lowering_test = Refl
 
 metric_driven_index_raising_test :
@@ -160,7 +160,7 @@ metric_driven_index_raising_test = Refl
 -- state all 128 coordinates; semantic clients use the named constructors and
 -- checked contraction/metric operations above.
 
-last_coordinate : (n : Number) → Integer → RawExactCoordinates (S n)
+last_coordinate : (n : CoordinateRank) → ±Number → RawExactCoordinates (S n)
 last_coordinate Z value = UnsafeCoordinateCons value UnsafeCoordinateNil
 last_coordinate (S n) value =
   UnsafeCoordinateCons 0 (last_coordinate n value)
@@ -233,27 +233,27 @@ r128_quarter_turn_exact_image_test = Refl
 r128_reflection_preserves_squared_norm_test :
   squared_norm
     real128_euclidean
-    (apply_first_axis_reflection real128_euclidean r128_sample) = 250
+    (apply_first_axis_reflection real128_euclidean r128_sample) = the ±Number 250
 r128_reflection_preserves_squared_norm_test = Refl
 
 r128_quarter_turn_preserves_squared_norm_test :
   squared_norm
     real128_euclidean
-    (apply_first_plane_quarter_turn real128_euclidean r128_sample) = 250
+    (apply_first_plane_quarter_turn real128_euclidean r128_sample) = the ±Number 250
 r128_quarter_turn_preserves_squared_norm_test = Refl
 
 r128_reflection_preserves_dot_test :
   dot
     real128_euclidean
     (apply_first_axis_reflection real128_euclidean r128_sample)
-    (apply_first_axis_reflection real128_euclidean r128_companion) = 190
+    (apply_first_axis_reflection real128_euclidean r128_companion) = the ±Number 190
 r128_reflection_preserves_dot_test = Refl
 
 r128_quarter_turn_preserves_dot_test :
   dot
     real128_euclidean
     (apply_first_plane_quarter_turn real128_euclidean r128_sample)
-    (apply_first_plane_quarter_turn real128_euclidean r128_companion) = 190
+    (apply_first_plane_quarter_turn real128_euclidean r128_companion) = the ±Number 190
 r128_quarter_turn_preserves_dot_test = Refl
 
 r128_reflection_is_involution_test :
@@ -270,7 +270,7 @@ r128_four_quarter_turns_are_identity_test :
     = r128_sample
 r128_four_quarter_turns_are_identity_test = Refl
 
-last_coordinate_value : {n : Number} → RawExactCoordinates (S n) → Integer
+last_coordinate_value : {n : CoordinateRank} → RawExactCoordinates (S n) → ±Number
 last_coordinate_value (UnsafeCoordinateCons value UnsafeCoordinateNil) = value
 last_coordinate_value
   (UnsafeCoordinateCons _ rest@(UnsafeCoordinateCons _ _)) = last_coordinate_value rest
@@ -278,13 +278,13 @@ last_coordinate_value
 r128_reflection_preserves_coordinate_128_test :
   last_coordinate_value
     (unsafe_coordinates_of_vector
-      (apply_first_axis_reflection real128_euclidean r128_sample)) = 9
+      (apply_first_axis_reflection real128_euclidean r128_sample)) = the ±Number 9
 r128_reflection_preserves_coordinate_128_test = Refl
 
 r128_quarter_turn_preserves_coordinate_128_test :
   last_coordinate_value
     (unsafe_coordinates_of_vector
-      (apply_first_plane_quarter_turn real128_euclidean r128_sample)) = 9
+      (apply_first_plane_quarter_turn real128_euclidean r128_sample)) = the ±Number 9
 r128_quarter_turn_preserves_coordinate_128_test = Refl
 
 -- --------------------------------------------------------------------------
@@ -294,22 +294,22 @@ r128_quarter_turn_preserves_coordinate_128_test = Refl
 north_pole_is_s2_test : UnitSpherePoint real_three_euclidean
 north_pole_is_s2_test = north_pole_s2
 
-sphere_s0_h0_rank_test : sphere_integral_cohomology_rank 0 0 = 2
+sphere_s0_h0_rank_test : sphere_integral_cohomology_rank 0 0 = the Number 2
 sphere_s0_h0_rank_test = Refl
 
-sphere_s2_h0_rank_test : sphere_integral_cohomology_rank 2 0 = 1
+sphere_s2_h0_rank_test : sphere_integral_cohomology_rank 2 0 = the Number 1
 sphere_s2_h0_rank_test = Refl
 
-sphere_s2_h1_rank_test : sphere_integral_cohomology_rank 2 1 = 0
+sphere_s2_h1_rank_test : sphere_integral_cohomology_rank 2 1 = the Number 0
 sphere_s2_h1_rank_test = Refl
 
-sphere_s2_h2_rank_test : sphere_integral_cohomology_rank 2 2 = 1
+sphere_s2_h2_rank_test : sphere_integral_cohomology_rank 2 2 = the Number 1
 sphere_s2_h2_rank_test = Refl
 
-odd_sphere_euler_test : sphere_euler_characteristic 3 = 0
+odd_sphere_euler_test : sphere_euler_characteristic 3 = the ±Number 0
 odd_sphere_euler_test = Refl
 
-even_sphere_euler_test : sphere_euler_characteristic 4 = 2
+even_sphere_euler_test : sphere_euler_characteristic 4 = the ±Number 2
 even_sphere_euler_test = Refl
 
 quaternion_i_j_test : quaternion_multiply quaternion_i quaternion_j = quaternion_k
@@ -319,7 +319,7 @@ quaternion_j_i_test :
   quaternion_multiply quaternion_j quaternion_i = quaternion_negate quaternion_k
 quaternion_j_i_test = Refl
 
-quaternion_i_norm_test : quaternion_norm_squared quaternion_i = 1
+quaternion_i_norm_test : quaternion_norm_squared quaternion_i = the ±Number 1
 quaternion_i_norm_test = Refl
 
 unit_quaternion_rotation_is_so3_test : SpecialOrthogonal real_three_euclidean
@@ -331,29 +331,30 @@ unit_quaternion_rotation_action_test :
     (three_vector 0 1 0) = three_vector 0 (-1) 0
 unit_quaternion_rotation_action_test = Refl
 
-cp3_real_dimension_test : cp_real_dimension 3 = 6
+cp3_real_dimension_test : cp_real_dimension 3 = the Number 6
 cp3_real_dimension_test = Refl
 
-cp3_hopf_sphere_dimension_test : cp_hopf_sphere_dimension 3 = 7
+cp3_hopf_sphere_dimension_test : cp_hopf_sphere_dimension 3 = the Number 7
 cp3_hopf_sphere_dimension_test = Refl
 
-cp2_h0_rank_test : cp_integral_cohomology_rank 2 0 = 1
+cp2_h0_rank_test : cp_integral_cohomology_rank 2 0 = the Number 1
 cp2_h0_rank_test = Refl
 
-cp2_h2_rank_test : cp_integral_cohomology_rank 2 2 = 1
+cp2_h2_rank_test : cp_integral_cohomology_rank 2 2 = the Number 1
 cp2_h2_rank_test = Refl
 
-cp2_h4_rank_test : cp_integral_cohomology_rank 2 4 = 1
+cp2_h4_rank_test : cp_integral_cohomology_rank 2 4 = the Number 1
 cp2_h4_rank_test = Refl
 
-cp2_h3_rank_test : cp_integral_cohomology_rank 2 3 = 0
+cp2_h3_rank_test : cp_integral_cohomology_rank 2 3 = the Number 0
 cp2_h3_rank_test = Refl
 
-cp2_h6_rank_test : cp_integral_cohomology_rank 2 6 = 0
+cp2_h6_rank_test : cp_integral_cohomology_rank 2 6 = the Number 0
 cp2_h6_rank_test = Refl
 
 r3_one_point_compactifies_to_s3_test :
-  compactified_sphere_dimension (euclidean_one_point_compactification 3) = 3
+  compactified_sphere_dimension (euclidean_one_point_compactification 3) =
+    the Number 3
 r3_one_point_compactifies_to_s3_test = Refl
 
 -- --------------------------------------------------------------------------
@@ -402,7 +403,7 @@ failing "Mismatch between: ExactVectorSample plane_space and EmbeddedCircleInS2.
     lookup_named_fact jordan_separation_fact unrelated_context
 
 jordan_lookup_conclusion_test :
-  complement_component_count (fact_conclusion jordan_lookup_test) = 2
+  complement_component_count (fact_conclusion jordan_lookup_test) = the Number 2
 jordan_lookup_conclusion_test = Refl
 
 jordan_lookup_explanation_test :

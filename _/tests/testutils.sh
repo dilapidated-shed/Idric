@@ -134,7 +134,7 @@ else
 fi
 
 # Set variables for hygiene testing
-if [ -z "$PREFIX_CHANGED" ] && [ -n "$IDRIS2_PREFIX" ]; then
+if [ -z "${PREFIX_CHANGED:-}" ] && [ -n "$IDRIS2_PREFIX" ]; then
     OLD_PREFIX="$IDRIS2_PREFIX"
     NEW_PREFIX="$test_dir/prefix"
 
@@ -145,8 +145,8 @@ if [ -z "$PREFIX_CHANGED" ] && [ -n "$IDRIS2_PREFIX" ]; then
     export IDRIS2_PACKAGE_PATH="$OLD_PP$SEP$NEW_PP"
     # Use TEST_IDRIS2_LIBS and TEST_IDRIS2_DATA to pass locations for
     # prebuilt libidris2_support and its DATA files.
-    export IDRIS2_LIBS="$OLD_PP/lib$SEP$NEW_PP/lib$SEP$TEST_IDRIS2_LIBS"
-    export IDRIS2_DATA="$OLD_PP/support$SEP$NEW_PP/support$SEP$TEST_IDRIS2_DATA"
+    export IDRIS2_LIBS="$OLD_PP/lib$SEP$NEW_PP/lib$SEP${TEST_IDRIS2_LIBS:-}"
+    export IDRIS2_DATA="$OLD_PP/support$SEP$NEW_PP/support$SEP${TEST_IDRIS2_DATA:-}"
 
     # Set where to install stuff
     export IDRIS2_PREFIX="$NEW_PREFIX"

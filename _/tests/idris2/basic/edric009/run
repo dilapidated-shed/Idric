@@ -12,7 +12,9 @@ cp "$example_dir/EuclideanGeometry.idric" "$fixture_dir/EuclideanGeometry.idric"
 cp "$example_dir/TopologyFacts.idric" "$fixture_dir/TopologyFacts.idric"
 cp "$example_dir/PresheafRestriction.idric" "$fixture_dir/PresheafRestriction.idric"
 cp "$example_dir/NamedFacts.idric" "$fixture_dir/NamedFacts.idric"
+cp "$example_dir/QuadraticForms.idric" "$fixture_dir/QuadraticForms.idric"
 cp "$example_dir/Tests.idric" "$fixture_dir/Tests.idric"
+cp "$example_dir/FormTests.idric" "$fixture_dir/FormTests.idric"
 
 # Preserve .idric all the way into the bootstrapped compiler. The previous
 # geometry runner renamed its sources to .idr; this receipt exercises the
@@ -31,4 +33,16 @@ cp "$example_dir/Tests.idric" "$fixture_dir/Tests.idric"
   fi
 
   ./build/exec/unified-higher-mathematics
+
+  if ! "$idris2" --check FormTests.idric >form-typecheck.log 2>&1; then
+    cat form-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" FormTests.idric -o quadratic-hermitian-forms >form-build.log 2>&1; then
+    cat form-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/quadratic-hermitian-forms
 )

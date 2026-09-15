@@ -6,21 +6,35 @@ import EuclideanGeometry
 %unbound_implicits off
 
 -- This module preserves the settled elementary topology facts from #45 while
--- keeping their source distinct from ordinary type unification.  The functions
+-- keeping their source distinct from ordinary type unification. The functions
 -- below expose known closed formulas and the datatypes expose named theorem
--- boundaries.  Nothing here computes general cohomology, constructs arbitrary
+-- boundaries. Nothing here computes general cohomology, constructs arbitrary
 -- quotients, or proves a separation theorem from coordinates.
+
+public export
+Dimension : Type
+Dimension = Number
+
+public export
+CohomologicalDegree : Type
+CohomologicalDegree = Number
+
+public export
+CohomologyRank : Type
+CohomologyRank = Number
+
+public export
+EulerCharacteristic : Type
+EulerCharacteristic = ±Number
+
+public export
+ConnectedComponentCount : Type
+ConnectedComponentCount = Number
 
 -- --------------------------------------------------------------------------
 -- Spheres in explicitly Euclidean ambient spaces
 -- --------------------------------------------------------------------------
 
--- A checked exact sample carries its norm-one equality.  Indexing by the
--- Euclidean structure, rather than only its coordinate count, prevents a point
--- from silently moving to an equal-rank different named space.  General sphere
--- actions are deliberately not fabricated here: the exact transform evaluator
--- lives in EuclideanGeometry, while a reusable norm-preservation proof layer is
--- a separate extension.
 public export
 data UnitSpherePoint :
   {space : FiniteSpace} → EuclideanStructure space → Type where
@@ -28,22 +42,17 @@ data UnitSpherePoint :
     {space : FiniteSpace} →
     {structure : EuclideanStructure space} →
     (coordinates : ExactVectorSample space) →
-    squared_norm structure coordinates = 1 →
+    squared_norm structure coordinates = the ±Number 1 →
     UnitSpherePoint structure
 
--- S^2 is represented in the named Euclidean R^3 fixture.  The norm-one
--- certificate is definitional for this exact coordinate sample.
 public export
 north_pole_s2 : UnitSpherePoint real_three_euclidean
 north_pole_s2 =
   CheckedUnitSpherePoint (three_vector 0 0 1) Refl
 
--- Additive integral cohomology ranks of ordinary spheres.  S^0 is handled
--- separately because it has two connected components.  For positive n the
--- only nonzero ranks are in degrees 0 and n.  This is a closed standard fact,
--- not a general cohomology calculation.
 public export
-sphere_integral_cohomology_rank : Number → Number → Number
+sphere_integral_cohomology_rank :
+  Dimension → CohomologicalDegree → CohomologyRank
 sphere_integral_cohomology_rank Z Z = 2
 sphere_integral_cohomology_rank Z (S degree) = 0
 sphere_integral_cohomology_rank (S dimension) Z = 1
@@ -59,15 +68,14 @@ flip_parity Even = Odd
 flip_parity Odd = Even
 
 public export
-number_parity : Number → Parity
-number_parity Z = Even
-number_parity (S n) = flip_parity (number_parity n)
+dimension_parity : Dimension → Parity
+dimension_parity Z = Even
+dimension_parity (S n) = flip_parity (dimension_parity n)
 
--- chi(S^n) = 1 + (-1)^n.
 public export
-sphere_euler_characteristic : Number → Integer
+sphere_euler_characteristic : Dimension → EulerCharacteristic
 sphere_euler_characteristic dimension =
-  case number_parity dimension of
+  case dimension_parity dimension of
     Even ⇒ 2
     Odd ⇒ 0
 
@@ -75,23 +83,17 @@ sphere_euler_characteristic dimension =
 -- Complex projective-space facts
 -- --------------------------------------------------------------------------
 
--- CP^n has complex dimension n and real dimension 2n.
 public export
-cp_real_dimension : Number → Number
+cp_real_dimension : Dimension → Dimension
 cp_real_dimension n = n + n
 
--- CP^n has the standard Hopf presentation S^(2n+1) / S^1.  This returns the
--- dimension of the sphere in that presentation; it does not implement quotient
--- equality or construct projective space.
 public export
-cp_hopf_sphere_dimension : Number → Number
+cp_hopf_sphere_dimension : Dimension → Dimension
 cp_hopf_sphere_dimension n = S (n + n)
 
--- Additive integral cohomology ranks of CP^n are one in even degrees
--- 0,2,...,2n and zero otherwise.  The ring structure is deliberately outside
--- this small fact table.
 public export
-cp_integral_cohomology_rank : Number → Number → Number
+cp_integral_cohomology_rank :
+  Dimension → CohomologicalDegree → CohomologyRank
 cp_integral_cohomology_rank n Z = 1
 cp_integral_cohomology_rank Z (S degree) = 0
 cp_integral_cohomology_rank (S n) (S Z) = 0
@@ -99,22 +101,17 @@ cp_integral_cohomology_rank (S n) (S (S degree)) =
   cp_integral_cohomology_rank n degree
 
 public export
-data HopfQuotientFact : Number → Type where
-  CPnAsSphereByCircle : (n : Number) → HopfQuotientFact n
+data HopfQuotientFact : Dimension → Type where
+  CPnAsSphereByCircle : (n : Dimension) → HopfQuotientFact n
 
 public export
-cp_hopf_quotient : (n : Number) → HopfQuotientFact n
+cp_hopf_quotient : (n : Dimension) → HopfQuotientFact n
 cp_hopf_quotient n = CPnAsSphereByCircle n
 
 -- --------------------------------------------------------------------------
 -- Named theorem-boundary facts
 -- --------------------------------------------------------------------------
 
--- A value of EmbeddedCircleInS2 is an explicit assumption token for the
--- hypothesis "there is a chosen embedded circle in S^2".  This example does
--- not construct a map or check injectivity.  JordanSeparation is the named
--- conclusion used by the tiny fact experiment; the compiler does not derive
--- it by unification.
 public export
 data EmbeddedCircleInS2 = MkJordanCurveExample
 
@@ -134,24 +131,23 @@ jordan_separation curve = ExactlyTwoComplementComponents curve
 
 public export
 complement_component_count :
-  {curve : EmbeddedCircleInS2} → JordanSeparation curve → Number
+  {curve : EmbeddedCircleInS2} →
+  JordanSeparation curve →
+  ConnectedComponentCount
 complement_component_count (ExactlyTwoComplementComponents curve) = 2
 
--- The one-point compactification of Euclidean R^n is S^n.  The family is
--- indexed explicitly so this fact cannot be mistaken for a generic
--- compactification operation on arbitrary spaces.
 public export
-data EuclideanCompactificationFact : Number → Type where
+data EuclideanCompactificationFact : Dimension → Type where
   EuclideanPlusIsSphere :
-    (dimension : Number) → EuclideanCompactificationFact dimension
+    (dimension : Dimension) → EuclideanCompactificationFact dimension
 
 public export
 euclidean_one_point_compactification :
-  (dimension : Number) → EuclideanCompactificationFact dimension
+  (dimension : Dimension) → EuclideanCompactificationFact dimension
 euclidean_one_point_compactification dimension =
   EuclideanPlusIsSphere dimension
 
 public export
 compactified_sphere_dimension :
-  {n : Number} → EuclideanCompactificationFact n → Number
+  {n : Dimension} → EuclideanCompactificationFact n → Dimension
 compactified_sphere_dimension (EuclideanPlusIsSphere dimension) = dimension

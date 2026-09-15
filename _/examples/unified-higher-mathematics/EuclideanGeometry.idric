@@ -10,7 +10,7 @@ import MathematicalSpaces
 public export
 data EuclideanStructure : FiniteSpace → Type where
   StandardCoordinate :
-    {rank : Number} →
+    {rank : CoordinateRank} →
     {name : SpaceName rank} →
     EuclideanStructure (NamedFiniteSpace name)
 
@@ -47,19 +47,19 @@ public export
 dot :
   {space : FiniteSpace} →
   EuclideanStructure space →
-  ExactVectorSample space → ExactVectorSample space → Integer
+  ExactVectorSample space → ExactVectorSample space → ±Number
 dot structure left right = contract (lower_index structure left) right
 
 public export
 squared_norm :
   {space : FiniteSpace} →
-  EuclideanStructure space → ExactVectorSample space → Integer
+  EuclideanStructure space → ExactVectorSample space → ±Number
 squared_norm structure value = dot structure value value
 
 -- SquareRoot is deliberately symbolic.  The exact integer radicand remains
 -- visible, and this small semantic layer makes no floating-point choice.
 public export
-data ExactSquareRoot = SquareRoot Integer
+data ExactSquareRoot = SquareRoot ±Number
 
 public export
 norm :
@@ -71,7 +71,7 @@ public export
 squared_distance :
   {space : FiniteSpace} →
   EuclideanStructure space →
-  ExactVectorSample space → ExactVectorSample space → Integer
+  ExactVectorSample space → ExactVectorSample space → ±Number
 squared_distance structure left right =
   squared_norm structure (difference_vector left right)
 
@@ -107,7 +107,7 @@ raise_indexed structure (LowerIndex value) =
 -- --------------------------------------------------------------------------
 
 public export
-data Quaternion = Q Integer Integer Integer Integer
+data Quaternion = Q ±Number ±Number ±Number ±Number
 
 public export
 quaternion_negate : Quaternion → Quaternion
@@ -127,7 +127,7 @@ quaternion_multiply (Q a b c d) (Q e f g h) =
     (a * h + b * g - c * f + d * e)
 
 public export
-quaternion_norm_squared : Quaternion → Integer
+quaternion_norm_squared : Quaternion → ±Number
 quaternion_norm_squared (Q a b c d) =
   a * a + b * b + c * c + d * d
 
@@ -151,7 +151,7 @@ public export
 data UnitQuaternion : Type where
   UnitQuaternionValue :
     (value : Quaternion) →
-    quaternion_norm_squared value = 1 →
+    quaternion_norm_squared value = the ±Number 1 →
     UnitQuaternion
 
 public export
@@ -200,14 +200,14 @@ data OrthogonalTransform :
     {structure : EuclideanStructure space} →
     OrthogonalTransform structure Preserving
   FirstAxisReflectionTransform :
-    {n : Number} →
+    {n : CoordinateRank} →
     {name : SpaceName (S n)} →
     OrthogonalTransform
       {space = NamedFiniteSpace name}
       StandardCoordinate
       Reversing
   FirstPlaneQuarterTurnTransform :
-    {n : Number} →
+    {n : CoordinateRank} →
     {name : SpaceName (S (S n))} →
     OrthogonalTransform
       {space = NamedFiniteSpace name}
@@ -236,7 +236,7 @@ data SpecialOrthogonal :
 
 public export
 first_axis_reflection :
-  {n : Number} →
+  {n : CoordinateRank} →
   {name : SpaceName (S n)} →
   (structure : EuclideanStructure (NamedFiniteSpace name)) →
   OrthogonalTransform structure Reversing
@@ -244,7 +244,7 @@ first_axis_reflection StandardCoordinate = FirstAxisReflectionTransform
 
 public export
 first_plane_quarter_turn :
-  {n : Number} →
+  {n : CoordinateRank} →
   {name : SpaceName (S (S n))} →
   (structure : EuclideanStructure (NamedFiniteSpace name)) →
   SpecialOrthogonal structure
@@ -354,7 +354,7 @@ apply_special_orthogonal_exact (InSO transform) vector =
 -- the connected OrthogonalTransform evaluator.
 public export
 apply_first_axis_reflection :
-  {n : Number} →
+  {n : CoordinateRank} →
   {name : SpaceName (S n)} →
   (structure : EuclideanStructure (NamedFiniteSpace name)) →
   ExactVectorSample (NamedFiniteSpace name) →
@@ -364,7 +364,7 @@ apply_first_axis_reflection structure =
 
 public export
 apply_first_plane_quarter_turn :
-  {n : Number} →
+  {n : CoordinateRank} →
   {name : SpaceName (S (S n))} →
   (structure : EuclideanStructure (NamedFiniteSpace name)) →
   ExactVectorSample (NamedFiniteSpace name) →

@@ -85,8 +85,8 @@ real bootstrapped Idric path it:
 3. executes that program and compares its PASS lines with `expected`.
 
 The focused source uses `ExactVectorSample` and `ExactCovectorSample`, making
-their `Integer` coordinate fragment explicit in the type names.  These values
-denote exact samples inside the named real coordinate space; they do not define
+their exact `±Number` coordinate fragment explicit in the type names.  These
+values denote exact samples inside the named real coordinate space; they do not define
 its complete scalar carrier.  The `Refl` declarations check the stated images,
 squared norms, dot products, involution, fourth-power identity, and the
 preserved 128th coordinate by compiler normalization.
