@@ -44,26 +44,22 @@ pair_complex_multiply
     , add (multiply a d) (multiply b c)
     )
 
-signed_add : ±Number → ±Number → ±Number
-signed_add left right = left + right
-
-signed_subtract : ±Number → ±Number → ±Number
-signed_subtract left right = left - right
-
-signed_multiply : ±Number → ±Number → ±Number
-signed_multiply left right = left * right
-
+-- The signed exact specialization is written directly so closed acceptance
+-- facts reduce definitionally across the module boundary. It is the same pair
+-- construction above with the present signed-number operations; it remains a
+-- Gaussian-integer oracle rather than a definition of mathematical C.
 public export
 signed_pair_add :
   (±Number, ±Number) →
   (±Number, ±Number) →
   (±Number, ±Number)
-signed_pair_add = pair_add signed_add
+signed_pair_add (first, second) (third, fourth) =
+  (first + third, second + fourth)
 
 public export
 signed_pair_complex_multiply :
   (±Number, ±Number) →
   (±Number, ±Number) →
   (±Number, ±Number)
-signed_pair_complex_multiply =
-  pair_complex_multiply signed_add signed_subtract signed_multiply
+signed_pair_complex_multiply (a, b) (c, d) =
+  (a * c - b * d, a * d + b * c)
