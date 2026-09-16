@@ -1,0 +1,50 @@
+module ComplexPairAgreement
+
+import MathematicalSpaces
+import PairArithmetic
+import QuadraticForms
+
+%unbound_implicits off
+
+-- ExactComplex remains the existing Gaussian-integral acceptance fixture.
+-- These conversions only expose its two signed coordinates as the pair
+-- construction used by PairArithmetic; they do not redefine mathematical C.
+public export
+exact_complex_as_pair : ExactComplex → (±Number, ±Number)
+exact_complex_as_pair (Complex real imaginary) = (real, imaginary)
+
+public export
+pair_as_exact_complex : (±Number, ±Number) → ExactComplex
+pair_as_exact_complex (real, imaginary) = Complex real imaginary
+
+public export
+exact_complex_pair_round_trip :
+  (value : ExactComplex) →
+  pair_as_exact_complex (exact_complex_as_pair value) = value
+exact_complex_pair_round_trip (Complex real imaginary) = Refl
+
+public export
+pair_exact_complex_round_trip :
+  (value : (±Number, ±Number)) →
+  exact_complex_as_pair (pair_as_exact_complex value) = value
+pair_exact_complex_round_trip (real, imaginary) = Refl
+
+public export
+exact_complex_addition_agrees :
+  (left : ExactComplex) →
+  (right : ExactComplex) →
+  exact_complex_as_pair (complex_add left right)
+    = signed_pair_add
+        (exact_complex_as_pair left)
+        (exact_complex_as_pair right)
+exact_complex_addition_agrees (Complex a b) (Complex c d) = Refl
+
+public export
+exact_complex_multiplication_agrees :
+  (left : ExactComplex) →
+  (right : ExactComplex) →
+  exact_complex_as_pair (complex_multiply left right)
+    = signed_pair_complex_multiply
+        (exact_complex_as_pair left)
+        (exact_complex_as_pair right)
+exact_complex_multiplication_agrees (Complex a b) (Complex c d) = Refl
