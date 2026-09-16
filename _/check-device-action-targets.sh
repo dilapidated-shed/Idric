@@ -1,0 +1,79 @@
+#!/bin/sh
+set -eu
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+repo_root=$(CDPATH= cd -- "$script_dir/.." && pwd)
+registry="$repo_root/examples/device_actions/targets.tsv"
+
+[ -f "$registry" ] || {
+    printf 'FAIL: missing device-action registry: %s\n' "$registry" >&2
+    exit 1
+}
+
+expected_header='action	profile	owner	implementation_state	execution_state	evidence	blocker_or_next	shell_role'
+actual_header=$(sed -n '1p' "$registry")
+
+if [ "$actual_header" != "$(printf '%b' "$expected_header")" ]; then
+    printf '%s\n' 'FAIL: unexpected device-action registry header' >&2
+    exit 1
+fi
+
+awk -F '\t' '
+BEGIN {
+    required["armv7_thumb_linux"] = 1
+    required["x86_64_linux"] = 1
+    required["android_phone"] = 1
+}
+NR == 1 { next }
+{
+    if (NF != 8) {
+        printf "FAIL: line %d has %d fields; expected 8\n", NR, NF > "/dev/stderr"
+        bad = 1
+        next
+    }
+
+    action = $1
+    profile = $2
+
+    if (action == "" || profile == "" || $3 == "" || $4 == "" || $5 == "" || $6 == "" || $7 == "" || $8 == "") {
+        printf "FAIL: line %d contains an empty required field\n", NR > "/dev/stderr"
+        bad = 1
+    }
+
+    if (!(profile in required)) {
+        printf "FAIL: line %d has unknown profile %s\n", NR, profile > "/dev/stderr"
+        bad = 1
+    }
+
+    key = action SUBSEP profile
+    if (seen[key]++) {
+        printf "FAIL: duplicate row for %s / %s\n", action, profile > "/dev/stderr"
+        bad = 1
+    }
+
+    actions[action] = 1
+    present[action, profile] = 1
+    rows++
+}
+END {
+    for (action in actions) {
+        action_count++
+        for (profile in required) {
+            if (!present[action, profile]) {
+                printf "FAIL: missing %s row for action %s\n", profile, action > "/dev/stderr"
+                bad = 1
+            }
+        }
+    }
+
+    if (action_count == 0) {
+        print "FAIL: no device actions registered" > "/dev/stderr"
+        bad = 1
+    }
+
+    if (bad)
+        exit 1
+
+    printf "PASS: %d device actions, %d complete action/profile rows\n", action_count, rows
+}
+' "$registry"
