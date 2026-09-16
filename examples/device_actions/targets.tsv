@@ -8,8 +8,8 @@ screen_split_red_blue	android_phone	Android adapter	not_reconciled	not_run	-	imp
 screen_timed_colors	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	implement timed colour sequence after screen surface boundary	sequence_timer
 screen_timed_colors	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	implement timed colour sequence after screen surface boundary	sequence_timer
 screen_timed_colors	android_phone	Android adapter	not_started	not_run	-	implement timed colour sequence on Android	sequence_timer
-speaker_tone	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_reconciled	not_run	-	reconcile native Linux audio target and capture emitted audio	sequence_timer
-speaker_tone	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_reconciled	not_run	-	reconcile native Linux audio target and capture emitted audio	sequence_timer
+speaker_tone	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#67	capture full-system virtual audio and later generated Idriç lowering	sequence_timer
+speaker_tone	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	ci_pending	isomorphisms/idric-x86-aggressive-backend#26	capture full-system virtual audio and later generated Idriç lowering	sequence_timer
 speaker_tone	android_phone	Android adapter	not_reconciled	not_run	-	reconcile Android speaker path and physical-phone receipt	sequence_timer
 speaker_two_tones	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_reconciled	not_run	-	implement two pitches with measured pause and duration	sequence_timer
 speaker_two_tones	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_reconciled	not_run	-	implement two pitches with measured pause and duration	sequence_timer
