@@ -1,6 +1,6 @@
 action	profile	owner	implementation_state	execution_state	evidence	blocker_or_next	shell_role
 screen_red	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#64	full-system Linux guest display and later generated Idriç lowering	sequence_timer
-screen_red	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	ci_pending	isomorphisms/idric-x86-aggressive-backend#24	full-system Linux guest display and later generated Idriç lowering	sequence_timer
+screen_red	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	full_system_guest_pass	https://github.com/isomorphisms/idric-x86-aggressive-backend/actions/runs/35119156854	generated Idriç lowering remains separate	sequence_timer
 screen_red	android_phone	Android adapter	historical_reference	not_run	isomorphisms/idric-arm-thumb:android-native-red-screen	reconcile current Android mechanism and capture physical-phone receipt	sequence_timer
 screen_split_red_blue	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_reconciled	not_run	-	implement native surface split and full-system guest capture	sequence_timer
 screen_split_red_blue	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_reconciled	not_run	-	implement native surface split and full-system guest capture	sequence_timer
