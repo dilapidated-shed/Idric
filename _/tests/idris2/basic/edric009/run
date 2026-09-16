@@ -11,10 +11,12 @@ cp "$example_dir/MathematicalSpaces.idric" "$fixture_dir/MathematicalSpaces.idri
 cp "$example_dir/EuclideanGeometry.idric" "$fixture_dir/EuclideanGeometry.idric"
 cp "$example_dir/TopologyFacts.idric" "$fixture_dir/TopologyFacts.idric"
 cp "$example_dir/PresheafRestriction.idric" "$fixture_dir/PresheafRestriction.idric"
+cp "$example_dir/PairArithmetic.idric" "$fixture_dir/PairArithmetic.idric"
 cp "$example_dir/NamedFacts.idric" "$fixture_dir/NamedFacts.idric"
 cp "$example_dir/QuadraticForms.idric" "$fixture_dir/QuadraticForms.idric"
 cp "$example_dir/ComplexProjective.idric" "$fixture_dir/ComplexProjective.idric"
 cp "$example_dir/Tests.idric" "$fixture_dir/Tests.idric"
+cp "$example_dir/PairArithmeticTests.idric" "$fixture_dir/PairArithmeticTests.idric"
 cp "$example_dir/FormTests.idric" "$fixture_dir/FormTests.idric"
 cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTests.idric"
 
@@ -35,6 +37,18 @@ cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTe
   fi
 
   ./build/exec/unified-higher-mathematics
+
+  if ! "$idris2" --check PairArithmeticTests.idric >pair-typecheck.log 2>&1; then
+    cat pair-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" PairArithmeticTests.idric -o pair-arithmetic >pair-build.log 2>&1; then
+    cat pair-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/pair-arithmetic
 
   if ! "$idris2" --check FormTests.idric >form-typecheck.log 2>&1; then
     cat form-typecheck.log >&2
