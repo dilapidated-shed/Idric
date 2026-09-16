@@ -1,10 +1,13 @@
 module PresheafRestriction
 
+import MathematicalSpaces
+
 %unbound_implicits off
 
 -- A finite restriction experiment, separate from the Euclidean geometry
--- model.  It records only three opens, their inclusions, and integer-labelled
--- sections.  It is not a general presheaf interface and makes no sheaf claim.
+-- model.  It records only three opens, their inclusions, and signed-number-
+-- labelled sections.  It is not a general presheaf interface and makes no
+-- sheaf claim.
 
 public export
 data Open = Whole | Patch | Point
@@ -18,9 +21,9 @@ data Included : Open → Open → Type where
 
 public export
 data Section : Open → Type where
-  WholeSection : Integer → Section Whole
-  PatchSection : Integer → Section Patch
-  PointSection : Integer → Section Point
+  WholeSection : ±Number → Section Whole
+  PatchSection : ±Number → Section Patch
+  PointSection : ±Number → Section Point
 
 public export
 restrict : {u, v : Open} → Included v u → Section u → Section v
