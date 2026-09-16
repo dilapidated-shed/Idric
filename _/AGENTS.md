@@ -7,6 +7,14 @@ guidance.
 Read [EDRIC.md](EDRIC.md) and [BRANCHES.md](BRANCHES.md) before changing this
 repository.
 
+## Human-facing scripts
+
+Whenever giving the human a script or command block, assume `$PWD` is arbitrary.
+Resolve repository and file paths from the script's own location, an explicit
+project location, or a discovered repository root, and perform any required
+`cd` inside the script. Never require the human to `cd` first or rely on relative
+paths against their current working directory.
+
 ## Identify the compiler line first
 
 - `Idriç` is the default branch and the canonical modern compiler line. It is
@@ -22,12 +30,14 @@ repository.
   repositories. A backend integration branch here must state the exact core
   compiler contract it is integrating.
 
-Before editing, run:
+Before editing, resolve `repo_root` to the absolute path of the intended Idriç
+checkout without assuming the caller's current directory. Then run:
 
 ```sh
-git fetch origin --prune
-git status --short --branch
-git worktree list
+: "${repo_root:?repo_root must be the absolute Idriç checkout path}"
+git -C "$repo_root" fetch origin --prune
+git -C "$repo_root" status --short --branch
+git -C "$repo_root" worktree list
 ```
 
 Do not switch, reset, stash, rebase, or overwrite a dirty worktree merely to
