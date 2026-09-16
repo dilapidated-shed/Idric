@@ -22,9 +22,9 @@ data Included : Open → Open → Type where
 
 public export
 data Section : Type → Open → Type where
-  WholeSection : payload → Section payload Whole
-  PatchSection : payload → Section payload Patch
-  PointSection : payload → Section payload Point
+  WholeSection : {payload : Type} → payload → Section payload Whole
+  PatchSection : {payload : Type} → payload → Section payload Patch
+  PointSection : {payload : Type} → payload → Section payload Point
 
 public export
 restrict :
