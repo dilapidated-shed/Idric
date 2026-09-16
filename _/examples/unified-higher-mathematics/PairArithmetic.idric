@@ -1,0 +1,65 @@
+module PairArithmetic
+
+import MathematicalSpaces
+
+%unbound_implicits off
+
+-- The pair construction is independent of presheaf restriction. Its carrier
+-- operations are supplied explicitly, so the construction does not choose a
+-- machine representation or identify an arbitrary pair with a number system.
+public export
+pair_add :
+  {scalar : Type} →
+  (add : scalar → scalar → scalar) →
+  (scalar, scalar) →
+  (scalar, scalar) →
+  (scalar, scalar)
+pair_add add (first, second) (third, fourth) =
+  (add first third, add second fourth)
+
+-- This is the familiar multiplication rule obtained by adjoining a symbol
+-- whose square is -1:
+--
+--   (a, b)(c, d) = (ac - bd, ad + bc).
+--
+-- The rule is useful before naming any particular carrier C. For example,
+-- applying it to pairs of signed whole numbers gives the Gaussian-integer
+-- acceptance slice, not all mathematical complex numbers.
+public export
+pair_complex_multiply :
+  {scalar : Type} →
+  (add : scalar → scalar → scalar) →
+  (subtract : scalar → scalar → scalar) →
+  (multiply : scalar → scalar → scalar) →
+  (scalar, scalar) →
+  (scalar, scalar) →
+  (scalar, scalar)
+pair_complex_multiply
+  add
+  subtract
+  multiply
+  (a, b)
+  (c, d) =
+    ( subtract (multiply a c) (multiply b d)
+    , add (multiply a d) (multiply b c)
+    )
+
+-- The signed exact specialization is written directly so closed acceptance
+-- facts reduce definitionally across the module boundary. It is the same pair
+-- construction above with the present signed-number operations; it remains a
+-- Gaussian-integer oracle rather than a definition of mathematical C.
+public export
+signed_pair_add :
+  (±Number, ±Number) →
+  (±Number, ±Number) →
+  (±Number, ±Number)
+signed_pair_add (first, second) (third, fourth) =
+  (first + third, second + fourth)
+
+public export
+signed_pair_complex_multiply :
+  (±Number, ±Number) →
+  (±Number, ±Number) →
+  (±Number, ±Number)
+signed_pair_complex_multiply (a, b) (c, d) =
+  (a * c - b * d, a * d + b * c)
