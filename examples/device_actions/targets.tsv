@@ -1,6 +1,6 @@
 action	profile	owner	implementation_state	execution_state	evidence	blocker_or_next	shell_role
 screen_red	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#64	full-system Linux guest display and later generated Idriç lowering	sequence_timer
-screen_red	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	full_system_guest_pass	https://github.com/isomorphisms/idric-x86-aggressive-backend/actions/runs/35119156854	generated Idriç lowering remains separate	sequence_timer
+screen_red	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	full_system_guest_pass	https://github.com/isomorphisms/idric-x86-aggressive-backend/actions/runs/35141820378	generated Idriç lowering remains separate	sequence_timer
 screen_red	android_phone	Android adapter	historical_reference	not_run	isomorphisms/idric-arm-thumb:android-native-red-screen	reconcile current Android mechanism and capture physical-phone receipt	sequence_timer
 screen_split_red_blue	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_reconciled	not_run	-	implement native surface split and full-system guest capture	sequence_timer
 screen_split_red_blue	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_reconciled	not_run	-	implement native surface split and full-system guest capture	sequence_timer
@@ -44,12 +44,12 @@ flashlight_pulse	android_phone	Android adapter	not_started	not_run	-	implement t
 infrared_pulse	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	select explicit simulated or passed-through infrared controller	command_timer
 infrared_pulse	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	select explicit simulated or passed-through infrared controller	command_timer
 infrared_pulse	android_phone	Android adapter	not_started	not_run	-	detect actual emitter capability before implementation	command_timer
-gpio_output	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	select named guest GPIO chip and line then drive high and low	command_timer
-gpio_output	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	select named guest GPIO chip and line then drive high and low	command_timer
+gpio_output	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#68	capture full-system gpio-sim receipt and later generated Idriç lowering	command_timer
+gpio_output	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	ci_pending	isomorphisms/idric-x86-aggressive-backend#27	capture full-system gpio-sim receipt and later generated Idriç lowering	command_timer
 gpio_output	android_phone	Android adapter	not_started	not_run	-	identify an exposed GPIO controller and permission boundary	command_timer
-gpio_input	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	select named guest GPIO line and read injected states	waitable_source
-gpio_input	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	select named guest GPIO line and read injected states	waitable_source
+gpio_input	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#68	capture full-system gpio-sim receipt and later generated Idriç lowering	waitable_source
+gpio_input	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	ci_pending	isomorphisms/idric-x86-aggressive-backend#27	capture full-system gpio-sim receipt and later generated Idriç lowering	waitable_source
 gpio_input	android_phone	Android adapter	not_started	not_run	-	identify an exposed GPIO input and permission boundary	waitable_source
-gpio_edge_wait	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	wait on a named guest line and verify injected edge ordering	waitable_source
-gpio_edge_wait	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	wait on a named guest line and verify injected edge ordering	waitable_source
+gpio_edge_wait	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#68	capture full-system gpio-sim receipt and later generated Idriç lowering	waitable_source
+gpio_edge_wait	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	ci_pending	isomorphisms/idric-x86-aggressive-backend#27	capture full-system gpio-sim receipt and later generated Idriç lowering	waitable_source
 gpio_edge_wait	android_phone	Android adapter	not_started	not_run	-	identify an exposed GPIO edge source and Android wait mechanism	waitable_source
