@@ -10,7 +10,7 @@ registry="$repo_root/examples/device_actions/targets.tsv"
     exit 1
 }
 
-expected_header='action	profile	owner	implementation_state	execution_state	evidence	blocker_or_next	shell_role'
+expected_header='action\tprofile\towner\timplementation_state\texecution_state\tevidence\tblocker_or_next\tshell_role'
 actual_header=$(sed -n '1p' "$registry")
 
 if [ "$actual_header" != "$(printf '%b' "$expected_header")" ]; then
@@ -23,6 +23,29 @@ BEGIN {
     required["armv7_thumb_linux"] = 1
     required["x86_64_linux"] = 1
     required["android_phone"] = 1
+
+    implementation["not_started"] = 1
+    implementation["not_reconciled"] = 1
+    implementation["historical_reference"] = 1
+    implementation["oracle_present"] = 1
+    implementation["implementation_present"] = 1
+
+    execution["not_run"] = 1
+    execution["not_reconciled"] = 1
+    execution["ci_pending"] = 1
+    execution["blocked"] = 1
+    execution["failed"] = 1
+    execution["host_pass"] = 1
+    execution["user_mode_pass"] = 1
+    execution["simulated_guest_pass"] = 1
+    execution["full_system_guest_pass"] = 1
+    execution["physical_device_pass"] = 1
+
+    shell_role["none"] = 1
+    shell_role["sequence_timer"] = 1
+    shell_role["stream"] = 1
+    shell_role["command_timer"] = 1
+    shell_role["waitable_source"] = 1
 }
 NR == 1 { next }
 {
@@ -34,14 +57,38 @@ NR == 1 { next }
 
     action = $1
     profile = $2
+    implementation_state = $4
+    execution_state = $5
+    evidence = $6
+    role = $8
 
-    if (action == "" || profile == "" || $3 == "" || $4 == "" || $5 == "" || $6 == "" || $7 == "" || $8 == "") {
+    if (action == "" || profile == "" || $3 == "" || implementation_state == "" || execution_state == "" || evidence == "" || $7 == "" || role == "") {
         printf "FAIL: line %d contains an empty required field\n", NR > "/dev/stderr"
         bad = 1
     }
 
     if (!(profile in required)) {
         printf "FAIL: line %d has unknown profile %s\n", NR, profile > "/dev/stderr"
+        bad = 1
+    }
+
+    if (!(implementation_state in implementation)) {
+        printf "FAIL: line %d has unknown implementation state %s\n", NR, implementation_state > "/dev/stderr"
+        bad = 1
+    }
+
+    if (!(execution_state in execution)) {
+        printf "FAIL: line %d has unknown execution state %s\n", NR, execution_state > "/dev/stderr"
+        bad = 1
+    }
+
+    if (!(role in shell_role)) {
+        printf "FAIL: line %d has unknown shell role %s\n", NR, role > "/dev/stderr"
+        bad = 1
+    }
+
+    if (execution_state ~ /_pass$/ && evidence == "-") {
+        printf "FAIL: line %d claims %s without evidence\n", NR, execution_state > "/dev/stderr"
         bad = 1
     }
 
