@@ -151,6 +151,23 @@ getEnv var
            then pure Nothing
            else pure (Just (prim__getString env))
 
+||| Retrieve an environment variable into Idriç-owned String storage.
+||| Invalid environment names (those containing `=` or NUL) are rejected as
+||| `Nothing`; this is distinct from a valid variable whose value is empty.
+export
+environment_value : String -> IO (Maybe String)
+environment_value var =
+  if any invalidNameCharacter (unpack var)
+     then pure Nothing
+     else do
+       env <- primIO $ prim__getEnv var
+       if prim__nullPtr env /= 0
+          then pure Nothing
+          else pure $ Just $ fastPack $ unpack $ prim__getString env
+  where
+    invalidNameCharacter : Char -> Bool
+    invalidNameCharacter c = c == '=' || c == '\0'
+
 ||| Retrieve all the key-value pairs of the environment variables, and return a
 ||| list containing them.
 export
