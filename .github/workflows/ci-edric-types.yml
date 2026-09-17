@@ -1,4 +1,4 @@
-name: Edric type-system smoke
+name: Idriç type-system smoke
 
 on:
   pull_request:
@@ -20,5 +20,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Bootstrap Edric and run focused smoke suite
+      - name: Bootstrap Idriç and run focused smoke suite
         run: ./_/edric all
