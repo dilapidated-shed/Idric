@@ -190,7 +190,7 @@ compose_orientation Reversing Reversing = Preserving
 -- evaluator below eliminates this same syntax, removing the former disconnect
 -- between marker values and separate generator functions.  The closed clauses
 -- are reviewed standard maps; this slice does not prove their determinant or a
--- general metric-preservation theorem inside Idric.
+-- general metric-preservation theorem inside Idriç.
 public export
 data OrthogonalTransform :
     {space : FiniteSpace} →

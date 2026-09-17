@@ -1,4 +1,4 @@
-name: Edric wrapper
+name: edric executable wrapper
 
 on:
   push:

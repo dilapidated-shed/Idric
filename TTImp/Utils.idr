@@ -185,7 +185,7 @@ findBindableNamesQuot env used (Elaborable_Quote_Declarations fc xs) = []
 findBindableNamesQuot env used (Elaborable_Run_Elaborator fc _ x) = []
 
 ||| Lower-case names normally become implicit binders. A lower-case type or
-||| data constructor introduced by Idric choice syntax is a global name
+||| data constructor introduced by Idriç choice syntax is a global name
 ||| instead, so leave it for ordinary name resolution.
 export
 excludeKnownTyOrDataCons :
