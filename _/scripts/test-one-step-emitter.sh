@@ -30,4 +30,4 @@ body="$temporary/body"
 body_sha=$(sha256sum "$body" | cut -d' ' -f1)
 grep -Fx "$(printf 'body_sha256\t%s' "$body_sha")" "$first"
 
-printf '%s\n' 'Idric compiler one-step emitter: PASS'
+printf '%s\n' 'Idriç compiler one-step emitter: PASS'

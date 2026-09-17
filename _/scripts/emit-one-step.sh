@@ -17,9 +17,9 @@ case "$2" in
 esac
 output=$3
 
-[ -f "$source" ] || { echo "Idric one-step emitter: source not found: $source" >&2; exit 2; }
+[ -f "$source" ] || { echo "Idriç one-step emitter: source not found: $source" >&2; exit 2; }
 [ -x "$compiler" ] || {
-  echo "Idric one-step emitter: compiler is not bootstrapped; run ./_/edric bootstrap" >&2
+  echo "Idriç one-step emitter: compiler is not bootstrapped; run ./_/edric bootstrap" >&2
   exit 2
 }
 
@@ -53,7 +53,7 @@ idric_library_path="$support_root/libs/prelude/build/ttc:$support_root/libs/base
 )
 
 [ "$(head -n 1 "$body_path")" = "$(printf 'EDRIC_ONE_STEP_BODY\t1')" ] || {
-  echo "Idric one-step emitter: compiler returned the wrong artifact body" >&2
+  echo "Idriç one-step emitter: compiler returned the wrong artifact body" >&2
   exit 1
 }
 

@@ -15,9 +15,8 @@ being mistaken for the current compiler.
 | `master` | Obsolete 2020 bootstrap history | No |
 | `idric/unicode-arrows` | Obsolete broad Unicode rewrite on the 2020 history | No |
 
-The repository is named `Idric`; the project is written `Idriç`; `Edric` is a
-speech/transcription spelling. Those names do not identify three compiler
-branches. There is no current branch named `main`. In ordinary conversation,
+The repository is named `Idric`; the project is written `Idriç`. The literal
+repository name and language name do not identify separate compiler branches. There is no current branch named `main`. In ordinary conversation,
 "the main branch of Idriç" means the default `Idriç` branch.
 
 ## Open pull-request branches

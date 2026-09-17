@@ -1,12 +1,12 @@
-# Idriç / Idric / Edric
+# Idriç / Idric
 
-This repository is the canonical modern home of the **Idriç** compiler experiment. `Idric` is the repository's ASCII spelling; `Edric` may appear in speech/transcription. It is based on current Idris 2, not the obsolete Idris2 bootstrap tree.
+This repository is the canonical modern home of the **Idriç** compiler experiment. `Idric` is the repository's literal ASCII repository name; human-facing prose uses `Idriç`. It is based on current Idris 2, not the obsolete Idris2 bootstrap tree.
 
 **Start here:** [EDRIC.md](EDRIC.md) records the build, test, naming, baseline,
 and handoff rules. [BRANCHES.md](BRANCHES.md) identifies the canonical compiler
 line, active review branches, archives, and separate backend repositories.
 
-At this checkpoint the fork deliberately remains ordinary Idris 2. Edric-specific language changes should be introduced one at a time with focused tests rather than by replaying the old mechanical rewrite wholesale.
+At this checkpoint the fork deliberately remains ordinary Idris 2. Idriç-specific language changes should be introduced one at a time with focused tests rather than by replaying the old mechanical rewrite wholesale.
 
 ---
 

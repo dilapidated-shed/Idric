@@ -1,7 +1,7 @@
 # Exact R^128 verification boundary
 
 This note preserves the exact high-dimensional oracle inherited from PR #47
-and states which evidence belongs to the current Idric compiler receipt.
+and states which evidence belongs to the current Idriç compiler receipt.
 
 ## Provenance
 
@@ -61,7 +61,7 @@ G^4 x = x
 (G x)_128 = 9.
 ```
 
-Mathematically, `det(H) = -1` and `det(G) = 1`.  The Idric layer does not
+Mathematically, `det(H) = -1` and `det(G) = 1`.  The Idriç layer does not
 calculate arbitrary determinants.  It records the corresponding orientation
 in closed transform constructors: `H` is `Reversing`, while `G` is
 `Preserving` and is exposed through `SpecialOrthogonal`.  The same closed
@@ -78,7 +78,7 @@ exclude that failure.
 ## Primary compiler evidence
 
 `tests/idris2/basic/edric009` is the primary current receipt.  Through the
-real bootstrapped Idric path it:
+real bootstrapped Idriç path it:
 
 1. checks `Tests.idric`, including its expected-failure declarations;
 2. compiles the unified example to an executable;
@@ -112,7 +112,7 @@ those historical transcripts:
   numerical checks reported zero error where those errors were measured.
 
 Those transcripts are secondary historical corroboration.  They are not a
-current compiler run, they are not proof objects consumed by Idric, and no
+current compiler run, they are not proof objects consumed by Idriç, and no
 rerunnable SymPy, NumPy, or SciPy script was committed with #47.  This
 reconciliation therefore neither vendors such a script nor adds any external
 mathematics dependency.  If an external check is rerun later, its command,
@@ -150,6 +150,6 @@ far_H: PASS
 far_G: PASS
 ```
 
-This remains secondary evidence.  It neither typechecks the Idric source nor
+This remains secondary evidence.  It neither typechecks the Idriç source nor
 replaces the `edric009` compiler/executable receipt, and it adds no project
 dependency.
