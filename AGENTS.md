@@ -7,6 +7,13 @@ Before writing or reviewing Idriç-facing source, read:
 3. [`examples/intent/http_server/`](examples/intent/http_server/README.md)
 4. [`_/AGENTS.md`](_/AGENTS.md) for repository and branch rules
 
+For device/platform examples, also read
+[`examples/device_actions/`](examples/device_actions/README.md). Its target
+matrix is canonical for the explicitly tracked small device actions: phone work
+must not erase or redefine the independent ARMv7/Thumb Linux and x86-64 Linux
+targets, and simulated/full-system/physical evidence must stay separately
+labeled.
+
 Apply the shared evidence and acceptance guardrails in
 `isomorphisms/ai-ci/AGENTS.md`.
 
