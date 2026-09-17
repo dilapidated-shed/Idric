@@ -1,16 +1,16 @@
-# Edric project checkpoint
+# Idriç project checkpoint
 
-This file is the durable handoff for the project called **Idriç**, **Idric**, or **Edric**. A new work thread should be able to start here without reconstructing the project from chat history.
+This file is the durable handoff for the **Idriç** project. A new work thread should be able to start here without reconstructing the project from chat history.
 
 ## Canonical repository
 
 `https://github.com/isomorphisms/Idric`
 
-The repository's ASCII name is `Idric`. The intended project name is `Idriç`; `Edric` is also used in speech/transcription. All three names deliberately appear here so repository search can find the project.
+The repository's ASCII name is `Idric`. The intended project and language name in human-facing prose is `Idriç`; use the literal repository name where a repository coordinate, URL, or path requires it.
 
 ## Foundation
 
-Edric is an experimental Idris-derived compiler line built on the current Idris 2 compiler. The modern baseline for this checkpoint is Idris 2 commit:
+Idriç is an experimental Idris-derived compiler line built on the current Idris 2 compiler. The modern baseline for this checkpoint is Idris 2 commit:
 
 `9b2116d98b5789afe3a003b234fd173c6b9aa379`
 
@@ -18,9 +18,9 @@ The older `isomorphisms/Idri-` / `Idris2-boot` work is historical reference only
 
 ## Implementation rule
 
-Use ordinary, current Idris 2 to implement Edric until an Edric change is itself stable enough to be deliberately dogfooded. Do not make the compiler depend on an unbuilt dialect of itself.
+Use ordinary, current Idris 2 to implement Idriç until an Idriç change is itself stable enough to be deliberately dogfooded. Do not make the compiler depend on an unbuilt dialect of itself.
 
-The first Edric-specific syntax is the storage-neutral `choice` declaration described below. The compiler remains implemented in ordinary Idris 2.
+The first Idriç-specific syntax is the storage-neutral `choice` declaration described below. The compiler remains implemented in ordinary Idris 2.
 
 ## Number and text vocabulary
 
@@ -43,7 +43,7 @@ it is not the current spelling for new source.
 
 ## Data-structure vocabulary
 
-Edriç names a structure by what it is, not merely by whether its length is
+Idriç names a structure by what it is, not merely by whether its length is
 known.
 
 - `List A` is a list whose length is not part of its public type.
@@ -57,7 +57,7 @@ known.
   including shader vector values.
 
 The inherited Idris 2 names `Vect` and `Data.Vect` remain where upstream
-compatibility requires them. New Edriç APIs, examples, and explanations must
+compatibility requires them. New Idriç APIs, examples, and explanations must
 not use “vector” as a synonym for a list with a known or computed length.
 
 ## Storage-neutral choices
@@ -196,13 +196,13 @@ For each language change:
 1. Make the smallest parser, elaborator, or compiler change that expresses the idea.
 2. Add a focused regression test under the existing Idris 2 test harness.
 3. Keep ordinary Idris 2 behavior working unless the change explicitly replaces it.
-4. Record user-visible syntax and semantic decisions here when they become part of Edric rather than leaving them only in a conversation.
+4. Record user-visible syntax and semantic decisions here when they become part of Idriç rather than leaving them only in a conversation.
 5. Keep the default `Idriç` branch buildable; use a descriptive branch when an
    experiment is not yet coherent.
 
 ## New-thread handoff
 
-A new thread working on Edric should:
+A new thread working on Idriç should:
 
 1. Open this file, [BRANCHES.md](BRANCHES.md), and the root `README.md`.
 2. Inspect the latest commits and current branch before changing code.
@@ -216,7 +216,7 @@ A new thread working on Edric should:
 - Durable repository handoff: established.
 - Ordinary Idris 2 implementation language: established.
 - Pinned repo-local threaded Chez Scheme bootstrap: established.
-- Focused Edric handoff test: checked in.
+- Focused Idriç handoff test: checked in.
 - Idriç source extension: `.idric`; `.idr` remains accepted for Idris compatibility.
 - Storage-neutral, lower snake_case `choice ... one_of` syntax: implemented for `.idric` only.
 - Ordinary `.idr` use of `choice` and `one_of` as identifiers: preserved and regression-tested.
