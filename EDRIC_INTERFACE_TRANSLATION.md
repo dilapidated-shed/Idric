@@ -20,53 +20,61 @@ A shell implementation can already express the job compactly:
 ```sh
 # Terminal colors only; receipt files stay plain.
 if [ -t 1 ] && [ "${TERM:-dumb}" != dumb ]; then
-    reset=$(printf '\033[0m')
-    bold=$(printf '\033[1m')
-    red=$(printf '\033[31m')
-    green=$(printf '\033[32m')
-    yellow=$(printf '\033[33m')
-    blue=$(printf '\033[34m')
-    magenta=$(printf '\033[35m')
-    cyan=$(printf '\033[36m')
+    stdout_reset=$(printf '\033[0m')
+    stdout_bold=$(printf '\033[1m')
+    stdout_green=$(printf '\033[32m')
+    stdout_yellow=$(printf '\033[33m')
+    stdout_blue=$(printf '\033[34m')
+    stdout_magenta=$(printf '\033[35m')
+    stdout_cyan=$(printf '\033[36m')
 else
-    reset=''
-    bold=''
-    red=''
-    green=''
-    yellow=''
-    blue=''
-    magenta=''
-    cyan=''
+    stdout_reset=''
+    stdout_bold=''
+    stdout_green=''
+    stdout_yellow=''
+    stdout_blue=''
+    stdout_magenta=''
+    stdout_cyan=''
+fi
+
+if [ -t 2 ] && [ "${TERM:-dumb}" != dumb ]; then
+    stderr_reset=$(printf '\033[0m')
+    stderr_bold=$(printf '\033[1m')
+    stderr_red=$(printf '\033[31m')
+else
+    stderr_reset=''
+    stderr_bold=''
+    stderr_red=''
 fi
 
 section() {
-    printf '\n%s%s=== %s ===%s\n' "$bold" "$cyan" "$*" "$reset"
+    printf '\n%s%s=== %s ===%s\n' "$stdout_bold" "$stdout_cyan" "$*" "$stdout_reset"
 }
 
 pass() {
-    printf '%s%sPASS%s  %s\n' "$bold" "$green" "$reset" "$*"
+    printf '%s%sPASS%s  %s\n' "$stdout_bold" "$stdout_green" "$stdout_reset" "$*"
 }
 
 fail() {
-    printf '%s%sFAIL%s  %s\n' "$bold" "$red" "$reset" "$*" >&2
+    printf '%s%sFAIL%s  %s\n' "$stderr_bold" "$stderr_red" "$stderr_reset" "$*" >&2
 }
 
 info() {
-    printf '%s%s%s%s\n' "$blue" "$*" "$reset" ""
+    printf '%s%s%s%s\n' "$stdout_blue" "$*" "$stdout_reset" ""
 }
 
 warn() {
-    printf '%s%sWARN%s  %s\n' "$bold" "$yellow" "$reset" "$*"
+    printf '%s%sWARN%s  %s\n' "$stdout_bold" "$stdout_yellow" "$stdout_reset" "$*"
 }
 ```
 
 This code is useful precisely because the mechanism is ordinary and local. The semantic boundary is clearer than the implementation:
 
-- decorate output only when standard output is an interactive terminal with a usable terminal type;
-- otherwise emit no decoration;
+- decorate each output stream only when that stream is an interactive terminal with a usable terminal type;
+- otherwise emit no decoration on that stream;
 - keep machine-readable or saved receipts independent of presentation;
 - distinguish ordinary information, warnings, failures, passes, and section boundaries for a human reader;
-- send failures to the error stream.
+- send failures to the error stream without letting standard-output terminal state decide whether standard error is decorated.
 
 Those are the facts an Edriç-facing interface should preserve.
 
@@ -75,14 +83,17 @@ Those are the facts an Edriç-facing interface should preserve.
 An Edriç description should be able to express something close to:
 
 ```idric
-terminal_style ← presentation for standard output
+stdout_style ← presentation for standard output
+stderr_style ← presentation for standard error
 
-when terminal_style supports color
+when stdout_style supports color
     show sections bold cyan
     show passes bold green
-    show failures bold red on standard error
     show information blue
     show warnings bold yellow
+
+when stderr_style supports color
+    show failures bold red on standard error
 
 keep receipts plain
 ```
