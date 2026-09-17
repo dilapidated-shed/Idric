@@ -1,0 +1,56 @@
+module QuaternionPairAgreementTests
+
+import QuadraticForms
+import EuclideanGeometry
+import QuaternionPairAgreement
+
+%unbound_implicits off
+
+quaternion_i_pair_test :
+  quaternion_as_complex_pair quaternion_i = (complex_i, complex_zero)
+quaternion_i_pair_test = Refl
+
+quaternion_j_pair_test :
+  quaternion_as_complex_pair quaternion_j = (complex_zero, complex_one)
+quaternion_j_pair_test = Refl
+
+quaternion_k_pair_test :
+  quaternion_as_complex_pair quaternion_k = (complex_zero, complex_i)
+quaternion_k_pair_test = Refl
+
+generic_quaternion_pair_i_j_test :
+  pair_quaternion_multiply
+    complex_add
+    complex_negate
+    complex_multiply
+    conjugate
+    (quaternion_as_complex_pair quaternion_i)
+    (quaternion_as_complex_pair quaternion_j)
+    = quaternion_as_complex_pair quaternion_k
+generic_quaternion_pair_i_j_test = Refl
+
+quaternion_pair_i_j_test :
+  exact_complex_pair_multiply
+    (quaternion_as_complex_pair quaternion_i)
+    (quaternion_as_complex_pair quaternion_j)
+    = quaternion_as_complex_pair quaternion_k
+quaternion_pair_i_j_test = Refl
+
+quaternion_pair_left_fixture : Quaternion
+quaternion_pair_left_fixture = Q 1 2 3 4
+
+quaternion_pair_right_fixture : Quaternion
+quaternion_pair_right_fixture = Q 5 6 7 8
+
+quaternion_pair_multiplication_agreement_test :
+  quaternion_as_complex_pair
+    (quaternion_multiply
+      quaternion_pair_left_fixture
+      quaternion_pair_right_fixture)
+    = exact_complex_pair_multiply
+        (quaternion_as_complex_pair quaternion_pair_left_fixture)
+        (quaternion_as_complex_pair quaternion_pair_right_fixture)
+quaternion_pair_multiplication_agreement_test = Refl
+
+main : IO ()
+main = putStrLn "quaternion complex-pair agreement: PASS"

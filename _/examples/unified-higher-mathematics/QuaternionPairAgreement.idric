@@ -1,0 +1,82 @@
+module QuaternionPairAgreement
+
+import QuadraticForms
+import EuclideanGeometry
+
+%unbound_implicits off
+
+-- For a carrier with addition, negation, multiplication, and conjugation,
+-- this is the conjugating pair product used to pass from complex values to
+-- quaternion values:
+--
+--   (a, b)(c, d) = (ac - b conjugate(d), ad + b conjugate(c)).
+--
+-- The operations are explicit because this small example layer does not yet
+-- pretend to provide a general law-bearing scalar hierarchy.
+public export
+pair_quaternion_multiply :
+  {scalar : Type} →
+  (add : scalar → scalar → scalar) →
+  (negate : scalar → scalar) →
+  (multiply : scalar → scalar → scalar) →
+  (conjugate_scalar : scalar → scalar) →
+  (scalar, scalar) →
+  (scalar, scalar) →
+  (scalar, scalar)
+pair_quaternion_multiply
+  add
+  negate
+  multiply
+  conjugate_scalar
+  (a, b)
+  (c, d) =
+    ( add
+        (multiply a c)
+        (negate (multiply b (conjugate_scalar d)))
+    , add
+        (multiply a d)
+        (multiply b (conjugate_scalar c))
+    )
+
+-- ExactComplex remains the existing exact acceptance carrier. This direct
+-- specialization makes the construction readable while preserving the
+-- existing complex operations and conjugation.
+public export
+exact_complex_pair_multiply :
+  (ExactComplex, ExactComplex) →
+  (ExactComplex, ExactComplex) →
+  (ExactComplex, ExactComplex)
+exact_complex_pair_multiply (a, b) (c, d) =
+  ( complex_add
+      (complex_multiply a c)
+      (complex_negate (complex_multiply b (conjugate d)))
+  , complex_add
+      (complex_multiply a d)
+      (complex_multiply b (conjugate c))
+  )
+
+public export
+quaternion_as_complex_pair : Quaternion → (ExactComplex, ExactComplex)
+quaternion_as_complex_pair (Q a b c d) =
+  (Complex a b, Complex c d)
+
+public export
+complex_pair_as_quaternion : (ExactComplex, ExactComplex) → Quaternion
+complex_pair_as_quaternion (Complex a b, Complex c d) = Q a b c d
+
+public export
+quaternion_pair_round_trip :
+  (value : Quaternion) →
+  complex_pair_as_quaternion (quaternion_as_complex_pair value) = value
+quaternion_pair_round_trip (Q a b c d) = Refl
+
+public export
+complex_pair_quaternion_round_trip :
+  (value : (ExactComplex, ExactComplex)) →
+  quaternion_as_complex_pair (complex_pair_as_quaternion value) = value
+complex_pair_quaternion_round_trip (Complex a b, Complex c d) = Refl
+
+-- A universal symbolic equality with the direct four-coordinate Hamilton
+-- formula needs the ring identities that this example layer deliberately does
+-- not yet encode. The focused tests therefore compare closed exact fixtures,
+-- including the basis law i j = k and a nontrivial four-coordinate product.
