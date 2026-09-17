@@ -14,9 +14,11 @@ cp "$example_dir/PresheafRestriction.idric" "$fixture_dir/PresheafRestriction.id
 cp "$example_dir/PairArithmetic.idric" "$fixture_dir/PairArithmetic.idric"
 cp "$example_dir/NamedFacts.idric" "$fixture_dir/NamedFacts.idric"
 cp "$example_dir/QuadraticForms.idric" "$fixture_dir/QuadraticForms.idric"
+cp "$example_dir/ComplexPairAgreement.idric" "$fixture_dir/ComplexPairAgreement.idric"
 cp "$example_dir/ComplexProjective.idric" "$fixture_dir/ComplexProjective.idric"
 cp "$example_dir/Tests.idric" "$fixture_dir/Tests.idric"
 cp "$example_dir/PairArithmeticTests.idric" "$fixture_dir/PairArithmeticTests.idric"
+cp "$example_dir/ComplexPairAgreementTests.idric" "$fixture_dir/ComplexPairAgreementTests.idric"
 cp "$example_dir/FormTests.idric" "$fixture_dir/FormTests.idric"
 cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTests.idric"
 
@@ -49,6 +51,18 @@ cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTe
   fi
 
   ./build/exec/pair-arithmetic
+
+  if ! "$idris2" --check ComplexPairAgreementTests.idric >complex-pair-typecheck.log 2>&1; then
+    cat complex-pair-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" ComplexPairAgreementTests.idric -o complex-pair-agreement >complex-pair-build.log 2>&1; then
+    cat complex-pair-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/complex-pair-agreement
 
   if ! "$idris2" --check FormTests.idric >form-typecheck.log 2>&1; then
     cat form-typecheck.log >&2

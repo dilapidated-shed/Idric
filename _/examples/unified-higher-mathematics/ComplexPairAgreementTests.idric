@@ -1,0 +1,30 @@
+module ComplexPairAgreementTests
+
+import MathematicalSpaces
+import PairArithmetic
+import QuadraticForms
+import ComplexPairAgreement
+
+%unbound_implicits off
+
+complex_pair_round_trip_test :
+  pair_as_exact_complex (exact_complex_as_pair (Complex 2 3)) = Complex 2 3
+complex_pair_round_trip_test = Refl
+
+complex_pair_addition_test :
+  exact_complex_as_pair (complex_add (Complex 2 3) (Complex 5 (-1))) = (7, 2)
+complex_pair_addition_test = Refl
+
+complex_pair_multiplication_test :
+  exact_complex_as_pair (complex_multiply (Complex 2 3) (Complex 5 (-1)))
+    = (13, 13)
+complex_pair_multiplication_test = Refl
+
+complex_pair_multiplication_agreement_test :
+  exact_complex_as_pair (complex_multiply (Complex 2 3) (Complex 5 (-1)))
+    = signed_pair_complex_multiply (2, 3) (5, (-1))
+complex_pair_multiplication_agreement_test =
+  exact_complex_multiplication_agrees (Complex 2 3) (Complex 5 (-1))
+
+main : IO ()
+main = putStrLn "exact complex pair agreement: PASS"
