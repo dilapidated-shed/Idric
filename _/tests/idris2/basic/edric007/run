@@ -1,0 +1,7 @@
+. ../../../testutils.sh
+
+cp ../../../../examples/units-time-intervals/UnitsTimeIntervals.idric UnitsTimeIntervals.idr
+cp ../../../../examples/units-time-intervals/Tests.idric Tests.idr
+
+"$idris2" Tests.idr -o units-time-intervals >/dev/null
+./build/exec/units-time-intervals

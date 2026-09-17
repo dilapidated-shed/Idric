@@ -52,6 +52,7 @@ smoke_test() {
 	run_test idris2/basic/edric004
 	run_test idris2/basic/edric005
 	run_test idris2/basic/edric006
+	run_test idris2/basic/edric007
 	run_test idris2/basic/edric009
 	sh "$repo_root/scripts/test-one-step-emitter.sh"
 }

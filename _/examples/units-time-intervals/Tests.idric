@@ -1,0 +1,199 @@
+module Tests
+
+import UnitsTimeIntervals
+
+%default total
+
+-- Tests first.  This file deliberately pins only the small algebraically
+-- settled kernel from the August 29, 2026 type-system discussion.
+--
+-- Not in this first slice: calendar months/time zones, probability or Gaussian
+-- inference, correlated uncertainty, interval multiplication/division, or an
+-- algebraic inheritance hierarchy.
+
+-- --------------------------------------------------------------------------
+-- 1. Exact units and dimensional analysis
+-- --------------------------------------------------------------------------
+
+inch_metric_definition_test :
+  quantityEqual
+    (inches (whole 1))
+    (metres (fraction 127 5000)) = True
+inch_metric_definition_test = Refl
+
+foot_inches_test :
+  quantityEqual
+    (feet (whole 1))
+    (inches (whole 12)) = True
+foot_inches_test = Refl
+
+quarter_plus_sixteenth_inch_test :
+  quantityEqual
+    (addQuantity
+      (inches (fraction 1 4))
+      (inches (fraction 1 16)))
+    (inches (fraction 5 16)) = True
+quarter_plus_sixteenth_inch_test = Refl
+
+centimetre_metre_test :
+  quantityEqual
+    (centimetres (whole 100))
+    (metres (whole 1)) = True
+centimetre_metre_test = Refl
+
+millimetre_metre_test :
+  quantityEqual
+    (millimetres (whole 1000))
+    (metres (whole 1)) = True
+millimetre_metre_test = Refl
+
+us_volume_relations_test :
+  quantityEqual
+    (usCups (whole 16))
+    (usGallons (whole 1)) = True
+us_volume_relations_test = Refl
+
+us_pints_relation_test :
+  quantityEqual
+    (usPints (whole 8))
+    (usGallons (whole 1)) = True
+us_pints_relation_test = Refl
+
+us_quarts_relation_test :
+  quantityEqual
+    (usQuarts (whole 4))
+    (usGallons (whole 1)) = True
+us_quarts_relation_test = Refl
+
+-- No special GallonsPerSecond class is declared.  The result type follows from
+-- division of the dimension exponents.
+one_gallon_per_second : Quantity volumeFlowDimension
+one_gallon_per_second =
+  divideQuantity
+    (usGallons (whole 1))
+    (secondsQuantity (whole 1))
+
+metres_per_second_squared : Quantity accelerationDimension
+metres_per_second_squared =
+  divideQuantity
+    (divideQuantity
+      (metres (whole 1))
+      (secondsQuantity (whole 1)))
+    (secondsQuantity (whole 1))
+
+-- --------------------------------------------------------------------------
+-- 2. Instant + signed Duration
+-- --------------------------------------------------------------------------
+
+five_minutes_after_test :
+  instantEqual
+    (plusDuration (instant (whole 1000)) (minutes (whole 5)))
+    (instant (whole 1300)) = True
+five_minutes_after_test = Refl
+
+five_minutes_before_test :
+  instantEqual
+    (minusDuration (instant (whole 1000)) (minutes (whole 5)))
+    (instant (whole 700)) = True
+five_minutes_before_test = Refl
+
+instant_difference_test :
+  durationEqual
+    (instantDifference (instant (whole 700)) (instant (whole 1000)))
+    (minutes (whole 5)) = True
+instant_difference_test = Refl
+
+signed_duration_subtraction_test :
+  durationEqual
+    (subtractDuration (minutes (whole 5)) (minutes (whole 8)))
+    (minutes (whole (-3))) = True
+signed_duration_subtraction_test = Refl
+
+duration_inverse_test :
+  durationEqual
+    (addDuration (minutes (whole 5)) (negateDuration (minutes (whole 5))))
+    (seconds (whole 0)) = True
+duration_inverse_test = Refl
+
+minute_definition_test :
+  durationEqual (minutes (whole 1)) (seconds (whole 60)) = True
+minute_definition_test = Refl
+
+hour_definition_test :
+  durationEqual (hours (whole 1)) (minutes (whole 60)) = True
+hour_definition_test = Refl
+
+-- --------------------------------------------------------------------------
+-- 3. One-dimensional exact rational intervals
+-- --------------------------------------------------------------------------
+
+closed_lower_endpoint_is_member_test :
+  contains
+    (closedInterval (whole 1) (whole 3))
+    (whole 1) = True
+closed_lower_endpoint_is_member_test = Refl
+
+open_lower_endpoint_is_not_member_test :
+  contains
+    (openInterval (whole 1) (whole 3))
+    (whole 1) = False
+open_lower_endpoint_is_not_member_test = Refl
+
+closed_upper_endpoint_is_member_test :
+  contains
+    (closedInterval (whole 1) (whole 3))
+    (whole 3) = True
+closed_upper_endpoint_is_member_test = Refl
+
+open_upper_endpoint_is_not_member_test :
+  contains
+    (openInterval (whole 1) (whole 3))
+    (whole 3) = False
+open_upper_endpoint_is_not_member_test = Refl
+
+closed_interval_addition_test :
+  intervalEqual
+    (addInterval
+      (closedInterval (whole 1) (whole 3))
+      (closedInterval (whole 4) (whole 9)))
+    (closedInterval (whole 5) (whole 12)) = True
+closed_interval_addition_test = Refl
+
+mixed_open_interval_addition_test :
+  intervalEqual
+    (addInterval
+      (rightOpenInterval (whole 1) (whole 3))
+      (leftOpenInterval (whole 4) (whole 9)))
+    (openInterval (whole 5) (whole 12)) = True
+mixed_open_interval_addition_test = Refl
+
+-- Opening a boundary records a one-way loss of endpoint membership.  The API
+-- intentionally does not offer "add epsilon back and close it" as an inverse.
+open_left_removes_endpoint_test :
+  contains
+    (openLeft (closedInterval (whole 1) (whole 3)))
+    (whole 1) = False
+open_left_removes_endpoint_test = Refl
+
+open_right_removes_endpoint_test :
+  contains
+    (openRight (closedInterval (whole 1) (whole 3)))
+    (whole 3) = False
+open_right_removes_endpoint_test = Refl
+
+-- --------------------------------------------------------------------------
+-- 4. Nilpotent epsilon remains available, but is not ordered
+-- --------------------------------------------------------------------------
+
+-- The same epsilon glyph motivates the endpoint spelling, but the types remain
+-- distinct: this epsilon is the dual-number tangent infinitesimal satisfying
+-- epsilon^2 = 0.  Interval openness is represented by endpoint membership, not
+-- by pretending this nilpotent value can be positive in an ordered ring.
+epsilon_squared_test :
+  dualEqual
+    (dualMultiply epsilon epsilon)
+    dualZero = True
+epsilon_squared_test = Refl
+
+main : IO ()
+main = putStrLn "units, time, intervals: tests typecheck"

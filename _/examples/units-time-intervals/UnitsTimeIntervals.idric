@@ -1,0 +1,438 @@
+module UnitsTimeIntervals
+
+%default total
+
+-- This is deliberately a small executable mathematical kernel, not a general
+-- units/time/uncertainty framework.  The type checker should establish the
+-- settled algebra here without forcing the user to advertise a hierarchy of
+-- Group/Semigroup/etc. interfaces in ordinary source.
+
+-- --------------------------------------------------------------------------
+-- Exact rational scalar used by the first fixtures
+-- --------------------------------------------------------------------------
+
+public export
+data Rat = MkRat Integer Integer
+
+-- First-pass invariant: callers use a nonzero positive denominator.  The
+-- constructors below preserve that invariant for every checked-in fixture.
+-- A later library can hide MkRat and normalize/reject arbitrary denominators;
+-- that representation question is intentionally not needed for these tests.
+public export
+whole : Integer -> Rat
+whole n = MkRat n 1
+
+public export
+fraction : Integer -> Integer -> Rat
+fraction n d = MkRat n d
+
+public export
+ratAdd : Rat -> Rat -> Rat
+ratAdd (MkRat a b) (MkRat c d) =
+  MkRat (a * d + c * b) (b * d)
+
+public export
+ratNegate : Rat -> Rat
+ratNegate (MkRat a b) = MkRat (-a) b
+
+public export
+ratSubtract : Rat -> Rat -> Rat
+ratSubtract left right = ratAdd left (ratNegate right)
+
+public export
+ratMultiply : Rat -> Rat -> Rat
+ratMultiply (MkRat a b) (MkRat c d) = MkRat (a * c) (b * d)
+
+public export
+ratDivide : Rat -> Rat -> Rat
+ratDivide (MkRat a b) (MkRat c d) = MkRat (a * d) (b * c)
+
+public export
+ratEqual : Rat -> Rat -> Bool
+ratEqual (MkRat a b) (MkRat c d) = (a * d) == (c * b)
+
+-- The first interval kernel uses positive denominators, so cross multiplication
+-- preserves order without a sign case split.
+public export
+ratLess : Rat -> Rat -> Bool
+ratLess (MkRat a b) (MkRat c d) = (a * d) < (c * b)
+
+public export
+ratLessOrEqual : Rat -> Rat -> Bool
+ratLessOrEqual left right = ratLess left right || ratEqual left right
+
+-- --------------------------------------------------------------------------
+-- Physical dimensions and exact unit scales
+-- --------------------------------------------------------------------------
+
+-- Exponents are ordered Length, Mass, Time.  That is enough for the first
+-- length/volume/flow/acceleration examples.  Extending the basis later is a
+-- representation change, not a reason to delay these laws.
+public export
+data Dimension = Dim Integer Integer Integer
+
+public export
+lengthDimension : Dimension
+lengthDimension = Dim 1 0 0
+
+public export
+massDimension : Dimension
+massDimension = Dim 0 1 0
+
+public export
+timeDimension : Dimension
+timeDimension = Dim 0 0 1
+
+public export
+volumeDimension : Dimension
+volumeDimension = Dim 3 0 0
+
+public export
+volumeFlowDimension : Dimension
+volumeFlowDimension = Dim 3 0 (-1)
+
+public export
+accelerationDimension : Dimension
+accelerationDimension = Dim 1 0 (-2)
+
+public export
+multiplyDimension : Dimension -> Dimension -> Dimension
+multiplyDimension (Dim l1 m1 t1) (Dim l2 m2 t2) =
+  Dim (l1 + l2) (m1 + m2) (t1 + t2)
+
+public export
+divideDimension : Dimension -> Dimension -> Dimension
+divideDimension (Dim l1 m1 t1) (Dim l2 m2 t2) =
+  Dim (l1 - l2) (m1 - m2) (t1 - t2)
+
+public export
+data Quantity : Dimension -> Type where
+  MkQuantity : Rat -> Quantity dimension
+
+public export
+quantityValue : Quantity dimension -> Rat
+quantityValue (MkQuantity value) = value
+
+public export
+quantityEqual : Quantity dimension -> Quantity dimension -> Bool
+quantityEqual (MkQuantity left) (MkQuantity right) = ratEqual left right
+
+public export
+addQuantity : Quantity dimension -> Quantity dimension -> Quantity dimension
+addQuantity (MkQuantity left) (MkQuantity right) =
+  MkQuantity (ratAdd left right)
+
+public export
+subtractQuantity : Quantity dimension -> Quantity dimension -> Quantity dimension
+subtractQuantity (MkQuantity left) (MkQuantity right) =
+  MkQuantity (ratSubtract left right)
+
+public export
+multiplyQuantity :
+  {leftDimension : Dimension} ->
+  {rightDimension : Dimension} ->
+  Quantity leftDimension ->
+  Quantity rightDimension ->
+  Quantity (multiplyDimension leftDimension rightDimension)
+multiplyQuantity (MkQuantity left) (MkQuantity right) =
+  MkQuantity (ratMultiply left right)
+
+public export
+divideQuantity :
+  {leftDimension : Dimension} ->
+  {rightDimension : Dimension} ->
+  Quantity leftDimension ->
+  Quantity rightDimension ->
+  Quantity (divideDimension leftDimension rightDimension)
+divideQuantity (MkQuantity left) (MkQuantity right) =
+  MkQuantity (ratDivide left right)
+
+-- Length.  Metre is the canonical scalar used internally in this fixture.
+public export
+metres : Rat -> Quantity lengthDimension
+metres amount = MkQuantity amount
+
+public export
+centimetres : Rat -> Quantity lengthDimension
+centimetres amount = MkQuantity (ratMultiply amount (fraction 1 100))
+
+public export
+millimetres : Rat -> Quantity lengthDimension
+millimetres amount = MkQuantity (ratMultiply amount (fraction 1 1000))
+
+public export
+inches : Rat -> Quantity lengthDimension
+inches amount = MkQuantity (ratMultiply amount (fraction 127 5000))
+
+public export
+feet : Rat -> Quantity lengthDimension
+feet amount = MkQuantity (ratMultiply amount (fraction 381 1250))
+
+-- Time as an ordinary physical dimension, for compound quantities such as
+-- volume/time.  This is separate from Instant below: an instant is a point,
+-- while a time-dimensional quantity is an elapsed displacement.
+public export
+secondsQuantity : Rat -> Quantity timeDimension
+secondsQuantity amount = MkQuantity amount
+
+-- Volume.  Cubic metre is canonical.  1 litre = 1/1000 m^3 exactly.
+public export
+litres : Rat -> Quantity volumeDimension
+litres amount = MkQuantity (ratMultiply amount (fraction 1 1000))
+
+-- US customary liquid units are named explicitly.  Do not silently identify
+-- these with imperial gallons/pints.  The US gallon is exactly 231 cubic inches,
+-- hence exactly 473176473 / 125000000000 cubic metres.
+public export
+usGallons : Rat -> Quantity volumeDimension
+usGallons amount =
+  MkQuantity
+    (ratMultiply amount (fraction 473176473 125000000000))
+
+public export
+usQuarts : Rat -> Quantity volumeDimension
+usQuarts amount = usGallons (ratDivide amount (whole 4))
+
+public export
+usPints : Rat -> Quantity volumeDimension
+usPints amount = usGallons (ratDivide amount (whole 8))
+
+public export
+usCups : Rat -> Quantity volumeDimension
+usCups amount = usGallons (ratDivide amount (whole 16))
+
+-- --------------------------------------------------------------------------
+-- Instant + signed Duration
+-- --------------------------------------------------------------------------
+
+-- No calendar semantics here.  The coordinate is an arbitrary exact elapsed
+-- second coordinate used only to make the affine point/displacement laws
+-- executable.  No epoch, timezone, month, DST, or leap-second policy is claimed.
+public export
+data Duration = MkDuration Rat
+
+public export
+data Instant = MkInstant Rat
+
+public export
+seconds : Rat -> Duration
+seconds amount = MkDuration amount
+
+public export
+minutes : Rat -> Duration
+minutes amount = seconds (ratMultiply amount (whole 60))
+
+public export
+hours : Rat -> Duration
+hours amount = minutes (ratMultiply amount (whole 60))
+
+public export
+instant : Rat -> Instant
+instant coordinate = MkInstant coordinate
+
+public export
+durationEqual : Duration -> Duration -> Bool
+durationEqual (MkDuration left) (MkDuration right) = ratEqual left right
+
+public export
+instantEqual : Instant -> Instant -> Bool
+instantEqual (MkInstant left) (MkInstant right) = ratEqual left right
+
+public export
+addDuration : Duration -> Duration -> Duration
+addDuration (MkDuration left) (MkDuration right) =
+  MkDuration (ratAdd left right)
+
+public export
+negateDuration : Duration -> Duration
+negateDuration (MkDuration value) = MkDuration (ratNegate value)
+
+public export
+subtractDuration : Duration -> Duration -> Duration
+subtractDuration left right = addDuration left (negateDuration right)
+
+public export
+plusDuration : Instant -> Duration -> Instant
+plusDuration (MkInstant point) (MkDuration displacement) =
+  MkInstant (ratAdd point displacement)
+
+public export
+minusDuration : Instant -> Duration -> Instant
+minusDuration point displacement = plusDuration point (negateDuration displacement)
+
+-- Read as: instantDifference earlier later = later - earlier.
+public export
+instantDifference : Instant -> Instant -> Duration
+instantDifference (MkInstant earlier) (MkInstant later) =
+  MkDuration (ratSubtract later earlier)
+
+-- --------------------------------------------------------------------------
+-- One-dimensional exact rational intervals
+-- --------------------------------------------------------------------------
+
+-- We intentionally keep endpoint membership as data.  The epsilon names make
+-- the familiar "a + epsilon" / "b - epsilon" intuition available in the type
+-- vocabulary, but they do not pretend that the nilpotent dual epsilon below is
+-- an ordered positive number.  A nonzero ordered epsilon cannot satisfy
+-- epsilon^2 = 0 in an ordered ring.
+public export
+data LowerBoundary
+  = IncludeLower
+  | LowerPlusEpsilon
+
+public export
+data UpperBoundary
+  = IncludeUpper
+  | UpperMinusEpsilon
+
+public export
+data Interval a
+  = EmptyInterval
+  | Span LowerBoundary a a UpperBoundary
+
+public export
+lowerIncluded : LowerBoundary -> Bool
+lowerIncluded IncludeLower = True
+lowerIncluded LowerPlusEpsilon = False
+
+public export
+upperIncluded : UpperBoundary -> Bool
+upperIncluded IncludeUpper = True
+upperIncluded UpperMinusEpsilon = False
+
+public export
+makeInterval : LowerBoundary -> Rat -> Rat -> UpperBoundary -> Interval Rat
+makeInterval lower lo hi upper =
+  if ratLess hi lo
+    then EmptyInterval
+    else if ratEqual lo hi
+      then if lowerIncluded lower && upperIncluded upper
+        then Span lower lo hi upper
+        else EmptyInterval
+      else Span lower lo hi upper
+
+public export
+closedInterval : Rat -> Rat -> Interval Rat
+closedInterval lo hi = makeInterval IncludeLower lo hi IncludeUpper
+
+public export
+openInterval : Rat -> Rat -> Interval Rat
+openInterval lo hi = makeInterval LowerPlusEpsilon lo hi UpperMinusEpsilon
+
+public export
+leftOpenInterval : Rat -> Rat -> Interval Rat
+leftOpenInterval lo hi = makeInterval LowerPlusEpsilon lo hi IncludeUpper
+
+public export
+rightOpenInterval : Rat -> Rat -> Interval Rat
+rightOpenInterval lo hi = makeInterval IncludeLower lo hi UpperMinusEpsilon
+
+public export
+openLeft : Interval Rat -> Interval Rat
+openLeft EmptyInterval = EmptyInterval
+openLeft (Span _ lo hi upper) =
+  makeInterval LowerPlusEpsilon lo hi upper
+
+public export
+openRight : Interval Rat -> Interval Rat
+openRight EmptyInterval = EmptyInterval
+openRight (Span lower lo hi _) =
+  makeInterval lower lo hi UpperMinusEpsilon
+
+public export
+lowerAllows : LowerBoundary -> Rat -> Rat -> Bool
+lowerAllows IncludeLower lo value = ratLessOrEqual lo value
+lowerAllows LowerPlusEpsilon lo value = ratLess lo value
+
+public export
+upperAllows : UpperBoundary -> Rat -> Rat -> Bool
+upperAllows IncludeUpper hi value = ratLessOrEqual value hi
+upperAllows UpperMinusEpsilon hi value = ratLess value hi
+
+public export
+contains : Interval Rat -> Rat -> Bool
+contains EmptyInterval _ = False
+contains (Span lower lo hi upper) value =
+  lowerAllows lower lo value && upperAllows upper hi value
+
+public export
+sameLowerBoundary : LowerBoundary -> LowerBoundary -> Bool
+sameLowerBoundary IncludeLower IncludeLower = True
+sameLowerBoundary LowerPlusEpsilon LowerPlusEpsilon = True
+sameLowerBoundary _ _ = False
+
+public export
+sameUpperBoundary : UpperBoundary -> UpperBoundary -> Bool
+sameUpperBoundary IncludeUpper IncludeUpper = True
+sameUpperBoundary UpperMinusEpsilon UpperMinusEpsilon = True
+sameUpperBoundary _ _ = False
+
+public export
+intervalEqual : Interval Rat -> Interval Rat -> Bool
+intervalEqual EmptyInterval EmptyInterval = True
+intervalEqual
+  (Span lower1 lo1 hi1 upper1)
+  (Span lower2 lo2 hi2 upper2) =
+    sameLowerBoundary lower1 lower2 &&
+    ratEqual lo1 lo2 &&
+    ratEqual hi1 hi2 &&
+    sameUpperBoundary upper1 upper2
+intervalEqual _ _ = False
+
+public export
+addLowerBoundary : LowerBoundary -> LowerBoundary -> LowerBoundary
+addLowerBoundary IncludeLower IncludeLower = IncludeLower
+addLowerBoundary _ _ = LowerPlusEpsilon
+
+public export
+addUpperBoundary : UpperBoundary -> UpperBoundary -> UpperBoundary
+addUpperBoundary IncludeUpper IncludeUpper = IncludeUpper
+addUpperBoundary _ _ = UpperMinusEpsilon
+
+public export
+addInterval : Interval Rat -> Interval Rat -> Interval Rat
+addInterval EmptyInterval _ = EmptyInterval
+addInterval _ EmptyInterval = EmptyInterval
+addInterval
+  (Span lower1 lo1 hi1 upper1)
+  (Span lower2 lo2 hi2 upper2) =
+    makeInterval
+      (addLowerBoundary lower1 lower2)
+      (ratAdd lo1 lo2)
+      (ratAdd hi1 hi2)
+      (addUpperBoundary upper1 upper2)
+
+-- Deliberately absent: a closeLeft/closeRight operation that pretends opening
+-- with epsilon was invertible.  Once endpoint membership has been discarded,
+-- closing the set is a new operation/claim, not algebraic cancellation.
+
+-- --------------------------------------------------------------------------
+-- Dual-number epsilon: same notation family, distinct type and semantics
+-- --------------------------------------------------------------------------
+
+public export
+data Dual = MkDual Rat Rat
+
+public export
+dualZero : Dual
+dualZero = MkDual (whole 0) (whole 0)
+
+public export
+epsilon : Dual
+epsilon = MkDual (whole 0) (whole 1)
+
+public export
+dualMultiply : Dual -> Dual -> Dual
+dualMultiply (MkDual a b) (MkDual c d) =
+  MkDual
+    (ratMultiply a c)
+    (ratAdd (ratMultiply a d) (ratMultiply b c))
+
+public export
+dualEqual : Dual -> Dual -> Bool
+dualEqual (MkDual a b) (MkDual c d) =
+  ratEqual a c && ratEqual b d
+
+-- No Ord/ordering operation is supplied for Dual.  This is intentional: the
+-- nilpotent epsilon belongs to first-order/tangent algebra, while interval
+-- openness belongs to endpoint membership/order semantics.
