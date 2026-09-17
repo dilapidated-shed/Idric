@@ -25,7 +25,6 @@ if [ -t 1 ] && [ "${TERM:-dumb}" != dumb ]; then
     stdout_green=$(printf '\033[32m')
     stdout_yellow=$(printf '\033[33m')
     stdout_blue=$(printf '\033[34m')
-    stdout_magenta=$(printf '\033[35m')
     stdout_cyan=$(printf '\033[36m')
 else
     stdout_reset=''
@@ -33,7 +32,6 @@ else
     stdout_green=''
     stdout_yellow=''
     stdout_blue=''
-    stdout_magenta=''
     stdout_cyan=''
 fi
 
