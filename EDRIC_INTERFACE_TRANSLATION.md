@@ -70,7 +70,7 @@ This code is useful precisely because the mechanism is ordinary and local. The s
 
 - decorate each output stream only when that stream is an interactive terminal with a usable terminal type;
 - otherwise emit no decoration on that stream;
-- keep machine-readable or saved receipts independent of presentation;
+- keep machine-readable or saved receipts on a distinct undecorated path rather than deriving receipts from decorated terminal output;
 - distinguish ordinary information, warnings, failures, passes, and section boundaries for a human reader;
 - send failures to the error stream without letting standard-output terminal state decide whether standard error is decorated.
 
