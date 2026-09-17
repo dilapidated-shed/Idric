@@ -1,0 +1,92 @@
+name: Temporary Idriç terminology repair
+
+on:
+  push:
+    branches:
+      - docs/idric-terminology-audit
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/idric-terminology-audit
+          fetch-depth: 0
+
+      - name: Correct maintained prose and remove this workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          replacements = {
+              ".github/workflows/ci-edric-types.yml": [
+                  ("name: Edric type-system smoke", "name: Idriç type-system smoke"),
+                  ("Bootstrap Edric and run focused smoke suite", "Bootstrap Idriç and run focused smoke suite"),
+              ],
+              "_/.github/workflows/ci-edric-higher-mathematics.yml": [
+                  ("name: Idric higher-mathematics semantics", "name: Idriç higher-mathematics semantics"),
+                  ("Bootstrap Idric", "Bootstrap Idriç"),
+              ],
+              "_/.github/workflows/ci-edric-wrapper.yml": [
+                  ("name: Edric wrapper", "name: edric executable wrapper"),
+              ],
+              "_/README.md": [
+                  ("# Idriç / Idric / Edric", "# Idriç / Idric"),
+                  ("`Idric` is the repository's ASCII spelling; `Edric` may appear in speech/transcription.",
+                   "`Idric` is the repository's literal ASCII repository name; human-facing prose uses `Idriç`."),
+                  ("Edric-specific language changes", "Idriç-specific language changes"),
+              ],
+              "_/BRANCHES.md": [
+                  ("The repository is named `Idric`; the project is written `Idriç`; `Edric` is a\nspeech/transcription spelling. Those names do not identify three compiler\nbranches.",
+                   "The repository is named `Idric`; the project is written `Idriç`. The literal\nrepository name and language name do not identify separate compiler branches."),
+              ],
+              "TTImp/Utils.idr": [
+                  ("data constructor introduced by Idric choice syntax", "data constructor introduced by Idriç choice syntax"),
+              ],
+              "_/examples/unified-higher-mathematics/EuclideanGeometry.idric": [
+                  ("inside Idric.", "inside Idriç."),
+              ],
+              "_/scripts/test-one-step-emitter.sh": [
+                  ("Idric compiler one-step emitter: PASS", "Idriç compiler one-step emitter: PASS"),
+              ],
+              "_/scripts/emit-one-step.sh": [
+                  ("Idric one-step emitter:", "Idriç one-step emitter:"),
+              ],
+          }
+
+          for name, pairs in replacements.items():
+              path = Path(name)
+              text = path.read_text()
+              original = text
+              for old, new in pairs:
+                  count = text.count(old)
+                  if count == 0:
+                      raise SystemExit(f"expected text not found in {name}: {old!r}")
+                  text = text.replace(old, new)
+              if text == original:
+                  raise SystemExit(f"no change in {name}")
+              path.write_text(text)
+
+          verification = Path("_/examples/unified-higher-mathematics/HIGH_DIMENSIONAL_VERIFICATION.md")
+          text = verification.read_text()
+          changed, count = re.subn(r"\bIdric\b", "Idriç", text)
+          if count != 5:
+              raise SystemExit(f"expected 5 prose Idric occurrences in {verification}, found {count}")
+          verification.write_text(changed)
+          PY
+
+          rm .github/workflows/idric-terminology-fix-temp.yml
+
+          git config user.name 'isomorphisms terminology audit'
+          git config user.email 'isomorphisms@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'Finish Idriç terminology cleanup'
+          git push origin HEAD:docs/idric-terminology-audit
