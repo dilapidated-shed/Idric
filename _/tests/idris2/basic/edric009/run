@@ -15,10 +15,12 @@ cp "$example_dir/PairArithmetic.idric" "$fixture_dir/PairArithmetic.idric"
 cp "$example_dir/NamedFacts.idric" "$fixture_dir/NamedFacts.idric"
 cp "$example_dir/QuadraticForms.idric" "$fixture_dir/QuadraticForms.idric"
 cp "$example_dir/ComplexPairAgreement.idric" "$fixture_dir/ComplexPairAgreement.idric"
+cp "$example_dir/QuaternionPairAgreement.idric" "$fixture_dir/QuaternionPairAgreement.idric"
 cp "$example_dir/ComplexProjective.idric" "$fixture_dir/ComplexProjective.idric"
 cp "$example_dir/Tests.idric" "$fixture_dir/Tests.idric"
 cp "$example_dir/PairArithmeticTests.idric" "$fixture_dir/PairArithmeticTests.idric"
 cp "$example_dir/ComplexPairAgreementTests.idric" "$fixture_dir/ComplexPairAgreementTests.idric"
+cp "$example_dir/QuaternionPairAgreementTests.idric" "$fixture_dir/QuaternionPairAgreementTests.idric"
 cp "$example_dir/FormTests.idric" "$fixture_dir/FormTests.idric"
 cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTests.idric"
 
@@ -63,6 +65,18 @@ cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTe
   fi
 
   ./build/exec/complex-pair-agreement
+
+  if ! "$idris2" --check QuaternionPairAgreementTests.idric >quaternion-pair-typecheck.log 2>&1; then
+    cat quaternion-pair-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" QuaternionPairAgreementTests.idric -o quaternion-pair-agreement >quaternion-pair-build.log 2>&1; then
+    cat quaternion-pair-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/quaternion-pair-agreement
 
   if ! "$idris2" --check FormTests.idric >form-typecheck.log 2>&1; then
     cat form-typecheck.log >&2
