@@ -1,5 +1,6 @@
 module QuaternionPairAgreementTests
 
+import MathematicalSpaces
 import QuadraticForms
 import EuclideanGeometry
 import QuaternionPairAgreement
