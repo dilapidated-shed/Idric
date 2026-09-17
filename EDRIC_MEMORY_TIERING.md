@@ -1,8 +1,8 @@
-# Edriç memory-tiering lowering note
+# Idriç memory-tiering lowering note
 
 Status: design note. This is not a claim that every phrase below is accepted by the current parser.
 
-Memory management is a useful forcing example for the intended Edriç boundary because the semantic policy is much easier to state than any one Linux, Android, DEX, C, assembly, or kernel implementation.
+Memory management is a useful forcing example for the intended Idriç boundary because the semantic policy is much easier to state than any one Linux, Android, DEX, C, assembly, or kernel implementation.
 
 ## Start with the policy
 
@@ -35,7 +35,7 @@ The concrete Android experiment lives in <https://github.com/isomorphisms/zram>.
 Lowering does not need to be one fixed staircase for every action. Different phrases can descend through different mechanisms:
 
 ```text
-Edriç policy
+Idriç policy
     |
     +-> Android framework action
     |      -> checked Android/runtime operations
@@ -75,7 +75,7 @@ No one of these should become the ontology of the source language.
 
 ## A portable machine IR is plausible
 
-A future cross-processor IR can sit below semantic Idriç/Edriç operations and above target encodings. It should describe machine-relevant meaning without pretending all processors are identical.
+A future cross-processor IR can sit below semantic Idriç operations and above target encodings. It should describe machine-relevant meaning without pretending all processors are identical.
 
 Useful explicit concepts would include:
 
@@ -95,7 +95,7 @@ This would be a portable *machine* representation, not a replacement for the hig
 
 ## DEX is a real target, but not a Linux-kernel instruction set
 
-DEX is appropriate for code that belongs in Android's managed/runtime layer. Edriç can therefore lower an Android-side controller, service, policy process, or framework client directly to DEX.
+DEX is appropriate for code that belongs in Android's managed/runtime layer. Idriç can therefore lower an Android-side controller, service, policy process, or framework client directly to DEX.
 
 DEX cannot directly execute as Linux kernel code. Kernel zram, page reclaim, storage drivers, and similar mechanisms still require code accepted by the kernel/native architecture. The source program can nevertheless span both sides by preserving the semantic action above the boundary and lowering each component to the target it actually runs on.
 
@@ -128,7 +128,7 @@ One level lower might expose page numbers, byte counts, queues, file descriptors
 
 Only the final lowering needs to care whether the selected implementation is DEX bytecode, a syscall sequence, C-shaped ABI calls, or direct machine instructions.
 
-## ComputerScience chooses; Edriç preserves intent
+## ComputerScience chooses; Idriç preserves intent
 
 `walnut-burgundy/computer-science` should eventually choose among implementation variants from target facts and measurements:
 
@@ -140,7 +140,7 @@ Only the final lowering needs to care whether the selected implementation is DEX
 - available Android/kernel interfaces;
 - actual target ABI and instruction set.
 
-Edriç should preserve the semantic request and the constraints needed to make that choice. The compiler should not silently encode one historical operating-system convention such as “all systems work goes through C.”
+Idriç should preserve the semantic request and the constraints needed to make that choice. The compiler should not silently encode one historical operating-system convention such as “all systems work goes through C.”
 
 ## Acceptance boundary
 
