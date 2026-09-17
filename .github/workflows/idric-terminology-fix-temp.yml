@@ -17,7 +17,7 @@ jobs:
           ref: docs/idric-terminology-audit
           fetch-depth: 0
 
-      - name: Correct maintained prose and remove this workflow
+      - name: Correct remaining maintained prose
         shell: bash
         run: |
           set -euo pipefail
@@ -26,10 +26,6 @@ jobs:
           import re
 
           replacements = {
-              ".github/workflows/ci-edric-types.yml": [
-                  ("name: Edric type-system smoke", "name: Idriç type-system smoke"),
-                  ("Bootstrap Edric and run focused smoke suite", "Bootstrap Idriç and run focused smoke suite"),
-              ],
               "_/.github/workflows/ci-edric-higher-mathematics.yml": [
                   ("name: Idric higher-mathematics semantics", "name: Idriç higher-mathematics semantics"),
                   ("Bootstrap Idric", "Bootstrap Idriç"),
@@ -66,8 +62,7 @@ jobs:
               text = path.read_text()
               original = text
               for old, new in pairs:
-                  count = text.count(old)
-                  if count == 0:
+                  if old not in text:
                       raise SystemExit(f"expected text not found in {name}: {old!r}")
                   text = text.replace(old, new)
               if text == original:
@@ -81,8 +76,6 @@ jobs:
               raise SystemExit(f"expected 5 prose Idric occurrences in {verification}, found {count}")
           verification.write_text(changed)
           PY
-
-          rm .github/workflows/idric-terminology-fix-temp.yml
 
           git config user.name 'isomorphisms terminology audit'
           git config user.email 'isomorphisms@users.noreply.github.com'
