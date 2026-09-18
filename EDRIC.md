@@ -85,6 +85,44 @@ and alternative names resolve correctly in signatures and exhaustive patterns,
 without disabling normal Idris auto-implicit binding for unrelated lowercase
 names.
 
+
+## Storage-layout intent as a lower-level control target
+
+Status: research note. This is not accepted parser syntax.
+
+Linux `fallocate(..., FALLOC_FL_KEEP_SIZE)` on FAT is a useful forcing example for the adverb/intent experiment. A high-level program may know that some durable data should be stored with a particular allocation policy without wanting to name a syscall, a C ABI, or a FAT helper.
+
+Possible source-level intent might read approximately like:
+
+```idric
+store append_log
+    with storage reserved ahead of writes
+    keeping visible length unchanged
+    preferring sequential allocation
+```
+
+The exact words and grammar are deliberately open. The important information is the semantic request and whether each clause is a preference or a hard requirement.
+
+Keep these layers separate:
+
+- the source intent: reserve backing space before later writes, keep logical length unchanged until data is written, and express append/sequential-placement preferences where they matter;
+- the architecture choice: decide whether the target can satisfy those constraints and which mechanism should do it;
+- the operating-system mechanism: for example Linux `fallocate` with `FALLOC_FL_KEEP_SIZE`;
+- the filesystem mechanism: on Linux FAT, `fat_fallocate()` can extend the allocated cluster chain through `fat_add_cluster()`;
+- the storage device: filesystem cluster allocation does not by itself prove physical NAND placement or contiguity behind a flash translation layer.
+
+This is a good case for jagged lowering. One target may use a normal userspace syscall, another an append-FAT-specific primitive, and another may have no equivalent capability. Unsupported requirements should remain visible rather than being silently weakened.
+
+Capability also belongs to the access path, not just the nominal filesystem. An Android mediated/FUSE-style storage path can reject `fallocate` before an underlying FAT implementation is reached. A planner therefore needs filesystem, mount/interface, kernel, and device facts separately.
+
+The concrete experiment is now at <https://github.com/fuego-ironworks/sd-card-append-fat>. Useful source references are:
+
+- util-linux command wrapper: <https://github.com/util-linux/util-linux/blob/master/sys-utils/fallocate.c>
+- Linux VFS dispatch: <https://github.com/torvalds/linux/blob/master/fs/open.c>
+- Linux FAT implementation: <https://github.com/torvalds/linux/blob/master/fs/fat/file.c>
+
+ComputerScience should eventually choose the target mechanism from capabilities and measurements. Edric/Idriç should preserve the storage intent and constraints long enough for that choice to be explicit and inspectable.
+
 ## Working copy
 
 Preferred checkout:
