@@ -101,14 +101,23 @@ language accepts it.
 - `→` for type/result direction
 - `←` for effectful binding or receiving a result
 - `⇒` for branch/result notation where applicable
-- `=` for equality
-- `≠` for inequality
+- `=` for propositional equality: `left = right` is an equality type, not a
+  runtime Boolean comparison
+- `≟` for runtime/decidable equality when an `Eq`-style comparison should
+  produce `Bool`; inherited `==` is a compatibility spelling, not canonical
+  Idriç source
+- reserve `≠` for proposition-level inequality/negated equality; do not use it
+  as the Boolean equality-question spelling
 - `≝` for “defined as” in intent notation and documentation
 - `∘` for composition where it actually clarifies the expression
 - Unicode `−` for mathematical minus rather than an ASCII hyphen when writing
   mathematical notation
 
 Do not use ASCII `->` or `<-` as substitutes for Idriç-facing arrows.
+
+The frontend may lower `≟` to the inherited `Eq` operator internally. That
+implementation spelling belongs at the bootstrap/compatibility boundary and
+must not leak back into maintained `.idric` source.
 
 Use `$` when it materially removes nested parentheses and makes the expression
 read in its natural order. Do not add punctuation merely to imitate another

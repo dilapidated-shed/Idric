@@ -60,6 +60,23 @@ The inherited Idris 2 names `Vect` and `Data.Vect` remain where upstream
 compatibility requires them. New Idriç APIs, examples, and explanations must
 not use “vector” as a synonym for a list with a known or computed length.
 
+## Equality notation
+
+In `.idric` source, `left = right` remains propositional equality: it forms
+an equality type and can be witnessed by `Refl`. Runtime decidable comparison
+uses `left ≟ right` and produces `Bool` through the existing checked `Eq`
+surface.
+
+The frontend normalizes `≟` to the inherited `==` operator before the general
+operator parser and elaborator. This keeps one checked equality meaning without
+making `=` context-sensitive or ambiguous. Ordinary `.idr` source keeps
+inherited `==` behavior unchanged. The inherited grammar may still accept
+`==` in a `.idric` file, but it is compatibility syntax rather than the
+canonical spelling for maintained Idriç source.
+
+`≠` remains reserved for proposition-level inequality/negated equality; it is
+not the Boolean equality-question spelling.
+
 ## Storage-neutral choices
 
 Files ending in `.idric` may declare a non-parameterized choice with lower
@@ -166,6 +183,7 @@ make test only=idris2/basic/edric004
 make test only=idris2/basic/edric005
 make test only=idris2/basic/edric006
 make test only=idris2/basic/edric009
+make test only=idris2/basic/edric010
 ```
 
 ## Idriç koans
@@ -226,6 +244,10 @@ A new thread working on Idriç should:
   frontend lowers that exact module boundary to `Data.String`.
 - The older `ℕ` spelling remains a migration alias, not the current spelling.
 - Idriç source accepts `→`, `⇒`, `←`, and `≤` as compact aliases for `->`, `=>`, `<-`, and `<=`; the ASCII spellings remain accepted.
+- In `.idric`, `=` remains propositional equality and `≟` is the canonical
+  runtime/decidable equality question; the frontend lowers `≟` to inherited
+  `==` before ordinary operator parsing and elaboration. `.idr` `==` behavior
+  is unchanged, and inherited `==` is not canonical maintained Idriç syntax.
 - The aliases are filename-scoped to `.idric`; ordinary `.idr` Unicode identifiers remain unchanged.
 - Canonical Unicode pretty-printing is not yet claimed by this input-syntax slice.
 - Historical broad mechanical Unicode rewrite: reference only, not the base.

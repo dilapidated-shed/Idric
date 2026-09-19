@@ -1,0 +1,22 @@
+module Main
+
+import Data.Text
+import IdrisCompat
+
+text_equal : Text → Text → Bool
+text_equal left right = left ≟ right
+
+text_self_equal : (value : Text) → value = value
+text_self_equal value = Refl
+
+proposition_checked : Text
+proposition_checked = case text_self_equal "same" of
+  Refl ⇒ "propositional equality"
+
+main : IO ()
+main = do
+  printLn $ text_equal "same" "same"
+  printLn $ text_equal "same" "different"
+  putStrLn proposition_checked
+  printLn $ idris_text_equal "same" "same"
+  printLn $ idris_text_equal "same" "different"
