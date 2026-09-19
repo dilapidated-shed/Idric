@@ -26,7 +26,7 @@ public export
 data SourceSyntax = IdrisSyntax | IdricSyntax
 
 isIdricSyntaxSymbol : Char -> Bool
-isIdricSyntaxSymbol c = c `elem` unpack "→⇒←≤"
+isIdricSyntaxSymbol c = c `elem` unpack "→⇒←≤≟"
 
 public export
 data DebugInfo
@@ -257,6 +257,7 @@ canonicalIdricSymbol "→" = Symbol "->"
 canonicalIdricSymbol "⇒" = Symbol "=>"
 canonicalIdricSymbol "←" = Symbol "<-"
 canonicalIdricSymbol "≤" = Symbol "<="
+canonicalIdricSymbol "≟" = Symbol "=="
 canonicalIdricSymbol symbol = Symbol symbol
 
 syntaxSymbol : SourceSyntax -> Tokenizer Token
