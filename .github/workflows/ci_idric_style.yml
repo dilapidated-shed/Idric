@@ -18,5 +18,3 @@ jobs:
           fetch-depth: 0
       - name: Check newly added Idriç source
         uses: isomorphisms/ai-ci/idric-style@d76e865c3742c51308ddf211ee6f5b724f4104de
-        with:
-          base: ${{ github.event_name == 'pull_request' && 'HEAD^1' || github.event.before }}
