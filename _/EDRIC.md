@@ -260,3 +260,4 @@ A new thread working on Idriç should:
   `R^128` orthogonal generators, the finite presheaf restriction model, and one
   provenance-labelled named fact.  It is a bounded semantic example, not a
   complete real-scalar model or general mathematics engine.
+- The same higher-mathematics acceptance now carries the exact three-byte Q0.11 octahedral storage contract for an `S²` direction / unit pure quaternion. It fixes packing and principal-axis bytes without claiming that this is a general `S³` orientation-quaternion codec or importing accelerometer-specific magnitude and gravity semantics.
