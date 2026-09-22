@@ -21,6 +21,8 @@ cp "$example_dir/Tests.idric" "$fixture_dir/Tests.idric"
 cp "$example_dir/PairArithmeticTests.idric" "$fixture_dir/PairArithmeticTests.idric"
 cp "$example_dir/ComplexPairAgreementTests.idric" "$fixture_dir/ComplexPairAgreementTests.idric"
 cp "$example_dir/QuaternionPairAgreementTests.idric" "$fixture_dir/QuaternionPairAgreementTests.idric"
+cp "$example_dir/CompactUnitDirectionStorage.idric" "$fixture_dir/CompactUnitDirectionStorage.idric"
+cp "$example_dir/CompactUnitDirectionStorageTests.idric" "$fixture_dir/CompactUnitDirectionStorageTests.idric"
 cp "$example_dir/FormTests.idric" "$fixture_dir/FormTests.idric"
 cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTests.idric"
 
@@ -77,6 +79,18 @@ cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTe
   fi
 
   ./build/exec/quaternion-pair-agreement
+
+  if ! "$idris2" --check CompactUnitDirectionStorageTests.idric >compact-direction-typecheck.log 2>&1; then
+    cat compact-direction-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" CompactUnitDirectionStorageTests.idric -o compact-unit-direction >compact-direction-build.log 2>&1; then
+    cat compact-direction-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/compact-unit-direction
 
   if ! "$idris2" --check FormTests.idric >form-typecheck.log 2>&1; then
     cat form-typecheck.log >&2

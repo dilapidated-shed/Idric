@@ -1,0 +1,104 @@
+module CompactUnitDirectionStorage
+
+%unbound_implicits off
+
+-- This is the exact storage boundary extracted from the phone accelerometer
+-- codec. A three-dimensional unit direction is equivalently a unit pure
+-- quaternion 0 + x i + y j + z k, hence a point of S^2.
+--
+-- This module models only the two signed Q0.11 octahedral chart coordinates
+-- and their three stored bytes. It does not claim to store an arbitrary unit
+-- orientation quaternion in S^3, and it deliberately does not import the
+-- accelerometer's magnitude, balanced-gravity reference, or physical units.
+
+public export
+record CompactUnitDirectionCodes where
+  constructor OctahedralQ0_11
+  first_chart_code : Integer
+  second_chart_code : Integer
+
+public export
+record CompactUnitDirectionBytes where
+  constructor DirectionBytes
+  low_byte : Integer
+  middle_byte : Integer
+  high_byte : Integer
+
+public export
+direction_code_minimum : Integer
+direction_code_minimum = -2048
+
+public export
+direction_code_maximum : Integer
+direction_code_maximum = 2047
+
+public export
+direction_code_scale : Integer
+direction_code_scale = 2048
+
+public export
+twos_complement_12 : Integer → Integer
+twos_complement_12 code =
+  if code < 0
+    then code + 4096
+    else code
+
+public export
+sign_extend_12 : Integer → Integer
+sign_extend_12 bits =
+  if bits >= 2048
+    then bits - 4096
+    else bits
+
+public export
+pack_direction_codes :
+  CompactUnitDirectionCodes → CompactUnitDirectionBytes
+pack_direction_codes (OctahedralQ0_11 first second) =
+  let packed =
+        twos_complement_12 first +
+        4096 * twos_complement_12 second
+      low = mod packed 256
+      middle = mod (div packed 256) 256
+      high = mod (div packed 65536) 256
+  in DirectionBytes low middle high
+
+public export
+unpack_direction_bytes :
+  CompactUnitDirectionBytes → CompactUnitDirectionCodes
+unpack_direction_bytes (DirectionBytes low middle high) =
+  let first_bits =
+        low + 256 * mod middle 16
+      second_bits =
+        div middle 16 + 16 * high
+  in OctahedralQ0_11
+       (sign_extend_12 first_bits)
+       (sign_extend_12 second_bits)
+
+-- The standard octahedral fold maps the six principal directions to these
+-- exact chart-code pairs. Positive chart coordinates clamp at +2047 because
+-- the stored coordinates are signed 12-bit values; negative full scale is
+-- -2048.
+
+public export
+positive_x_codes : CompactUnitDirectionCodes
+positive_x_codes = OctahedralQ0_11 2047 0
+
+public export
+negative_x_codes : CompactUnitDirectionCodes
+negative_x_codes = OctahedralQ0_11 (-2048) 0
+
+public export
+positive_y_codes : CompactUnitDirectionCodes
+positive_y_codes = OctahedralQ0_11 0 2047
+
+public export
+negative_y_codes : CompactUnitDirectionCodes
+negative_y_codes = OctahedralQ0_11 0 (-2048)
+
+public export
+positive_z_codes : CompactUnitDirectionCodes
+positive_z_codes = OctahedralQ0_11 0 0
+
+public export
+negative_z_codes : CompactUnitDirectionCodes
+negative_z_codes = OctahedralQ0_11 2047 2047
