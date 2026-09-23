@@ -2,6 +2,8 @@
 
 This slice establishes the type-level distinction needed by complex and projective arithmetic without choosing a machine representation or silently settling the separate floating-precision work.
 
+Related O/SO, Givens/Householder, polar-complex, DFT/FFT, RoPE, shader, and target-lowering work is indexed in [`_/examples/unified-higher-mathematics/ROTATION-COMPLEX-PROJECTIVE-CROSS-REFERENCES.md`](_/examples/unified-higher-mathematics/ROTATION-COMPLEX-PROJECTIVE-CROSS-REFERENCES.md). That index is for discovery; none of those target representations redefine the semantic `Complex` or projective types here.
+
 ## What the checker now distinguishes
 
 `ComplexCoordinates complex n` is the structural type of an element of a complex coordinate space with exactly `n` coordinates. `ComplexProjectivePoint complex n` is a projective point with a nonzero homogeneous representative containing exactly `n + 1` complex coordinates.
