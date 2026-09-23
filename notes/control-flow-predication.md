@@ -6,6 +6,9 @@ start changing the Idric / edric compiler itself.
 The immediate example came from the shader backend and GPU Gems 2 Chapter 34,
 but the issue is not specific to GPUs.
 
+Related shader-backend note:
+https://github.com/isomorphisms/idris-shader-backend/blob/main/books%20about%20GPU%20programming/GPU%20Gems%202/chapter-34-flow-control-and-rselect.md
+
 Source motivating the terminology:
 
 - Mark Harris and Ian Buck, “GPU Flow-Control Idioms,” *GPU Gems 2* (2005):
