@@ -55,6 +55,12 @@ Thus the first-axis reflection is orientation-reversing and two reflections
 compose into `SO`, without pretending that this example can certify an
 arbitrary user-supplied matrix or represent every quaternionic rotation.
 
+Related implementation and research work is indexed in
+[ROTATION-COMPLEX-PROJECTIVE-CROSS-REFERENCES.md](ROTATION-COMPLEX-PROJECTIVE-CROSS-REFERENCES.md),
+including the shader Givens/Householder fixtures, ARM polar-complex experiment,
+x86 complex/projective leader, RoPE, DFT/FFT connections, and DwarfStar GPU
+rotation research. Those links are cross-references, not representation choices.
+
 The Einstein-style experiment is intentionally only a one-index kernel.
 `LowerIndex` contains a covector, `UpperIndex` contains a vector, and
 `contract_index` accepts opposite variance over the same complete named-space
