@@ -23,6 +23,8 @@ cp "$example_dir/ComplexPairAgreementTests.idric" "$fixture_dir/ComplexPairAgree
 cp "$example_dir/QuaternionPairAgreementTests.idric" "$fixture_dir/QuaternionPairAgreementTests.idric"
 cp "$example_dir/CompactUnitDirectionStorage.idric" "$fixture_dir/CompactUnitDirectionStorage.idric"
 cp "$example_dir/CompactUnitDirectionStorageTests.idric" "$fixture_dir/CompactUnitDirectionStorageTests.idric"
+cp "$example_dir/Circle96.idric" "$fixture_dir/Circle96.idric"
+cp "$example_dir/Circle96Tests.idric" "$fixture_dir/Circle96Tests.idric"
 cp "$example_dir/FormTests.idric" "$fixture_dir/FormTests.idric"
 cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTests.idric"
 
@@ -91,6 +93,18 @@ cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTe
   fi
 
   ./build/exec/compact-unit-direction
+
+  if ! "$idris2" --check Circle96Tests.idric >circle96-typecheck.log 2>&1; then
+    cat circle96-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" Circle96Tests.idric -o circle96-geometry >circle96-build.log 2>&1; then
+    cat circle96-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/circle96-geometry
 
   if ! "$idris2" --check FormTests.idric >form-typecheck.log 2>&1; then
     cat form-typecheck.log >&2

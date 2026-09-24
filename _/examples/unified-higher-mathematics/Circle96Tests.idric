@@ -1,0 +1,95 @@
+module Circle96Tests
+
+import Circle96
+
+%unbound_implicits off
+
+zero_is_first_third_origin :
+  circle96_code (circle96 0) = 0
+zero_is_first_third_origin = Refl
+
+one_third_is_binary_landmark :
+  circle96_code (circle96 32) = 32
+one_third_is_binary_landmark = Refl
+
+two_thirds_is_binary_landmark :
+  circle96_code (circle96 64) = 64
+two_thirds_is_binary_landmark = Refl
+
+one_third_sector_is_one :
+  third_sector (circle96 32) = 1
+one_third_sector_is_one = Refl
+
+two_thirds_sector_is_two :
+  third_sector (circle96 64) = 2
+two_thirds_sector_is_two = Refl
+
+third_landmarks_have_zero_local_offset :
+  position_within_third (circle96 64) = 0
+third_landmarks_have_zero_local_offset = Refl
+
+sixty_degrees_is_halfway_through_first_third :
+  position_within_third (circle96 16) = 16
+sixty_degrees_is_halfway_through_first_third = Refl
+
+last_canonical_code_is_valid :
+  circle96_code_is_canonical 95 = True
+last_canonical_code_is_valid = Refl
+
+first_spare_code_is_not_canonical :
+  circle96_code_is_canonical 96 = False
+first_spare_code_is_not_canonical = Refl
+
+one_flat_is_exact :
+  rotation96_code one_flat = 16
+one_flat_is_exact = Refl
+
+half_flat_is_exact :
+  rotation96_code half_flat = 8
+half_flat_is_exact = Refl
+
+quarter_flat_is_exact :
+  rotation96_code quarter_flat = 4
+quarter_flat_is_exact = Refl
+
+eighth_flat_is_exact :
+  rotation96_code eighth_flat = 2
+eighth_flat_is_exact = Refl
+
+sixteenth_flat_is_exact :
+  rotation96_code sixteenth_flat = 1
+sixteenth_flat_is_exact = Refl
+
+full_turn_wraps :
+  rotate (rotation96 96) (circle96 7) = circle96 7
+full_turn_wraps = Refl
+
+flat_wraps :
+  rotate one_flat (circle96 88) = circle96 8
+flat_wraps = Refl
+
+inverse_flat :
+  rotate (inverse_rotation one_flat) (rotate one_flat (circle96 23)) =
+    circle96 23
+inverse_flat = Refl
+
+reflection_is_involution :
+  reflect (reflection96 17) (reflect (reflection96 17) (circle96 31)) =
+    circle96 31
+reflection_is_involution = Refl
+
+short_forward_displacement :
+  local_displacement (circle96 1) (circle96 95) = 2
+short_forward_displacement = Refl
+
+short_backward_displacement :
+  local_displacement (circle96 95) (circle96 1) = -2
+short_backward_displacement = Refl
+
+half_turn_tie_is_negative :
+  local_displacement (circle96 48) (circle96 0) = -48
+half_turn_tie_is_negative = Refl
+
+main : IO ()
+main =
+  putStrLn "Circle96 rotation/reflection/local-displacement: PASS"
