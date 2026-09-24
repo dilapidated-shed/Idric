@@ -73,7 +73,9 @@ and therefore requires a Euclidean structure.
 `Circle96.idric` is the small concrete circle used for the present cam-setting
 experiment. One turn has 96 positions, so one 60-degree wrench flat is exactly
 16 ticks and successive half-flat subdivisions remain exact down to one
-sixteenth-flat = one tick = 3.75 degrees.
+sixteenth-flat = one tick = 3.75 degrees. Because 96 = 3 * 32, its canonical
+7-bit codes also read naturally as a two-bit third-sector tag plus a five-bit
+binary position inside that third; `11xxxxx` is spare.
 
 The source concepts are deliberately distinct: `Circle96` is a position,
 `Rotation96` acts on positions, `Reflection96` reverses orientation about a
