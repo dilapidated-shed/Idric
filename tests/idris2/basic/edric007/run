@@ -57,3 +57,11 @@ fi
 # Ordinary .idr remains ordinary Idris: its inherited Double is not rewritten
 # and receives no Idriç narrowing warning.
 check IdrisDouble.idr >/dev/null
+
+
+human_display=$(run HumanDisplay.idric)
+if [ "$human_display" != "½ ³⁄₂ ¹⁄₁₆" ]; then
+    printf '%s\n' "$human_display"
+    echo "Float16 interpolation did not use vulgar dyadic fractions"
+    exit 1
+fi
