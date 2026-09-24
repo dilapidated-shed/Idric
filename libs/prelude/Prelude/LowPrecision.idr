@@ -6,6 +6,7 @@ import Prelude.Display
 import Prelude.EqOrd
 import Prelude.Float16
 import Prelude.Interpolation
+import Prelude.Interfaces
 import Prelude.Num
 import Prelude.Show
 import Prelude.Types
