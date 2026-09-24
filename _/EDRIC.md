@@ -1,16 +1,16 @@
-# Edric project checkpoint
+# Idriç project checkpoint
 
-This file is the durable handoff for the project called **Idriç**, **Idric**, or **Edric**. A new work thread should be able to start here without reconstructing the project from chat history.
+This file is the durable handoff for the **Idriç** project. A new work thread should be able to start here without reconstructing the project from chat history.
 
 ## Canonical repository
 
 `https://github.com/isomorphisms/Idric`
 
-The repository's ASCII name is `Idric`. The intended project name is `Idriç`; `Edric` is also used in speech/transcription. All three names deliberately appear here so repository search can find the project.
+The repository's ASCII name is `Idric`. The intended project and language name in human-facing prose is `Idriç`; use the literal repository name where a repository coordinate, URL, or path requires it.
 
 ## Foundation
 
-Edric is an experimental Idris-derived compiler line built on the current Idris 2 compiler. The modern baseline for this checkpoint is Idris 2 commit:
+Idriç is an experimental Idris-derived compiler line built on the current Idris 2 compiler. The modern baseline for this checkpoint is Idris 2 commit:
 
 `9b2116d98b5789afe3a003b234fd173c6b9aa379`
 
@@ -18,9 +18,9 @@ The older `isomorphisms/Idri-` / `Idris2-boot` work is historical reference only
 
 ## Implementation rule
 
-Use ordinary, current Idris 2 to implement Edric until an Edric change is itself stable enough to be deliberately dogfooded. Do not make the compiler depend on an unbuilt dialect of itself.
+Use ordinary, current Idris 2 to implement Idriç until an Idriç change is itself stable enough to be deliberately dogfooded. Do not make the compiler depend on an unbuilt dialect of itself.
 
-The first Edric-specific syntax is the storage-neutral `choice` declaration described below. The compiler remains implemented in ordinary Idris 2.
+The first Idriç-specific syntax is the storage-neutral `choice` declaration described below. The compiler remains implemented in ordinary Idris 2.
 
 ## Downstream complex-mathematics boundary
 
@@ -30,13 +30,28 @@ The live downstream reference for whole-plane holomorphic evolution is [`isomorp
 
 General complex/projective semantics belong in Idriç only at the smallest reusable language/compiler seam. The x86-64, ARM, and shader repositories remain implementation followers or leaders as recorded by their own versioned corpora and receipts; no backend defines which holomorphic perturbations the application admits.
 
-## Natural-number vocabulary
+## Number and text vocabulary
 
-Idriç source spells the natural-number type `ℕ`. In a `.idric` file the frontend lowers `ℕ` to the inherited Idris 2 `Nat` internally; ordinary `.idr` source remains unchanged. `Nat` therefore remains an implementation and compatibility spelling, not the spelling for new Idriç APIs, examples, or teaching material.
+Idriç source spells the unrestricted nonnegative whole-number type `Number` and
+decoded character text `Text`. In a `.idric` file the frontend lowers those
+names to the inherited Idris 2 bootstrap representations. Ordinary `.idr`
+source remains unchanged. The inherited names are implementation and
+compatibility spellings, not names for new Idriç APIs, examples, or teaching
+material.
+
+Fresh `.idric` source imports `Data.Text` when it needs the inherited text
+operations. The frontend lowers that exact module boundary to `Data.String`;
+ordinary `.idr` module names remain unchanged.
+
+`Number` and `Text` describe general language values. Code should still use a
+more specific semantic type—source location, byte count, path, protocol field,
+and so on—when operations or invariants differ. The older `ℕ` input spelling is
+accepted temporarily so existing Idriç source can migrate without a flag day;
+it is not the current spelling for new source.
 
 ## Data-structure vocabulary
 
-Edriç names a structure by what it is, not merely by whether its length is
+Idriç names a structure by what it is, not merely by whether its length is
 known.
 
 - `List A` is a list whose length is not part of its public type.
@@ -50,8 +65,25 @@ known.
   including shader vector values.
 
 The inherited Idris 2 names `Vect` and `Data.Vect` remain where upstream
-compatibility requires them. New Edriç APIs, examples, and explanations must
+compatibility requires them. New Idriç APIs, examples, and explanations must
 not use “vector” as a synonym for a list with a known or computed length.
+
+## Equality notation
+
+In `.idric` source, `left = right` remains propositional equality: it forms
+an equality type and can be witnessed by `Refl`. Runtime decidable comparison
+uses `left ≟ right` and produces `Bool` through the existing checked `Eq`
+surface.
+
+The frontend normalizes `≟` to the inherited `==` operator before the general
+operator parser and elaborator. This keeps one checked equality meaning without
+making `=` context-sensitive or ambiguous. Ordinary `.idr` source keeps
+inherited `==` behavior unchanged. The inherited grammar may still accept
+`==` in a `.idric` file, but it is compatibility syntax rather than the
+canonical spelling for maintained Idriç source.
+
+`≠` remains reserved for proposition-level inequality/negated equality; it is
+not the Boolean equality-question spelling.
 
 ## Storage-neutral choices
 
@@ -60,9 +92,9 @@ snake_case names:
 
 ```idris
 choice existing_touch_target one_of
-  fixed_value ℕ
-  zero ℕ
-  pole ℕ
+  fixed_value Number
+  zero Number
+  pole Number
 
 choice touch_beginning one_of
   near_existing existing_touch_target
@@ -159,6 +191,7 @@ make test only=idris2/basic/edric004
 make test only=idris2/basic/edric005
 make test only=idris2/basic/edric006
 make test only=idris2/basic/edric009
+make test only=idris2/basic/edric010
 ```
 
 ## Idriç koans
@@ -189,13 +222,13 @@ For each language change:
 1. Make the smallest parser, elaborator, or compiler change that expresses the idea.
 2. Add a focused regression test under the existing Idris 2 test harness.
 3. Keep ordinary Idris 2 behavior working unless the change explicitly replaces it.
-4. Record user-visible syntax and semantic decisions here when they become part of Edric rather than leaving them only in a conversation.
+4. Record user-visible syntax and semantic decisions here when they become part of Idriç rather than leaving them only in a conversation.
 5. Keep the default `Idriç` branch buildable; use a descriptive branch when an
    experiment is not yet coherent.
 
 ## New-thread handoff
 
-A new thread working on Edric should:
+A new thread working on Idriç should:
 
 1. Open this file, [BRANCHES.md](BRANCHES.md), and the root `README.md`.
 2. Inspect the latest commits and current branch before changing code.
@@ -209,12 +242,20 @@ A new thread working on Edric should:
 - Durable repository handoff: established.
 - Ordinary Idris 2 implementation language: established.
 - Pinned repo-local threaded Chez Scheme bootstrap: established.
-- Focused Edric handoff test: checked in.
+- Focused Idriç handoff test: checked in.
 - Idriç source extension: `.idric`; `.idr` remains accepted for Idris compatibility.
 - Storage-neutral, lower snake_case `choice ... one_of` syntax: implemented for `.idric` only.
 - Ordinary `.idr` use of `choice` and `one_of` as identifiers: preserved and regression-tested.
-- Idriç source spells natural numbers `ℕ`; the frontend lowers that spelling to inherited Idris 2 `Nat` internally.
+- Idriç source spells nonnegative whole numbers `Number` and decoded character
+  text `Text`; the frontend lowers both to inherited bootstrap representations.
+- Idriç source spells the inherited text-operation module `Data.Text`; the
+  frontend lowers that exact module boundary to `Data.String`.
+- The older `ℕ` spelling remains a migration alias, not the current spelling.
 - Idriç source accepts `→`, `⇒`, `←`, and `≤` as compact aliases for `->`, `=>`, `<-`, and `<=`; the ASCII spellings remain accepted.
+- In `.idric`, `=` remains propositional equality and `≟` is the canonical
+  runtime/decidable equality question; the frontend lowers `≟` to inherited
+  `==` before ordinary operator parsing and elaboration. `.idr` `==` behavior
+  is unchanged, and inherited `==` is not canonical maintained Idriç syntax.
 - The aliases are filename-scoped to `.idric`; ordinary `.idr` Unicode identifiers remain unchanged.
 - Canonical Unicode pretty-printing is not yet claimed by this input-syntax slice.
 - Historical broad mechanical Unicode rewrite: reference only, not the base.
@@ -227,3 +268,4 @@ A new thread working on Edric should:
   `R^128` orthogonal generators, the finite presheaf restriction model, and one
   provenance-labelled named fact.  It is a bounded semantic example, not a
   complete real-scalar model or general mathematics engine.
+- The same higher-mathematics acceptance now carries the exact three-byte Q0.11 octahedral storage contract for an `S²` direction / unit pure quaternion. It fixes packing and principal-axis bytes without claiming that this is a general `S³` orientation-quaternion codec or importing accelerometer-specific magnitude and gravity semantics.
