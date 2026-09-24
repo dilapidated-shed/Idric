@@ -1,0 +1,105 @@
+module Circle96
+
+%unbound_implicits off
+
+-- A small finite circle chosen for cam-setting work.
+--
+-- There are 96 positions in one turn:
+--   1 tick  = 3.75 degrees
+--   16 ticks = one 60-degree wrench flat
+--
+-- Positions, rotations, and reflections are distinct source concepts even
+-- though all three use small integer codes internally.
+
+public export
+record Circle96 where
+  constructor Circle96Code
+  circle96_code : Integer
+
+public export
+record Rotation96 where
+  constructor Rotation96Code
+  rotation96_code : Integer
+
+public export
+record Reflection96 where
+  constructor Reflection96Code
+  reflection96_code : Integer
+
+public export
+normalize_96 : Integer → Integer
+normalize_96 value =
+  let remainder = mod value 96
+  in if remainder < 0
+       then remainder + 96
+       else remainder
+
+public export
+circle96 : Integer → Circle96
+circle96 value = Circle96Code (normalize_96 value)
+
+public export
+rotation96 : Integer → Rotation96
+rotation96 value = Rotation96Code (normalize_96 value)
+
+public export
+reflection96 : Integer → Reflection96
+reflection96 value = Reflection96Code (normalize_96 value)
+
+public export
+rotate : Rotation96 → Circle96 → Circle96
+rotate (Rotation96Code amount) (Circle96Code point) =
+  circle96 (point + amount)
+
+public export
+compose_rotations : Rotation96 → Rotation96 → Rotation96
+compose_rotations (Rotation96Code first) (Rotation96Code second) =
+  rotation96 (first + second)
+
+public export
+inverse_rotation : Rotation96 → Rotation96
+inverse_rotation (Rotation96Code amount) =
+  rotation96 (-amount)
+
+-- Every code names one of the 96 reflections of the regular 96-gon.
+-- Applying reflection r to point x is r - x modulo 96.
+--
+-- Even reflection codes have an axis through opposite vertices.
+-- Odd reflection codes have an axis through opposite edges.
+
+public export
+reflect : Reflection96 → Circle96 → Circle96
+reflect (Reflection96Code reflection) (Circle96Code point) =
+  circle96 (reflection - point)
+
+-- The shortest signed local displacement from 'from' to 'to'.
+-- This is tangent/linear data for a derivative or Jacobian, not a circle point.
+-- At the exact half-turn tie, choose -48.
+
+public export
+local_displacement : Circle96 → Circle96 → Integer
+local_displacement (Circle96Code to) (Circle96Code from) =
+  let forward = normalize_96 (to - from)
+  in if forward >= 48
+       then forward - 96
+       else forward
+
+public export
+one_flat : Rotation96
+one_flat = rotation96 16
+
+public export
+half_flat : Rotation96
+half_flat = rotation96 8
+
+public export
+quarter_flat : Rotation96
+quarter_flat = rotation96 4
+
+public export
+eighth_flat : Rotation96
+eighth_flat = rotation96 2
+
+public export
+sixteenth_flat : Rotation96
+sixteenth_flat = rotation96 1
