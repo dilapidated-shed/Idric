@@ -60,7 +60,8 @@ check IdrisDouble.idr >/dev/null
 
 
 human_display=$(run HumanDisplay.idric)
-if [ "$human_display" != "½ ³⁄₂ ¹⁄₁₆" ]; then
+if [ "$human_display" != "½ ³⁄₂ ¹⁄₁₆
+³⁄₂" ]; then
     printf '%s\n' "$human_display"
     echo "Float16 interpolation did not use vulgar dyadic fractions"
     exit 1
