@@ -7,5 +7,6 @@ pair arithmetic construction: PASS
 exact complex pair agreement: PASS
 quaternion complex-pair agreement: PASS
 compact unit-pure-quaternion storage: PASS
+Circle96 rotation/reflection/local-displacement: PASS
 quadratic and Hermitian form semantics: PASS
 complex/projective structural semantics: PASS
