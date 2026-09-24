@@ -1,0 +1,337 @@
+module XbrlCanary
+
+import Data.List
+import Data.String
+import System
+import System.File
+
+%default covering
+
+-- Deliberately bounded ASCII/XML subset, not an XBRL implementation.
+-- The runtime reads bytes supplied by the caller, never the oracle or network.
+record Span where
+  constructor Between
+  lower : ℕ
+  upper : ℕ
+
+record Cursor where
+  constructor At
+  offset : ℕ
+  remaining : List Char
+
+record Scan where
+  constructor Scanned
+  value : String
+  span : Span
+  after : Cursor
+
+data ScanState = DataState | NameState | QuotedState
+data ByteClass = AngleOpen | Ampersand | DoubleQuote | NameByte | Delimiter | OtherByte
+data ScanAction = KeepByte | StopBefore | RejectByte
+
+name_byte : Char → Bool
+name_byte c = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+              (c >= '0' && c <= '9') || elem c (unpack "_:.-")
+
+classify_byte : Char → ByteClass
+classify_byte '<' = AngleOpen
+classify_byte '&' = Ampersand
+classify_byte '"' = DoubleQuote
+classify_byte c = if name_byte c then NameByte
+                  else if isSpace c || elem c (unpack "=/>") then Delimiter
+                  else OtherByte
+
+-- This finite state/class dispatch is used by all three actual scanning modes.
+state_class_step : ScanState → ByteClass → ScanAction
+state_class_step DataState AngleOpen = StopBefore
+state_class_step DataState Ampersand = StopBefore
+state_class_step DataState _ = KeepByte
+state_class_step NameState NameByte = KeepByte
+state_class_step NameState Delimiter = StopBefore
+state_class_step NameState _ = RejectByte
+state_class_step QuotedState DoubleQuote = StopBefore
+state_class_step QuotedState AngleOpen = RejectByte
+state_class_step QuotedState Ampersand = RejectByte
+state_class_step QuotedState _ = KeepByte
+
+scan_loop : ScanState → ℕ → ℕ → List Char → List Char → Either String Scan
+scan_loop state start pos acc [] =
+  Right (Scanned (pack (reverse acc)) (Between start pos) (At pos []))
+scan_loop state start pos acc all_chars@(c :: cs) =
+  case state_class_step state (classify_byte c) of
+    KeepByte ⇒ scan_loop state start (S pos) (c :: acc) cs
+    StopBefore ⇒ Right (Scanned (pack (reverse acc)) (Between start pos) (At pos all_chars))
+    RejectByte ⇒ Left ("unsupported byte at " ++ show pos)
+
+scan_run : ScanState → Cursor → Either String Scan
+scan_run state (At start chars) = scan_loop state start start [] chars
+
+-- A whole ordinary-data run, stopping BEFORE either '<' or '&', or at EOF.
+bulk_scan : Cursor → Either String Scan
+bulk_scan = scan_run DataState
+
+skip_space : Cursor → Cursor
+skip_space (At pos (c :: cs)) = if isSpace c then skip_space (At (S pos) cs)
+                               else At pos (c :: cs)
+skip_space cur = cur
+
+expect : Char → Cursor → Either String Cursor
+expect wanted (At pos (c :: cs)) =
+  if c == wanted then Right (At (S pos) cs)
+  else Left ("expected " ++ show wanted ++ " at " ++ show pos)
+expect wanted (At pos []) = Left ("unexpected EOF at " ++ show pos)
+
+read_name : Cursor → Either String Scan
+read_name cur = do
+  found ← scan_run NameState cur
+  case unpack found.value of
+    [] ⇒ Left "empty name"
+    c :: _ ⇒ if (c >= '0' && c <= '9') || c == '-' || c == '.'
+               then Left "unsupported name start"
+               else Right found
+
+record Attribute where
+  constructor Attr
+  name : String
+  name_span : Span
+  value : String
+  value_span : Span
+
+data Token = StartTag Span String Span (List Attribute)
+           | EndTag Span String Span
+           | TextToken Span String
+
+read_attribute : Cursor → Either String (Attribute, Cursor)
+read_attribute cur = do
+  key ← read_name cur
+  eq ← expect '=' (skip_space key.after)
+  quoted ← expect '"' (skip_space eq)
+  val ← scan_run QuotedState quoted
+  next ← expect '"' val.after
+  Right (Attr key.value key.span val.value val.span, next)
+
+read_attributes : ℕ → Cursor → List Attribute → Either String (List Attribute, Cursor)
+read_attributes fuel (At pos ('>' :: cs)) acc = Right (reverse acc, At (S pos) cs)
+read_attributes Z cur acc = Left "attribute bound exceeded"
+read_attributes (S fuel) cur@(At pos chars) acc =
+  case chars of
+    [] ⇒ Left "unclosed start tag"
+    c :: _ ⇒ if not (isSpace c) then Left "expected attribute separator or '>'" else
+      case skip_space cur of
+        At end ('>' :: cs) ⇒ Right (reverse acc, At (S end) cs)
+        next ⇒ do
+          (attr, after) ← read_attribute next
+          if any (\old ⇒ old.name == attr.name) acc then Left "duplicate attribute" else
+            read_attributes fuel after (attr :: acc)
+
+read_tag : Cursor → Either String (Token, Cursor)
+read_tag cur = do
+  opened ← expect '<' cur
+  case opened.remaining of
+    '/' :: cs ⇒ do
+      key ← read_name (At (S opened.offset) cs)
+      next ← expect '>' (skip_space key.after)
+      Right (EndTag (Between cur.offset next.offset) key.value key.span, next)
+    _ ⇒ do
+      key ← read_name opened
+      (attrs, next) ← read_attributes 8 key.after []
+      Right (StartTag (Between cur.offset next.offset) key.value key.span attrs, next)
+
+tokenize : List Char → Either String (List Token, ℕ)
+tokenize chars = go 64 (At 0 chars) []
+  where
+    go : ℕ → Cursor → List Token → Either String (List Token, ℕ)
+    go fuel (At pos []) acc = Right (reverse acc, pos)
+    go Z cur acc = Left "token/node bound exceeded"
+    go (S fuel) cur@(At _ ('<' :: _)) acc = do
+      (tok, next) ← read_tag cur
+      go fuel next (tok :: acc)
+    go (S fuel) cur acc = do
+      found ← bulk_scan cur
+      if found.after.offset == cur.offset then Left "entities are outside this subset" else
+        go fuel found.after (TextToken found.span found.value :: acc)
+
+search_exact : List Char → List Char → List Span
+search_exact [] chars = []
+search_exact needle chars = go 0 chars
+  where
+    go : ℕ → List Char → List Span
+    go pos [] = []
+    go pos all_chars@(_ :: cs) =
+      let later = go (S pos) cs in
+      if isPrefixOf needle all_chars then Between pos (pos + length needle) :: later else later
+
+data Node = Element Span String (List Attribute) (List Node)
+          | TextNode Span String
+
+mutual
+  parse_node : ℕ → List Token → Either String (Node, List Token)
+  parse_node Z _ = Left "tree depth bound exceeded"
+  parse_node (S depth) (StartTag start name _ attrs :: rest) = do
+    (children, end, after) ← parse_children depth name [] rest
+    Right (Element (Between start.lower end) name attrs children, after)
+  parse_node _ _ = Left "expected element"
+
+  parse_children : ℕ → String → List Node → List Token → Either String (List Node, ℕ, List Token)
+  parse_children depth name acc [] = Left "unclosed element"
+  parse_children depth name acc (EndTag span closing _ :: rest) =
+    if name == closing then Right (reverse acc, span.upper, rest)
+    else Left "mismatched close tag"
+  parse_children depth name acc (TextToken span val :: rest) =
+    parse_children depth name (TextNode span val :: acc) rest
+  parse_children depth name acc tokens = do
+    (child, rest) ← parse_node depth tokens
+    parse_children depth name (child :: acc) rest
+
+document_space : List Token → List Token
+document_space all_tokens@(TextToken _ value :: rest) =
+  if all isSpace (unpack value) then document_space rest else all_tokens
+document_space tokens = tokens
+
+build_tree : List Token → Either String Node
+build_tree tokens = do
+  (root, rest) ← parse_node 8 (document_space tokens)
+  case document_space rest of
+    [] ⇒ Right root
+    _ ⇒ Left "more than one root or trailing non-whitespace"
+
+indexed : ℕ → List a → List (ℕ, a)
+indexed n [] = []
+indexed n (x :: xs) = (n, x) :: indexed (S n) xs
+
+mutual
+  find_bounded : ℕ → String → List ℕ → Node → Maybe (List ℕ, Node)
+  find_bounded depth wanted path node@(Element _ name _ children) =
+    if name == wanted then Just (path, node) else
+      case depth of
+        Z ⇒ Nothing
+        S d ⇒ find_children d wanted path (indexed 0 children)
+  find_bounded _ _ _ _ = Nothing
+
+  find_children : ℕ → String → List ℕ → List (ℕ, Node) → Maybe (List ℕ, Node)
+  find_children depth wanted path [] = Nothing
+  find_children depth wanted path ((index, node) :: rest) =
+    case find_bounded depth wanted (path ++ [index]) node of
+      Just found ⇒ Just found
+      Nothing ⇒ find_children depth wanted path rest
+
+decimal : String → Either String Integer
+decimal text = case unpack text of
+  [] ⇒ Left "empty integer"
+  chars ⇒ if all (\c ⇒ c >= '0' && c <= '9') chars
+             then Right (foldl (\n, c ⇒ 10 * n + cast (ord c - ord '0')) 0 chars)
+             else Left "expected unsigned decimal digits"
+
+-- JSON encoders for observations; none contains fixture offsets or answers.
+jarray : List String → String
+jarray xs = "[" ++ concat (intersperse "," xs) ++ "]"
+
+jobject : List (String, String) → String
+jobject xs = "{" ++ concat (intersperse "," (map (\(k, v) ⇒ show k ++ ":" ++ v) xs)) ++ "}"
+
+jspan : Span → String
+jspan (Between lo hi) = jarray [show lo, show hi]
+
+jpath : List ℕ → String
+jpath = jarray . map show
+
+jattr : Attribute → String
+jattr attr = jobject [("name", show attr.name), ("name_span", jspan attr.name_span),
+                      ("value", show attr.value), ("value_span", jspan attr.value_span)]
+
+jtoken : Token → String
+jtoken (StartTag span name ns attrs) =
+  jobject [("kind", show "start_tag"), ("span", jspan span), ("name", show name),
+           ("name_span", jspan ns), ("attributes", jarray (map jattr attrs))]
+jtoken (EndTag span name ns) =
+  jobject [("kind", show "end_tag"), ("span", jspan span), ("name", show name), ("name_span", jspan ns)]
+jtoken (TextToken span value) =
+  jobject [("kind", show "text"), ("span", jspan span), ("value", show value)]
+
+jscan : ℕ → Token → List String
+jscan size (TextToken span value) =
+  [jobject [("span", jspan span), ("bytes", show value),
+            ("terminator", show (if span.upper == size then "eof" else "0x3c"))]]
+jscan _ _ = []
+
+mutual
+  element_rows : List ℕ → Node → List String
+  element_rows path (TextNode _ _) = []
+  element_rows path (Element span name _ children) =
+    jobject [("path", jpath path), ("name", show name), ("span", jspan span)] ::
+      concatMap (\(i, child) ⇒ element_rows (path ++ [i]) child) (indexed 0 children)
+
+  node_rows : List ℕ → Node → List String
+  node_rows path (TextNode span value) =
+    [jobject [("path", jpath path), ("kind", show "text"), ("value", show value), ("span", jspan span)]]
+  node_rows path (Element _ name _ children) =
+    jobject [("path", jpath path), ("kind", show "element"), ("name", show name)] ::
+      concatMap (\(i, child) ⇒ node_rows (path ++ [i]) child) (indexed 0 children)
+
+lookup_attribute : String → List Attribute → Either String String
+lookup_attribute wanted [] = Left ("missing attribute " ++ wanted)
+lookup_attribute wanted (attr :: rest) =
+  if attr.name == wanted then Right attr.value else lookup_attribute wanted rest
+
+extraction : String → Node → Either String String
+extraction wanted tree = case find_bounded 1 wanted [] tree of
+  Just (path, Element _ name attrs [TextNode span text]) ⇒ do
+    value ← decimal text
+    context ← lookup_attribute "contextRef" attrs
+    unit ← lookup_attribute "unitRef" attrs
+    Right (jobject [("name", show name), ("element_path", jpath path),
+                    ("text_path", jpath (path ++ [0])), ("text_span", jspan span),
+                    ("raw_text", show text), ("integer_value", show value),
+                    ("attributes", jobject [("contextRef", show context), ("unitRef", show unit)])])
+  _ ⇒ Left "target absent within depth 1 or not a single text fact"
+
+jfind : String → Node → ℕ → String
+jfind wanted tree depth =
+  jobject [("name", show wanted), ("max_depth", show depth),
+           ("result", case find_bounded depth wanted [] tree of
+                        Nothing ⇒ "null"
+                        Just (path, _) ⇒ jpath path)]
+
+observe : String → Either String String
+observe source = do
+  let chars = unpack source
+  if length chars > 4096 then Left "byte bound exceeded" else Right ()
+  if all (\c ⇒ ord c >= 32 && ord c < 127 || c == '\n' || c == '\t') chars
+     then Right () else Left "only printable ASCII, LF and TAB are supported"
+  (tokens, final_offset) ← tokenize chars
+  tree ← build_tree tokens
+  let needle = "NetIncomeLoss"
+  let wanted = "us-gaap:NetIncomeLoss"
+  let matches = search_exact (unpack needle) chars
+  let first = case matches of
+                [] ⇒ "null"
+                span :: _ ⇒ show span.lower
+  fact ← extraction wanted tree
+  Right (jobject
+    [("search", jobject [("needle", show needle), ("needle_byte_count", show (length (unpack needle))),
+                          ("first_match", first), ("matches", jarray (map jspan matches)),
+                          ("count", show (length matches))]),
+     ("tokenizer", jobject [("data_structural_bytes", jarray [show "0x3c", show "0x26"]),
+                             ("data_scans", jarray (concatMap (jscan (length chars)) tokens)),
+                             ("tokens", jarray (map jtoken tokens)), ("final_offset", show final_offset)]),
+     ("traversal", jobject [("qname_mode", show "lexical"), ("element_preorder", jarray (element_rows [] tree)),
+                             ("node_preorder", jarray (node_rows [] tree)),
+                             ("bounded_find", jarray (map (jfind wanted tree) [0, 1]))]),
+     ("extraction", fact)])
+
+main : IO ()
+main = do
+  args ← getArgs
+  case args of
+    [_, path] ⇒ do
+      Right source ← readFile path | Left err ⇒ do
+        putStrLn ("ERROR: " ++ show err)
+        exitFailure
+      case observe source of
+        Left err ⇒ do
+          putStrLn ("ERROR: " ++ err)
+          exitFailure
+        Right result ⇒ putStrLn result
+    _ ⇒ do
+      putStrLn "usage: XbrlCanary FILE"
+      exitFailure

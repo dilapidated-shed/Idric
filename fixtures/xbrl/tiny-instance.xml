@@ -1,0 +1,1 @@
+<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:us-gaap="http://fasb.org/us-gaap/2026"><us-gaap:Revenue contextRef="quarter" unitRef="USD">125000</us-gaap:Revenue><us-gaap:NetIncomeLoss contextRef="quarter" unitRef="USD">18000</us-gaap:NetIncomeLoss></xbrli:xbrl>

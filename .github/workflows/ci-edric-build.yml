@@ -7,9 +7,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: idric-build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   compiler:
     runs-on: ubuntu-latest
+    env:
+      IDRIC_EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Checkout exact Idriç head
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
@@ -19,10 +25,21 @@ jobs:
       - name: Install host build tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential curl
+          sudo apt-get install -y build-essential curl python3 util-linux
+
+      - name: Prepare exact-head receipt and test the acceptance harness
+        run: |
+          python3 xbrl_acceptance.py prepare
+          python3 -m unittest discover -s _/tests/xbrl -v
 
       - name: Bootstrap through the follower-visible Edriç entrypoint
-        run: ./edric all
+        run: |
+          if ./edric all; then
+            python3 xbrl_acceptance.py stamp-build
+          else
+            python3 xbrl_acceptance.py fail-build
+            exit 1
+          fi
 
       - name: Verify follower-visible compiler paths
         shell: sh
@@ -39,3 +56,15 @@ jobs:
 
       - name: Verify follower-visible environment export contract
         run: ./edric test --only base/system_environment_value
+
+      - name: Offline XBRL compiler acceptance
+        run: sudo --preserve-env=IDRIC_EXPECTED_HEAD unshare --net -- python3 xbrl_acceptance.py run
+
+      - name: Retain exact-head receipt, observations and compiler artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: xbrl-acceptance-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: _/build/xbrl-acceptance/
+          if-no-files-found: error
+          retention-days: 14

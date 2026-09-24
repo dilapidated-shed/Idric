@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "fixture": "tiny-instance.xml",
+  "synthetic": true,
+  "source_url": null,
+  "encoding": "utf-8",
+  "ascii_subset": true,
+  "byte_count": 282,
+  "terminal_lf": true,
+  "sha256": "936f6516b375941feb1f44ed2cdabfce7ee7d2793f473b0a5c09543a59330b4a",
+  "span_convention": "[start, end), zero-based byte offsets",
+  "search": {
+    "needle": "NetIncomeLoss",
+    "needle_byte_count": 13,
+    "first_match": 190,
+    "matches": [
+      [190, 203],
+      [254, 267]
+    ],
+    "count": 2
+  },
+  "tokenizer": {
+    "data_structural_bytes": ["0x3c", "0x26"],
+    "data_scans": [
+      {"span": [157, 163], "bytes": "125000", "terminator": "0x3c"},
+      {"span": [239, 244], "bytes": "18000", "terminator": "0x3c"},
+      {"span": [281, 282], "bytes": "\n", "terminator": "eof"}
+    ],
+    "tokens": [
+      {
+        "kind": "start_tag",
+        "span": [0, 105],
+        "name": "xbrli:xbrl",
+        "name_span": [1, 11],
+        "attributes": [
+          {"name": "xmlns:xbrli", "name_span": [12, 23], "value": "http://www.xbrl.org/2003/instance", "value_span": [25, 58]},
+          {"name": "xmlns:us-gaap", "name_span": [60, 73], "value": "http://fasb.org/us-gaap/2026", "value_span": [75, 103]}
+        ]
+      },
+      {
+        "kind": "start_tag",
+        "span": [105, 157],
+        "name": "us-gaap:Revenue",
+        "name_span": [106, 121],
+        "attributes": [
+          {"name": "contextRef", "name_span": [122, 132], "value": "quarter", "value_span": [134, 141]},
+          {"name": "unitRef", "name_span": [143, 150], "value": "USD", "value_span": [152, 155]}
+        ]
+      },
+      {"kind": "text", "span": [157, 163], "value": "125000"},
+      {"kind": "end_tag", "span": [163, 181], "name": "us-gaap:Revenue", "name_span": [165, 180]},
+      {
+        "kind": "start_tag",
+        "span": [181, 239],
+        "name": "us-gaap:NetIncomeLoss",
+        "name_span": [182, 203],
+        "attributes": [
+          {"name": "contextRef", "name_span": [204, 214], "value": "quarter", "value_span": [216, 223]},
+          {"name": "unitRef", "name_span": [225, 232], "value": "USD", "value_span": [234, 237]}
+        ]
+      },
+      {"kind": "text", "span": [239, 244], "value": "18000"},
+      {"kind": "end_tag", "span": [244, 268], "name": "us-gaap:NetIncomeLoss", "name_span": [246, 267]},
+      {"kind": "end_tag", "span": [268, 281], "name": "xbrli:xbrl", "name_span": [270, 280]},
+      {"kind": "text", "span": [281, 282], "value": "\n"}
+    ],
+    "final_offset": 282
+  },
+  "traversal": {
+    "qname_mode": "lexical",
+    "element_preorder": [
+      {"path": [], "name": "xbrli:xbrl", "span": [0, 281]},
+      {"path": [0], "name": "us-gaap:Revenue", "span": [105, 181]},
+      {"path": [1], "name": "us-gaap:NetIncomeLoss", "span": [181, 268]}
+    ],
+    "node_preorder": [
+      {"path": [], "kind": "element", "name": "xbrli:xbrl"},
+      {"path": [0], "kind": "element", "name": "us-gaap:Revenue"},
+      {"path": [0, 0], "kind": "text", "value": "125000", "span": [157, 163]},
+      {"path": [1], "kind": "element", "name": "us-gaap:NetIncomeLoss"},
+      {"path": [1, 0], "kind": "text", "value": "18000", "span": [239, 244]}
+    ],
+    "bounded_find": [
+      {"name": "us-gaap:NetIncomeLoss", "max_depth": 0, "result": null},
+      {"name": "us-gaap:NetIncomeLoss", "max_depth": 1, "result": [1]}
+    ]
+  },
+  "extraction": {
+    "name": "us-gaap:NetIncomeLoss",
+    "element_path": [1],
+    "text_path": [1, 0],
+    "text_span": [239, 244],
+    "raw_text": "18000",
+    "integer_value": 18000,
+    "attributes": {
+      "contextRef": "quarter",
+      "unitRef": "USD"
+    }
+  },
+  "correctness_boundary": {
+    "network": "forbidden",
+    "input": "committed fixture bytes only",
+    "live_retrieval": "separate refresh/differential path; never compiler correctness"
+  }
+}
