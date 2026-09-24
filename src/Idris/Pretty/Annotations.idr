@@ -55,11 +55,59 @@ equals = keyword "="
 
 export
 arrow : Doc IdrisSyntax
-arrow = keyword "->"
+arrow = keyword "→"
 
 export
 fatArrow : Doc IdrisSyntax
-fatArrow = keyword "=>"
+fatArrow = keyword "⇒"
+
+export
+leftArrow : Doc IdrisSyntax
+leftArrow = keyword "←"
+
+export
+lambda_ : Doc IdrisSyntax
+lambda_ = keyword "λ"
+
+export
+division : Doc IdrisSyntax
+division = keyword "÷"
+
+export
+multiplication : Doc IdrisSyntax
+multiplication = keyword "×"
+
+export
+squareRoot : Doc IdrisSyntax
+squareRoot = keyword "√"
+
+export
+squared : Doc IdrisSyntax
+squared = keyword "²"
+
+export
+cubed : Doc IdrisSyntax
+cubed = keyword "³"
+
+export
+notEqual : Doc IdrisSyntax
+notEqual = keyword "≠"
+
+export
+decidableEqual : Doc IdrisSyntax
+decidableEqual = keyword "≟"
+
+export
+infinity_ : Doc IdrisSyntax
+infinity_ = keyword "∞"
+
+export
+minus_ : Doc IdrisSyntax
+minus_ = keyword "−"
+
+export
+enDash : Doc IdrisSyntax
+enDash = keyword "–"
 
 export
 rcurly : Doc IdrisSyntax
