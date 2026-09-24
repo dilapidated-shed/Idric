@@ -1,7 +1,7 @@
 # Exact R^128 verification boundary
 
 This note preserves the exact high-dimensional oracle inherited from PR #47
-and states which evidence belongs to the current Idric compiler receipt.
+and states which evidence belongs to the current Idriç compiler receipt.
 
 ## Provenance
 
@@ -31,7 +31,7 @@ y = (5, -2, 7, 0, ..., 0, 11).
 ```
 
 Let `H` negate the first coordinate and let `G` make the first-plane
-quarter-turn `(a, b) -> (-b, a)`.  The exact expected images are
+quarter-turn `(a, b) → (-b, a)`.  The exact expected images are
 
 ```text
 H x = (-3, 4, 12, 0, ..., 0, 9)
@@ -61,11 +61,11 @@ G^4 x = x
 (G x)_128 = 9.
 ```
 
-Mathematically, `det(H) = -1` and `det(G) = 1`.  The Idric layer does not
+Mathematically, `det(H) = -1` and `det(G) = 1`.  The Idriç layer does not
 calculate arbitrary determinants.  It records the corresponding orientation
 in closed transform constructors: `H` is `Reversing`, while `G` is
 `Preserving` and is exposed through `SpecialOrthogonal`.  The same closed
-syntax is interpreted by `applyOrthogonalExact`, removing the former API
+syntax is interpreted by `apply_orthogonal_exact`, removing the former API
 disconnect between marker terms and separately selected evaluators.  This is
 not a compiler-derived determinant or general orthogonality proof; the exact
 oracles and independent signed-permutation check cover these closed maps.
@@ -78,21 +78,21 @@ exclude that failure.
 ## Primary compiler evidence
 
 `tests/idris2/basic/edric009` is the primary current receipt.  Through the
-real bootstrapped Idric path it:
+real bootstrapped Idriç path it:
 
 1. checks `Tests.idric`, including its expected-failure declarations;
 2. compiles the unified example to an executable;
 3. executes that program and compares its PASS lines with `expected`.
 
 The focused source uses `ExactVectorSample` and `ExactCovectorSample`, making
-their `Integer` coordinate fragment explicit in the type names.  These values
-denote exact samples inside the named real coordinate space; they do not define
+their exact `±Number` coordinate fragment explicit in the type names.  These
+values denote exact samples inside the named real coordinate space; they do not define
 its complete scalar carrier.  The `Refl` declarations check the stated images,
 squared norms, dot products, involution, fourth-power identity, and the
 preserved 128th coordinate by compiler normalization.
 Orientation is represented in the closed transform type: `H` is
 `Reversing`, `G` is in `SpecialOrthogonal`, and composition of two reflections
-has a `SpecialOrthogonal real128Euclidean` result.
+has a `SpecialOrthogonal real128_euclidean` result.
 
 These tests preserve #47's exact high-dimensional behavior.  A Markdown
 calculation, successful parsing alone, or an external numerical result does
@@ -112,7 +112,7 @@ those historical transcripts:
   numerical checks reported zero error where those errors were measured.
 
 Those transcripts are secondary historical corroboration.  They are not a
-current compiler run, they are not proof objects consumed by Idric, and no
+current compiler run, they are not proof objects consumed by Idriç, and no
 rerunnable SymPy, NumPy, or SciPy script was committed with #47.  This
 reconciliation therefore neither vendors such a script nor adds any external
 mathematics dependency.  If an external check is rerun later, its command,
@@ -150,6 +150,6 @@ far_H: PASS
 far_G: PASS
 ```
 
-This remains secondary evidence.  It neither typechecks the Idric source nor
+This remains secondary evidence.  It neither typechecks the Idriç source nor
 replaces the `edric009` compiler/executable receipt, and it adds no project
 dependency.

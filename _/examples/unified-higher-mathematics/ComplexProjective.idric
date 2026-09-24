@@ -1,0 +1,188 @@
+module ComplexProjective
+
+import MathematicalSpaces
+
+%unbound_implicits off
+
+-- Complex arithmetic and machine representation are separate questions.
+-- This module establishes the structural types needed by the checker without
+-- choosing Float16, Float32, Cartesian machine pairs, SIMD lanes, or a backend
+-- ABI.  The `complex` parameter is the scalar carrier supplied by a concrete
+-- complex-arithmetic implementation.  In the exact acceptance test it is the
+-- Gaussian-integral ExactComplex fixture from QuadraticForms; that fixture is
+-- not the definition of the mathematical complex numbers.
+
+-- An element of C^n has n complex coordinates.  Dimension is part of the type,
+-- so a C^2 value cannot be consumed where C^3 is required.
+public export
+data ComplexCoordinates : Type → CoordinateRank → Type where
+  NoComplexCoordinates :
+    {complex : Type} →
+    ComplexCoordinates complex Z
+  ComplexCoordinate :
+    {complex : Type} →
+    {remaining : CoordinateRank} →
+    complex →
+    ComplexCoordinates complex remaining →
+    ComplexCoordinates complex (S remaining)
+
+export
+map_complex_coordinates :
+  {source : Type} →
+  {target : Type} →
+  {dimension : CoordinateRank} →
+  (map_coordinate : source → target) →
+  ComplexCoordinates source dimension →
+  ComplexCoordinates target dimension
+map_complex_coordinates map_coordinate NoComplexCoordinates =
+  NoComplexCoordinates
+map_complex_coordinates
+  map_coordinate
+  (ComplexCoordinate coordinate remaining) =
+    ComplexCoordinate
+      (map_coordinate coordinate)
+      (map_complex_coordinates map_coordinate remaining)
+
+public export
+scale_complex_coordinates :
+  {complex : Type} →
+  {dimension : CoordinateRank} →
+  (multiply_complex : complex → complex → complex) →
+  complex →
+  ComplexCoordinates complex dimension →
+  ComplexCoordinates complex dimension
+scale_complex_coordinates
+  multiply_complex
+  scalar
+  NoComplexCoordinates = NoComplexCoordinates
+scale_complex_coordinates
+  multiply_complex
+  scalar
+  (ComplexCoordinate coordinate remaining) =
+    ComplexCoordinate
+      (multiply_complex scalar coordinate)
+      (scale_complex_coordinates multiply_complex scalar remaining)
+
+-- The constructor is explicitly unsafe because this module does not invent a
+-- fake generic proof that an arbitrary complex carrier can decide nonzeroness.
+-- Concrete complex arithmetic should expose checked constructors appropriate
+-- to its scalar semantics.
+public export
+record NonzeroComplexScalar (complex : Type) where
+  constructor UnsafeKnownNonzeroComplexScalar
+  nonzero_complex_value : complex
+
+-- CP^n uses n+1 homogeneous complex coordinates, with the all-zero tuple
+-- excluded.  The witness constructor is unsafe for the same reason as above:
+-- nonzeroness belongs to the concrete complex carrier, not to this structural
+-- module.
+public export
+record NonzeroHomogeneousCoordinates
+    (complex : Type)
+    (projective_dimension : CoordinateRank) where
+  constructor UnsafeKnownNonzeroHomogeneousCoordinates
+  homogeneous_coordinates :
+    ComplexCoordinates complex (S projective_dimension)
+
+-- A projective point carries a homogeneous representative but has quotient
+-- semantics.  There is deliberately no Eq instance and no vector addition or
+-- multiplication on this type.  Common nonzero complex rescaling is expressed
+-- by the witness type below.
+public export
+data ComplexProjectivePoint : Type → CoordinateRank → Type where
+  UnsafeProjectiveClass :
+    {complex : Type} →
+    {projective_dimension : CoordinateRank} →
+    NonzeroHomogeneousCoordinates complex projective_dimension →
+    ComplexProjectivePoint complex projective_dimension
+
+export
+homogeneous_representative :
+  {complex : Type} →
+  {projective_dimension : CoordinateRank} →
+  ComplexProjectivePoint complex projective_dimension →
+  NonzeroHomogeneousCoordinates complex projective_dimension
+homogeneous_representative (UnsafeProjectiveClass representative) =
+  representative
+
+-- For a chosen nonzero lambda this type is inhabited exactly when
+--
+--   lambda * left = right
+--
+-- coordinate by coordinate.  Projective equivalence is the existence of such
+-- a nonzero lambda.  Keeping the scale as explicit evidence prevents raw
+-- component equality from being mistaken for equality in CP^n.
+public export
+projective_rescaling_witness :
+  {complex : Type} →
+  {projective_dimension : CoordinateRank} →
+  (multiply_complex : complex → complex → complex) →
+  (scale : NonzeroComplexScalar complex) →
+  (left : NonzeroHomogeneousCoordinates complex projective_dimension) →
+  (right : NonzeroHomogeneousCoordinates complex projective_dimension) →
+  Type
+projective_rescaling_witness
+  multiply_complex
+  (UnsafeKnownNonzeroComplexScalar scalar)
+  (UnsafeKnownNonzeroHomogeneousCoordinates left)
+  (UnsafeKnownNonzeroHomogeneousCoordinates right) =
+    scale_complex_coordinates multiply_complex scalar left = right
+
+-- (z1,...,zn) maps to [1:z1:...:zn].  The first homogeneous coordinate is
+-- supplied as a known-nonzero complex scalar rather than inferred from a
+-- machine representation.
+public export
+affine_to_projective :
+  {complex : Type} →
+  {projective_dimension : CoordinateRank} →
+  NonzeroComplexScalar complex →
+  ComplexCoordinates complex projective_dimension →
+  ComplexProjectivePoint complex projective_dimension
+affine_to_projective
+  one
+  affine_coordinates =
+    UnsafeProjectiveClass $
+      UnsafeKnownNonzeroHomogeneousCoordinates $
+        ComplexCoordinate
+          (nonzero_complex_value one)
+          affine_coordinates
+
+public export
+divide_coordinates_by :
+  {complex : Type} →
+  {dimension : CoordinateRank} →
+  (divide_complex : complex → complex → complex) →
+  complex →
+  ComplexCoordinates complex dimension →
+  ComplexCoordinates complex dimension
+divide_coordinates_by divide_complex denominator NoComplexCoordinates =
+  NoComplexCoordinates
+divide_coordinates_by
+  divide_complex
+  denominator
+  (ComplexCoordinate coordinate remaining) =
+    ComplexCoordinate
+      (divide_complex coordinate denominator)
+      (divide_coordinates_by divide_complex denominator remaining)
+
+-- Extract the affine chart with first homogeneous coordinate nonzero.  The
+-- operation is partial: [0:z1:...:zn] is outside this chart.  In particular,
+-- [0:1] in CP^1 is the point at infinity and returns Nothing here.
+public export
+projective_first_chart :
+  {complex : Type} →
+  {projective_dimension : CoordinateRank} →
+  (is_zero_complex : complex → Bool) →
+  (divide_complex : complex → complex → complex) →
+  ComplexProjectivePoint complex projective_dimension →
+  Maybe (ComplexCoordinates complex projective_dimension)
+projective_first_chart
+  is_zero_complex
+  divide_complex
+  (UnsafeProjectiveClass
+    (UnsafeKnownNonzeroHomogeneousCoordinates
+      (ComplexCoordinate first remaining))) =
+        if is_zero_complex first
+          then Nothing
+          else Just $
+            divide_coordinates_by divide_complex first remaining

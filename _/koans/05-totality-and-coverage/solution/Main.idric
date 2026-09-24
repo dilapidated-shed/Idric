@@ -1,7 +1,5 @@
 module Main
 
-%default total
-
 data Signal = Red | Amber | Green
 
 next : Signal → Signal
@@ -9,7 +7,7 @@ next Red = Green
 next Amber = Red
 next Green = Amber
 
-signal_name : Signal → String
+signal_name : Signal → Text
 signal_name Red = "red"
 signal_name Amber = "amber"
 signal_name Green = "green"

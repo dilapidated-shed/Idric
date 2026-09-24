@@ -11,8 +11,20 @@ cp "$example_dir/MathematicalSpaces.idric" "$fixture_dir/MathematicalSpaces.idri
 cp "$example_dir/EuclideanGeometry.idric" "$fixture_dir/EuclideanGeometry.idric"
 cp "$example_dir/TopologyFacts.idric" "$fixture_dir/TopologyFacts.idric"
 cp "$example_dir/PresheafRestriction.idric" "$fixture_dir/PresheafRestriction.idric"
+cp "$example_dir/PairArithmetic.idric" "$fixture_dir/PairArithmetic.idric"
 cp "$example_dir/NamedFacts.idric" "$fixture_dir/NamedFacts.idric"
+cp "$example_dir/QuadraticForms.idric" "$fixture_dir/QuadraticForms.idric"
+cp "$example_dir/ComplexPairAgreement.idric" "$fixture_dir/ComplexPairAgreement.idric"
+cp "$example_dir/QuaternionPairAgreement.idric" "$fixture_dir/QuaternionPairAgreement.idric"
+cp "$example_dir/ComplexProjective.idric" "$fixture_dir/ComplexProjective.idric"
 cp "$example_dir/Tests.idric" "$fixture_dir/Tests.idric"
+cp "$example_dir/PairArithmeticTests.idric" "$fixture_dir/PairArithmeticTests.idric"
+cp "$example_dir/ComplexPairAgreementTests.idric" "$fixture_dir/ComplexPairAgreementTests.idric"
+cp "$example_dir/QuaternionPairAgreementTests.idric" "$fixture_dir/QuaternionPairAgreementTests.idric"
+cp "$example_dir/CompactUnitDirectionStorage.idric" "$fixture_dir/CompactUnitDirectionStorage.idric"
+cp "$example_dir/CompactUnitDirectionStorageTests.idric" "$fixture_dir/CompactUnitDirectionStorageTests.idric"
+cp "$example_dir/FormTests.idric" "$fixture_dir/FormTests.idric"
+cp "$example_dir/ComplexProjectiveTests.idric" "$fixture_dir/ComplexProjectiveTests.idric"
 
 # Preserve .idric all the way into the bootstrapped compiler. The previous
 # geometry runner renamed its sources to .idr; this receipt exercises the
@@ -31,4 +43,76 @@ cp "$example_dir/Tests.idric" "$fixture_dir/Tests.idric"
   fi
 
   ./build/exec/unified-higher-mathematics
+
+  if ! "$idris2" --check PairArithmeticTests.idric >pair-typecheck.log 2>&1; then
+    cat pair-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" PairArithmeticTests.idric -o pair-arithmetic >pair-build.log 2>&1; then
+    cat pair-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/pair-arithmetic
+
+  if ! "$idris2" --check ComplexPairAgreementTests.idric >complex-pair-typecheck.log 2>&1; then
+    cat complex-pair-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" ComplexPairAgreementTests.idric -o complex-pair-agreement >complex-pair-build.log 2>&1; then
+    cat complex-pair-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/complex-pair-agreement
+
+  if ! "$idris2" --check QuaternionPairAgreementTests.idric >quaternion-pair-typecheck.log 2>&1; then
+    cat quaternion-pair-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" QuaternionPairAgreementTests.idric -o quaternion-pair-agreement >quaternion-pair-build.log 2>&1; then
+    cat quaternion-pair-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/quaternion-pair-agreement
+
+  if ! "$idris2" --check CompactUnitDirectionStorageTests.idric >compact-direction-typecheck.log 2>&1; then
+    cat compact-direction-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" CompactUnitDirectionStorageTests.idric -o compact-unit-direction >compact-direction-build.log 2>&1; then
+    cat compact-direction-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/compact-unit-direction
+
+  if ! "$idris2" --check FormTests.idric >form-typecheck.log 2>&1; then
+    cat form-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" FormTests.idric -o quadratic-hermitian-forms >form-build.log 2>&1; then
+    cat form-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/quadratic-hermitian-forms
+
+  if ! "$idris2" --check ComplexProjectiveTests.idric >complex-projective-typecheck.log 2>&1; then
+    cat complex-projective-typecheck.log >&2
+    exit 1
+  fi
+
+  if ! "$idris2" ComplexProjectiveTests.idric -o complex-projective-semantics >complex-projective-build.log 2>&1; then
+    cat complex-projective-build.log >&2
+    exit 1
+  fi
+
+  ./build/exec/complex-projective-semantics
 )

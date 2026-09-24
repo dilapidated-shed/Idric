@@ -14,10 +14,41 @@ import System.File
 
 %default total
 
+-- Namespace components are stored inside-out. This exact rewrite gives fresh
+-- Idriç source a Data.Text boundary without renaming any unrelated module that
+-- happens to contain a Text component.
+replace_data_text_namespace_components : List String -> List String
+replace_data_text_namespace_components ["Text", "Data"] = ["String", "Data"]
+replace_data_text_namespace_components (part :: rest)
+    = part :: replace_data_text_namespace_components rest
+replace_data_text_namespace_components [] = []
+
+canonicalize_idric_namespace : Namespace -> Namespace
+canonicalize_idric_namespace ns
+    = unsafeFoldNamespace $
+        replace_data_text_namespace_components $ unsafeUnfoldNamespace ns
+
+-- Keep the inherited Idris compatibility lowering intact. New Idriç spellings
+-- are normalized to that existing boundary before this function runs.
 canonicalizeIdricToken : Token -> Token
 canonicalizeIdricToken (Ident "choice") = Keyword "choice"
 canonicalizeIdricToken (Ident "ℕ") = Ident "Nat"
 canonicalizeIdricToken tok = tok
+
+canonicalize_idric_surface_token : Token -> Token
+canonicalize_idric_surface_token (Ident "Number") = Ident "ℕ"
+canonicalize_idric_surface_token (Ident "Text") = Ident "String"
+canonicalize_idric_surface_token (DotSepIdent ns "Text")
+    = if unsafeUnfoldNamespace ns == ["Data"]
+         then DotSepIdent ns "String"
+         else DotSepIdent (canonicalize_idric_namespace ns) "Text"
+canonicalize_idric_surface_token (DotSepIdent ns name)
+    = DotSepIdent (canonicalize_idric_namespace ns) name
+canonicalize_idric_surface_token tok = tok
+
+canonicalize_idric_source_token : Token -> Token
+canonicalize_idric_source_token token
+    = canonicalizeIdricToken (canonicalize_idric_surface_token token)
 
 sourceSyntax : Maybe String -> SourceSyntax
 sourceSyntax (Just fname) = if isSuffixOf ".idric" fname
@@ -28,7 +59,7 @@ sourceSyntax Nothing = IdrisSyntax
 sourceTokens : Maybe String -> List (WithBounds Token) -> List (WithBounds Token)
 sourceTokens (Just fname) toks
     = if isSuffixOf ".idric" fname
-         then map (map canonicalizeIdricToken) toks
+         then map (map canonicalize_idric_source_token) toks
          else toks
 sourceTokens Nothing toks = toks
 

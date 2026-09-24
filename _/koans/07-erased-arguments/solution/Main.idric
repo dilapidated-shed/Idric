@@ -1,8 +1,6 @@
 module Main
 
-%default total
-
-keep_runtime_value : (0 compile_time_number : ℕ) → ℕ → ℕ
+keep_runtime_value : (0 compile_time_number : Number) → Number → Number
 keep_runtime_value compile_time_number runtime_number = runtime_number
 
 main : IO ()

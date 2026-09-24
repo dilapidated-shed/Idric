@@ -1,0 +1,10 @@
+import System
+
+showEnvironmentValue : Maybe String -> String
+showEnvironmentValue Nothing = "missing"
+showEnvironmentValue (Just value) = value
+
+main : IO ()
+main = do
+  putStrLn $ showEnvironmentValue !(environment_value "INVALID=NAME")
+  putStrLn $ showEnvironmentValue !(environment_value (pack ['N', '\0', 'X']))

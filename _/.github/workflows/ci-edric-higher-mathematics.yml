@@ -1,4 +1,4 @@
-name: Idric higher-mathematics semantics
+name: Idriç higher-mathematics semantics
 
 on:
   pull_request:
@@ -36,7 +36,7 @@ jobs:
           EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
 
-      - name: Bootstrap Idric
+      - name: Bootstrap Idriç
         run: ./edric bootstrap
 
       - name: Run focused higher-mathematics receipt

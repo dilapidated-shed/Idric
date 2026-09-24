@@ -1,0 +1,24 @@
+module PairArithmeticTests
+
+import MathematicalSpaces
+import PairArithmetic
+
+%unbound_implicits off
+
+signed_pair_add_test :
+  signed_pair_add (2, 3) (5, (-1)) = (7, 2)
+signed_pair_add_test = Refl
+
+signed_pair_multiplicative_identity_test :
+  signed_pair_complex_multiply (2, 3) (1, 0) = (2, 3)
+signed_pair_multiplicative_identity_test = Refl
+
+-- The pair (0, 1) behaves as the adjoined square root of -1 under the pair
+-- multiplication rule. This checks the construction without claiming that
+-- signed-number pairs exhaust C.
+signed_pair_i_squared_test :
+  signed_pair_complex_multiply (0, 1) (0, 1) = ((-1), 0)
+signed_pair_i_squared_test = Refl
+
+main : IO ()
+main = putStrLn "pair arithmetic construction: PASS"

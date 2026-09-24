@@ -42,6 +42,24 @@ import System.File
 
 %default covering
 
+-- Idriç treats totality as the ordinary source rule. The inherited Idris
+-- directive remains available when a file deliberately needs a different
+-- requirement, but fresh .idric programs do not need compiler policy at the
+-- top of every source file.
+with_idric_source_totality :
+  {auto c : Ref Ctxt Defs} -> String -> Core a -> Core a
+with_idric_source_totality source_file operation =
+  if isSuffixOf ".idric" source_file
+    then do
+      prior_requirement <- getDefaultTotalityOption
+      setDefaultTotalityOption Total
+      result <- catch operation $ \error => do
+        setDefaultTotalityOption prior_requirement
+        throw error
+      setDefaultTotalityOption prior_requirement
+      pure result
+    else operation
+
 -- If we're on an incremental codegen, check to see if the ttc was
 -- built with incremental.
 export
@@ -387,10 +405,13 @@ processMod sourceFileName ttcFileName msg sourcecode origin
 --                 defs <- get Ctxt
 --                 traverse (\x => setVisibility emptyFC x Private) (hiddenNames defs)
                 setNS (miAsNamespace ns)
-                errs <- logTime 2 "Processing decls" $
-                            processDecls (decls mod)
-                totErrs <- logTime 3 ("Totality check overall")
-                            getTotalityErrors
+                (errs, totErrs) <-
+                  with_idric_source_totality sourceFileName $ do
+                    declaration_errors <- logTime 2 "Processing decls" $
+                                           processDecls (decls mod)
+                    totality_errors <- logTime 3 "Totality check overall" $
+                                        getTotalityErrors
+                    pure (declaration_errors, totality_errors)
                 let errs = errs ++ totErrs
 --                 coreLift $ gc
 

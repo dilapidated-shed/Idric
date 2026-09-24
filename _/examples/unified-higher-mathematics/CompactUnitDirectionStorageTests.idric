@@ -1,0 +1,40 @@
+module CompactUnitDirectionStorageTests
+
+import CompactUnitDirectionStorage
+
+%unbound_implicits off
+
+positive_x_bytes :
+  pack_direction_codes positive_x_codes = DirectionBytes 255 7 0
+positive_x_bytes = Refl
+
+negative_x_bytes :
+  pack_direction_codes negative_x_codes = DirectionBytes 0 8 0
+negative_x_bytes = Refl
+
+positive_y_bytes :
+  pack_direction_codes positive_y_codes = DirectionBytes 0 240 127
+positive_y_bytes = Refl
+
+negative_y_bytes :
+  pack_direction_codes negative_y_codes = DirectionBytes 0 0 128
+negative_y_bytes = Refl
+
+positive_z_bytes :
+  pack_direction_codes positive_z_codes = DirectionBytes 0 0 0
+positive_z_bytes = Refl
+
+negative_z_bytes :
+  pack_direction_codes negative_z_codes = DirectionBytes 255 247 127
+negative_z_bytes = Refl
+
+mixed_codes : CompactUnitDirectionCodes
+mixed_codes = OctahedralQ0_11 (-1234) 987
+
+mixed_round_trip :
+  unpack_direction_bytes (pack_direction_codes mixed_codes) = mixed_codes
+mixed_round_trip = Refl
+
+main : IO ()
+main =
+  putStrLn "compact unit-pure-quaternion storage: PASS"

@@ -1,12 +1,10 @@
 module Main
 
-%default total
-
 -- Compile this file and read the types reported for these named holes.
-answer : ℕ
+answer : Number
 answer = ?natural_number
 
-message : String
+message : Text
 message = ?text_value
 
 main : IO ()

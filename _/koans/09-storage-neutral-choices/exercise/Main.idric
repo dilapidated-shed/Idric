@@ -1,7 +1,5 @@
 module Main
 
-%default total
-
 choice traffic_light one_of
   red
   amber
@@ -10,7 +8,7 @@ choice traffic_light one_of
 starting_light : traffic_light
 starting_light = ?first_light
 
-light_name : traffic_light → String
+light_name : traffic_light → Text
 light_name red = "red"
 light_name amber = "amber"
 light_name green = "green"

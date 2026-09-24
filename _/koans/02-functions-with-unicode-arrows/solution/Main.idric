@@ -1,8 +1,6 @@
 module Main
 
-%default total
-
-increment : ℕ → ℕ
+increment : Number → Number
 increment = \number ⇒ S number
 
 twice : (a → a) → a → a

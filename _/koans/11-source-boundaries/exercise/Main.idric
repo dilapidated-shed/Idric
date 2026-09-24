@@ -2,12 +2,10 @@ module Main
 
 import IdrisCompatibility
 
-%default total
-
-increment : ℕ → ℕ
+increment : Number → Number
 increment = \value ⇒ S value
 
-boundary_value : ℕ
+boundary_value : Number
 boundary_value = ?value_from_both_languages
 
 main : IO ()

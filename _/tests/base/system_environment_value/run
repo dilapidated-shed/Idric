@@ -1,0 +1,9 @@
+. ../../testutils.sh
+
+idris2 --cg chez -o test Test.idric
+IDRIC_ENV_TEST=hello ./build/exec/test
+IDRIC_ENV_TEST= ./build/exec/test
+env -u IDRIC_ENV_TEST ./build/exec/test
+
+idris2 --cg chez -o invalid-names InvalidNames.idric
+./build/exec/invalid-names

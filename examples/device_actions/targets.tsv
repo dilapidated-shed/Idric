@@ -1,0 +1,55 @@
+action	profile	owner	implementation_state	execution_state	evidence	blocker_or_next	shell_role
+screen_red	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#64	full-system Linux guest display and later generated Idriç lowering	sequence_timer
+screen_red	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	full_system_guest_pass	https://github.com/isomorphisms/idric-x86-aggressive-backend/actions/runs/35141820378	generated Idriç lowering remains separate	sequence_timer
+screen_red	android_phone	Android adapter	historical_reference	not_run	isomorphisms/idric-arm-thumb:android-native-red-screen	reconcile current Android mechanism and capture physical-phone receipt	sequence_timer
+screen_split_red_blue	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_reconciled	not_run	-	implement native surface split and full-system guest capture	sequence_timer
+screen_split_red_blue	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_reconciled	not_run	-	implement native surface split and full-system guest capture	sequence_timer
+screen_split_red_blue	android_phone	Android adapter	not_reconciled	not_run	-	implement Android surface split and physical-phone receipt	sequence_timer
+screen_timed_colors	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	implement timed colour sequence after screen surface boundary	sequence_timer
+screen_timed_colors	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	implement timed colour sequence after screen surface boundary	sequence_timer
+screen_timed_colors	android_phone	Android adapter	not_started	not_run	-	implement timed colour sequence on Android	sequence_timer
+speaker_tone	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#67	capture full-system virtual audio and later generated Idriç lowering	sequence_timer
+speaker_tone	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	ci_pending	isomorphisms/idric-x86-aggressive-backend#26	capture full-system virtual audio and later generated Idriç lowering	sequence_timer
+speaker_tone	android_phone	Android adapter	not_reconciled	not_run	-	reconcile Android speaker path and physical-phone receipt	sequence_timer
+speaker_two_tones	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_reconciled	not_run	-	implement two pitches with measured pause and duration	sequence_timer
+speaker_two_tones	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_reconciled	not_run	-	implement two pitches with measured pause and duration	sequence_timer
+speaker_two_tones	android_phone	Android adapter	not_reconciled	not_run	-	implement two pitches with pause on physical phone	sequence_timer
+speaker_melody	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_reconciled	not_run	-	reconcile previously discussed bounded melody fixture	sequence_timer
+speaker_melody	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_reconciled	not_run	-	reconcile previously discussed bounded melody fixture	sequence_timer
+speaker_melody	android_phone	Android adapter	not_reconciled	not_run	-	reconcile bounded melody fixture on physical phone	sequence_timer
+accelerometer_once	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	select declared simulated or passed-through sensor device and units	stream
+accelerometer_once	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	select declared simulated or passed-through sensor device and units	stream
+accelerometer_once	android_phone	Android adapter	historical_reference	not_reconciled	isomorphisms/idric-arm-thumb:samples/android-sensors	reconcile current Android sensor implementation and physical receipt	stream
+accelerometer_stream	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	stream timestamped injected samples from declared guest sensor	stream
+accelerometer_stream	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	stream timestamped injected samples from declared guest sensor	stream
+accelerometer_stream	android_phone	Android adapter	historical_reference	not_reconciled	isomorphisms/idric-arm-thumb:samples/android-sensors	reconcile timestamped physical sensor stream	stream
+sensor_once	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	choose a second declared sensor model and preserve identity and units	stream
+sensor_once	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	choose a second declared sensor model and preserve identity and units	stream
+sensor_once	android_phone	Android adapter	not_started	not_run	-	choose an available non-accelerometer sensor and record identity	stream
+sensor_stream	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	stream a second declared sensor with timestamps and errors	stream
+sensor_stream	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	stream a second declared sensor with timestamps and errors	stream
+sensor_stream	android_phone	Android adapter	not_started	not_run	-	stream an available non-accelerometer sensor with timestamps	stream
+camera_frame	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	select declared virtual camera and capture one identified frame	stream
+camera_frame	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	select declared virtual camera and capture one identified frame	stream
+camera_frame	android_phone	Android adapter	not_started	not_run	-	implement physical camera frame capture with dimensions and format	stream
+camera_stream	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	stream ordered frames from declared virtual camera	stream
+camera_stream	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	stream ordered frames from declared virtual camera	stream
+camera_stream	android_phone	Android adapter	not_started	not_run	-	stream ordered frames from physical camera	stream
+microphone_record	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	capture bounded samples from declared virtual audio input	stream
+microphone_record	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	capture bounded samples from declared virtual audio input	stream
+microphone_record	android_phone	Android adapter	not_started	not_run	-	capture bounded samples from physical microphone	stream
+flashlight_pulse	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	select explicit simulated or passed-through light controller	command_timer
+flashlight_pulse	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	select explicit simulated or passed-through light controller	command_timer
+flashlight_pulse	android_phone	Android adapter	not_started	not_run	-	implement torch state transitions and physical observation	command_timer
+infrared_pulse	armv7_thumb_linux	isomorphisms/idric-arm-thumb	not_started	not_run	-	select explicit simulated or passed-through infrared controller	command_timer
+infrared_pulse	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	not_started	not_run	-	select explicit simulated or passed-through infrared controller	command_timer
+infrared_pulse	android_phone	Android adapter	not_started	not_run	-	detect actual emitter capability before implementation	command_timer
+gpio_output	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#68	capture full-system gpio-sim receipt and later generated Idriç lowering	command_timer
+gpio_output	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	full_system_guest_pass	https://github.com/isomorphisms/idric-x86-aggressive-backend/actions/runs/35142671923	simulated Linux gpio-sim receipt passed; generated Idriç lowering and physical GPIO remain separate	command_timer
+gpio_output	android_phone	Android adapter	not_started	not_run	-	identify an exposed GPIO controller and permission boundary	command_timer
+gpio_input	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#68	capture full-system gpio-sim receipt and later generated Idriç lowering	waitable_source
+gpio_input	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	full_system_guest_pass	https://github.com/isomorphisms/idric-x86-aggressive-backend/actions/runs/35142671923	simulated Linux gpio-sim receipt passed; generated Idriç lowering and physical GPIO remain separate	waitable_source
+gpio_input	android_phone	Android adapter	not_started	not_run	-	identify an exposed GPIO input and permission boundary	waitable_source
+gpio_edge_wait	armv7_thumb_linux	isomorphisms/idric-arm-thumb	oracle_present	ci_pending	isomorphisms/idric-arm-thumb#68	capture full-system gpio-sim receipt and later generated Idriç lowering	waitable_source
+gpio_edge_wait	x86_64_linux	isomorphisms/idric-x86-aggressive-backend	oracle_present	full_system_guest_pass	https://github.com/isomorphisms/idric-x86-aggressive-backend/actions/runs/35142671923	simulated Linux gpio-sim receipt passed; generated Idriç lowering and physical GPIO remain separate	waitable_source
+gpio_edge_wait	android_phone	Android adapter	not_started	not_run	-	identify an exposed GPIO edge source and Android wait mechanism	waitable_source
