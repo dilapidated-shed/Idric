@@ -1,0 +1,8 @@
+module HumanDisplay
+
+main : IO ()
+main = do
+  let half : Float16 = 0.5
+  let threeHalves : Float16 = 1.5
+  let sixteenth : Float16 = 0.0625
+  putStrLn "\{half} \{threeHalves} \{sixteenth}"
