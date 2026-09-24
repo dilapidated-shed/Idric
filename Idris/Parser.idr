@@ -1334,9 +1334,8 @@ isLowerSnakeName str
     validTail afterUnderscore [] = not afterUnderscore
     validTail afterUnderscore ('_' :: cs)
         = not afterUnderscore && validTail True cs
-    validTail afterUnderscore (c :: cs)
+    validTail _ (c :: cs)
         = (isLower c || isDigit c)
-          && (not afterUnderscore || isLower c)
           && validTail False cs
 
 lowerSnakeName : String -> Rule Name

@@ -1,0 +1,12 @@
+module Main
+
+choice tls_13_cipher_suite one_of
+  tls_aes_128_gcm_sha256
+  tls_chacha20_poly1305_sha256
+
+show_suite : tls_13_cipher_suite -> String
+show_suite tls_aes_128_gcm_sha256 = "tls_aes_128_gcm_sha256"
+show_suite tls_chacha20_poly1305_sha256 = "tls_chacha20_poly1305_sha256"
+
+main : IO ()
+main = putStrLn (show_suite tls_aes_128_gcm_sha256)
