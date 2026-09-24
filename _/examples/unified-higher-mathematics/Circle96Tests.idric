@@ -4,6 +4,42 @@ import Circle96
 
 %unbound_implicits off
 
+zero_is_first_third_origin :
+  circle96_code (circle96 0) = 0
+zero_is_first_third_origin = Refl
+
+one_third_is_binary_landmark :
+  circle96_code (circle96 32) = 32
+one_third_is_binary_landmark = Refl
+
+two_thirds_is_binary_landmark :
+  circle96_code (circle96 64) = 64
+two_thirds_is_binary_landmark = Refl
+
+one_third_sector_is_one :
+  third_sector (circle96 32) = 1
+one_third_sector_is_one = Refl
+
+two_thirds_sector_is_two :
+  third_sector (circle96 64) = 2
+two_thirds_sector_is_two = Refl
+
+third_landmarks_have_zero_local_offset :
+  position_within_third (circle96 64) = 0
+third_landmarks_have_zero_local_offset = Refl
+
+sixty_degrees_is_halfway_through_first_third :
+  position_within_third (circle96 16) = 16
+sixty_degrees_is_halfway_through_first_third = Refl
+
+last_canonical_code_is_valid :
+  circle96_code_is_canonical 95 = True
+last_canonical_code_is_valid = Refl
+
+first_spare_code_is_not_canonical :
+  circle96_code_is_canonical 96 = False
+first_spare_code_is_not_canonical = Refl
+
 one_flat_is_exact :
   rotation96_code one_flat = 16
 one_flat_is_exact = Refl
