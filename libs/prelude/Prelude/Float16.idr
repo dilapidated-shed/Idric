@@ -2,6 +2,7 @@ module Prelude.Float16
 
 import Builtin
 import Prelude.Basics
+import Prelude.Display
 import Prelude.EqOrd
 import Prelude.Interpolation
 import Prelude.Num
@@ -282,8 +283,12 @@ displayFloat16 (MkFloat16 value) =
                             else sign ++ vulgar numerator denominator
 
 export
+Display Float16 where
+  display = displayFloat16
+
+export
 Interpolation Float16 where
-  interpolate = displayFloat16
+  interpolate = display
 
 export
 Show Float16 where

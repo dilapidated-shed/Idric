@@ -4,6 +4,7 @@ import Builtin
 import PrimIO
 import Prelude.Basics
 import Prelude.Interfaces
+import Prelude.Display
 import Prelude.Show
 
 %default total
@@ -148,3 +149,14 @@ print = putStr . show
 %inline export
 printLn : HasIO io => Show a => a -> io ()
 printLn = putStrLn . show
+
+
+||| Output a value using its human-facing Display notation.
+%inline export
+putDisplay : HasIO io => Display a => a -> io ()
+putDisplay = putStr . display
+
+||| Output a value using its human-facing Display notation, followed by newline.
+%inline export
+putDisplayLn : HasIO io => Display a => a -> io ()
+putDisplayLn = putStrLn . display
