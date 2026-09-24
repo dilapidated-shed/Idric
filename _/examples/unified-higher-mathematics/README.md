@@ -68,6 +68,23 @@ index. Equal ranks neither erase a name mismatch nor permit same-variance
 contraction. A variance change goes through `lower_indexed` or `raise_indexed`
 and therefore requires a Euclidean structure.
 
+## Finite circle geometry
+
+`Circle96.idric` is the small concrete circle used for the present cam-setting
+experiment. One turn has 96 positions, so one 60-degree wrench flat is exactly
+16 ticks and successive half-flat subdivisions remain exact down to one
+sixteenth-flat = one tick = 3.75 degrees.
+
+The source concepts are deliberately distinct: `Circle96` is a position,
+`Rotation96` acts on positions, `Reflection96` reverses orientation about a
+chosen axis, and `local_displacement` leaves the circle and returns a signed
+linear/tangent quantity for Jacobian-style local calculations. Ordinary integer
+addition/subtraction and bit shifts are not presented as the geometric API.
+
+The broader representation tradeoffs, including Circle 144/192/240/256/360/
+384/720 and the relation to BAM/BAMS, are recorded in
+`notes/binary-circle-machine.md`.
+
 ## Quadratic and Hermitian forms
 
 `QuadraticForms.idric` adds forms as mathematical objects above coordinate
