@@ -3,6 +3,7 @@ module Prelude.Float16
 import Builtin
 import Prelude.Basics
 import Prelude.EqOrd
+import Prelude.Interpolation
 import Prelude.Num
 import Prelude.Show
 import Prelude.Types
@@ -182,6 +183,107 @@ showFloat16Carrier value =
                           sign = if negative then "-" else ""
                           decimals = trimTrailingZeros (fractionDigits 8 fraction) in
                         sign ++ show whole ++ "." ++ decimals
+
+
+private
+superDigit : Char -> Char
+superDigit '0' = '⁰'
+superDigit '1' = '¹'
+superDigit '2' = '²'
+superDigit '3' = '³'
+superDigit '4' = '⁴'
+superDigit '5' = '⁵'
+superDigit '6' = '⁶'
+superDigit '7' = '⁷'
+superDigit '8' = '⁸'
+superDigit '9' = '⁹'
+superDigit c = c
+
+private
+subDigit : Char -> Char
+subDigit '0' = '₀'
+subDigit '1' = '₁'
+subDigit '2' = '₂'
+subDigit '3' = '₃'
+subDigit '4' = '₄'
+subDigit '5' = '₅'
+subDigit '6' = '₆'
+subDigit '7' = '₇'
+subDigit '8' = '₈'
+subDigit '9' = '₉'
+subDigit c = c
+
+private
+mapDigits : (Char -> Char) -> Integer -> String
+mapDigits f value = pack (map f (unpack (show value)))
+
+private
+commonVulgar : Integer -> Integer -> Maybe String
+commonVulgar 1 2 = Just "½"
+commonVulgar 1 4 = Just "¼"
+commonVulgar 3 4 = Just "¾"
+commonVulgar 1 8 = Just "⅛"
+commonVulgar 3 8 = Just "⅜"
+commonVulgar 5 8 = Just "⅝"
+commonVulgar 7 8 = Just "⅞"
+commonVulgar _ _ = Nothing
+
+private
+vulgar : Integer -> Integer -> String
+vulgar numerator denominator =
+  case commonVulgar numerator denominator of
+    Just glyph => glyph
+    Nothing =>
+      mapDigits superDigit numerator ++ "⁄" ++ mapDigits subDigit denominator
+
+private
+dyadicFraction :
+  Nat -> Float -> Integer -> Integer -> (Integer, Integer)
+dyadicFraction Z fraction numerator denominator = (numerator, denominator)
+dyadicFraction (S fuel) fraction numerator denominator =
+  if fraction == asFloat 0
+     then (numerator, denominator)
+     else
+       let doubled = prim__mul_Float fraction (asFloat 2)
+           bit = if doubled >= asFloat 1 then 1 else 0
+           rest = prim__sub_Float doubled (asFloat bit)
+       in dyadicFraction fuel rest
+            (prim__add_Integer (prim__mul_Integer numerator 2) bit)
+            (prim__mul_Integer denominator 2)
+
+||| Human-facing exact rendering of a binary16 value. Finite non-integral
+||| values are shown as vulgar dyadic fractions rather than decimal digits.
+||| This is presentation only: Show remains the canonical machine/debug text.
+export
+displayFloat16 : Float16 -> String
+displayFloat16 (MkFloat16 value) =
+  if value /= value
+     then "NaN"
+     else
+       let infinity = assert_total (prim__div_Float (asFloat 1) (asFloat 0)) in
+         if value == infinity
+            then "∞"
+            else if value == prim__negate_Float infinity
+                    then "−∞"
+                    else
+                      let negative = value < asFloat 0
+                          magnitude = if negative then prim__negate_Float value else value
+                          whole = floorBounded 17 0 65536 magnitude
+                          fraction = prim__sub_Float magnitude (asFloat whole)
+                          (fractionNumerator, denominator) =
+                            dyadicFraction 24 fraction 0 1
+                          numerator =
+                            prim__add_Integer
+                              (prim__mul_Integer whole denominator)
+                              fractionNumerator
+                          sign = if negative then "−" else ""
+                      in if denominator == 1
+                            then sign ++ show numerator
+                            else sign ++ vulgar numerator denominator
+
+export
+Interpolation Float16 where
+  interpolate = displayFloat16
 
 export
 Show Float16 where
