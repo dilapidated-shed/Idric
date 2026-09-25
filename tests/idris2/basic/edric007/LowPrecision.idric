@@ -1,0 +1,33 @@
+module LowPrecision
+
+e3_left : E3M2
+e3_left = e3m2 1.5
+
+e3_right : E3M2
+e3_right = e3m2 0.5
+
+e4_left : E4M3
+e4_left = e4m3 1.5
+
+e4_right : E4M3
+e4_right = e4m3 0.5
+
+e5_left : E5M2
+e5_left = e5m2 1.5
+
+e5_right : E5M2
+e5_right = e5m2 0.5
+
+main : IO ()
+main = do
+  putDisplayLn (e3_left + e3_right)
+  putDisplayLn (e3_left * e3_right)
+  putDisplayLn (e3m2 30.0)
+  putDisplayLn (e4_left + e4_right)
+  putDisplayLn (e5_left + e5_right)
+  case e5m3 1.0 of
+    Nothing => putStrLn "E5M3 rejected 1"
+    Just value => putDisplayLn value
+  case e5m3 0.0 of
+    Nothing => putStrLn "E5M3 rejects zero"
+    Just value => putDisplayLn value

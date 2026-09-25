@@ -66,3 +66,17 @@ if [ "$human_display" != "½ ³⁄₂ ¹⁄₁₆
     echo "Float16 interpolation did not use vulgar dyadic fractions"
     exit 1
 fi
+
+
+low_precision=$(run LowPrecision.idric)
+if [ "$low_precision" != "2
+¾
+28
+2
+2
+¹⁷⁄₁₆
+E5M3 rejects zero" ]; then
+    printf '%s\n' "$low_precision"
+    echo "compact floating source semantics failed"
+    exit 1
+fi
