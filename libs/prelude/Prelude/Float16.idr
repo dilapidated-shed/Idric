@@ -105,18 +105,35 @@ idricFloat16 : Float -> Float16
 idricFloat16 value = MkFloat16 (quantizeFloat16Carrier value)
 
 public export
+float16_add : Float16 -> Float16 -> Float16
+float16_add (MkFloat16 left) (MkFloat16 right) =
+  idricFloat16 (prim__add_Float left right)
+
+public export
+float16_subtract : Float16 -> Float16 -> Float16
+float16_subtract (MkFloat16 left) (MkFloat16 right) =
+  idricFloat16 (prim__sub_Float left right)
+
+public export
+float16_multiply : Float16 -> Float16 -> Float16
+float16_multiply (MkFloat16 left) (MkFloat16 right) =
+  idricFloat16 (prim__mul_Float left right)
+
+public export
+float16_divide : Float16 -> Float16 -> Float16
+float16_divide (MkFloat16 left) (MkFloat16 right) =
+  idricFloat16 (assert_total (prim__div_Float left right))
+
+public export
 Num Float16 where
-  (MkFloat16 left) + (MkFloat16 right) =
-    idricFloat16 (prim__add_Float left right)
-  (MkFloat16 left) * (MkFloat16 right) =
-    idricFloat16 (prim__mul_Float left right)
+  (+) = float16_add
+  (*) = float16_multiply
   fromInteger value = idricFloat16 (asFloat value)
 
 public export
 Neg Float16 where
   negate (MkFloat16 value) = idricFloat16 (prim__negate_Float value)
-  (MkFloat16 left) - (MkFloat16 right) =
-    idricFloat16 (prim__sub_Float left right)
+  (-) = float16_subtract
 
 public export
 Abs Float16 where
@@ -127,8 +144,7 @@ Abs Float16 where
 
 public export
 Fractional Float16 where
-  (MkFloat16 left) / (MkFloat16 right) =
-    idricFloat16 (assert_total (prim__div_Float left right))
+  (/) = float16_divide
 
 public export
 Eq Float16 where
