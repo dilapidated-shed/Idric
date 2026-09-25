@@ -13,6 +13,7 @@ Idris2_Closure *idris2_mkClosure(Idris2_Value *(*f)(), uint8_t arity,
                                  uint8_t filled);
 
 Idris2_Value *idris2_mkDouble(double d);
+Idris2_Value *idris2_mkFloat(float f);
 #define idris2_mkChar(x)                                                       \
   ((Idris2_Value *)(((uintptr_t)(x) << idris2_vp_int_shift) + 1))
 #define idris2_mkBits8(x)                                                      \

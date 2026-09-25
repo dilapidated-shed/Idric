@@ -273,6 +273,11 @@ public export
 FromDouble Double where
   fromDouble s = s
 
+%inline
+public export
+FromDouble Float where
+  fromDouble = prim__cast_DoubleFloat
+
 %defaulthint
 %inline
 public export

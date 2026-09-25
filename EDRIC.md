@@ -60,11 +60,24 @@ Idriç: requested Double; running this as Float16
 The same rule applies to the other wider spellings. Canonical `Float16` and
 bare decimal literals do not produce a narrowing warning.
 
-The current implementation uses inherited `Double` only as an internal carrier
-for the `Float16` record. That carrier does not determine source semantics: the
-binary16 rounding boundary is executable and regression-tested. Direct CPU and
-GPU backends may later replace the carrier with native or unboxed Float16
-storage and instructions without changing the source-language rule.
+The current implementation carries `Float16` in the compiler's primitive
+binary32 `Float`, not in `Double`. That carrier does not determine source
+semantics: the binary16 rounding boundary is executable and regression-tested.
+Direct CPU and GPU backends may replace the carrier with native or unboxed
+Float16 storage and instructions without changing the source-language rule.
+
+Edriç also exposes explicit compact formats `E4M3`, `E5M2`, `E3M2`, and
+`E5M3`. They are not aliases for `Float16`. `E4M3`, `E5M2`, and
+`E3M2` quantize on construction and after each basic arithmetic operation.
+Their arithmetic policy is one primitive binary32 operation followed by
+requantization to the destination format. This matches the direct ARM Thumb
+contract while keeping the source semantics independent of the backend.
+
+`E5M3` is the unsigned Ootomo-Naruse storage format, not a signed arithmetic
+float. Its constructor rejects zero, negative values, infinities, NaNs, and
+out-of-range values instead of inventing arithmetic or exceptional-value
+semantics. Bare decimal literals remain ordinary `Float16`; explicit compact
+values are constructed with `e4m3`, `e5m2`, `e3m2`, or `e5m3`.
 
 Ordinary `.idr` files retain inherited Idris `Double` behavior. Compiler
 implementation code and compatibility code may therefore continue using wider

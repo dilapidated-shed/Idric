@@ -284,6 +284,11 @@ Idris2_Value *idris2_cast_Integer_to_Double(Idris2_Value *input) {
   return (Idris2_Value *)idris2_mkDouble(mpz_get_d(from->i));
 }
 
+Idris2_Value *idris2_cast_Integer_to_Float(Idris2_Value *input) {
+  Idris2_Integer *from = (Idris2_Integer *)input;
+  return (Idris2_Value *)idris2_mkFloat((float)mpz_get_d(from->i));
+}
+
 Idris2_Value *idris2_cast_Integer_to_Char(Idris2_Value *input) {
   Idris2_Integer *from = (Idris2_Integer *)input;
   return (Idris2_Value *)idris2_mkChar((unsigned char)mpz_get_lsb(from->i, 8));

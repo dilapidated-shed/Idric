@@ -5,21 +5,21 @@ on:
     paths:
       - 'edric'
       - 'scripts/ensure-chez.sh'
-      - 'src/Parser/Source.idr'
-      - 'libs/prelude/Prelude.idr'
-      - 'libs/prelude/Prelude/Float16.idr'
-      - 'libs/prelude/prelude.ipkg'
+      - 'bootstrap/idris2_app/**'
+      - 'src/**'
+      - 'libs/prelude/**'
       - 'tests/idris2/basic/edric007/**'
+      - 'support/chez/**'
       - '.github/workflows/ci-edric-wrapper.yml'
   pull_request:
     paths:
       - 'edric'
       - 'scripts/ensure-chez.sh'
-      - 'src/Parser/Source.idr'
-      - 'libs/prelude/Prelude.idr'
-      - 'libs/prelude/Prelude/Float16.idr'
-      - 'libs/prelude/prelude.ipkg'
+      - 'bootstrap/idris2_app/**'
+      - 'src/**'
+      - 'libs/prelude/**'
       - 'tests/idris2/basic/edric007/**'
+      - 'support/chez/**'
       - '.github/workflows/ci-edric-wrapper.yml'
 
 jobs:
@@ -69,6 +69,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Require Float16 Prelude to avoid the wide primitive
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=libs/prelude/Prelude/Float16.idr
+          ! grep -q 'Double' "$file"
+          ! grep -q 'prim__cast_FloatInteger' "$file"
+          grep -q 'float16Carrier : Float' "$file"
+          grep -q 'prim__add_Float' "$file"
+          grep -q 'prim__div_Float' "$file"
+          grep -q 'FloatType' src/Core/TT/Primitive.idr
+          grep -q 'blodwen-float32' support/chez/support.ss
 
       - name: Install Chez Scheme
         run: |

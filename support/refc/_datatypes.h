@@ -16,6 +16,7 @@
 #define INT64_TAG 8
 #define INTEGER_TAG 9
 #define DOUBLE_TAG 10
+#define FLOAT_TAG 11
 #define STRING_TAG 12
 
 #define CLOSURE_TAG 15
@@ -101,6 +102,7 @@ flag.
 #define idris2_vp_to_Char(p)                                                   \
   ((unsigned char)((uintptr_t)(p) >> idris2_vp_int_shift))
 #define idris2_vp_to_Double(p) (((Idris2_Double *)(p))->d)
+#define idris2_vp_to_Float(p) (((Idris2_Float *)(p))->f)
 #define idris2_vp_to_Bool(p) (idris2_vp_to_Int8(p))
 
 typedef struct {
@@ -132,6 +134,11 @@ typedef struct {
   Idris2_header header;
   double d;
 } Idris2_Double;
+
+typedef struct {
+  Idris2_header header;
+  float f;
+} Idris2_Float;
 
 typedef struct {
   Idris2_header header;

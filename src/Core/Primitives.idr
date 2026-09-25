@@ -561,6 +561,7 @@ castTo Bits64Type = castBits64
 castTo StringType = castString
 castTo CharType = castChar
 castTo DoubleType = castDouble
+castTo FloatType = const Nothing
 castTo WorldType = const Nothing
 
 export
@@ -671,10 +672,13 @@ integralTypes = [ IntType
                 ]
 
 numTypes : List PrimType
-numTypes = integralTypes ++ [DoubleType]
+numTypes = integralTypes ++ [DoubleType, FloatType]
 
 primTypes : List PrimType
 primTypes = numTypes ++ [StringType, CharType]
+
+castTypes : List PrimType
+castTypes = integralTypes ++ [DoubleType, StringType, CharType]
 
 export
 allPrimitives : List Prim
@@ -725,10 +729,15 @@ allPrimitives =
     -- support all combinations of primitive casts with the following
     -- exceptions: String -> Char, Double -> Char, Char -> Double
     [ MkPrim (Cast t1 t2) (predTy t1 t2) isTotal
-    | t1 <- primTypes
-    , t2 <- primTypes
+    | t1 <- castTypes
+    , t2 <- castTypes
     , t1 /= t2                         &&
       (t1,t2) /= (StringType,CharType) &&
       (t1,t2) /= (DoubleType,CharType) &&
       (t1,t2) /= (CharType,DoubleType)
+    ] ++
+
+    [ MkPrim (Cast IntegerType FloatType) (predTy IntegerType FloatType) isTotal
+    , MkPrim (Cast DoubleType FloatType) (predTy DoubleType FloatType) isTotal
+    , MkPrim (Cast FloatType DoubleType) (predTy FloatType DoubleType) isTotal
     ]

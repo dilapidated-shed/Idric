@@ -138,6 +138,11 @@ constPrimitives = MkConstantPrimitives {
 
 ||| Generate scheme for a primitive function.
 schOp : {0 arity : Nat} -> PrimFn arity -> Vect arity Builder -> Core Builder
+schOp (Add FloatType) [x, y] = pure $ op "blodwen-float32" [op "+" [x, y]]
+schOp (Sub FloatType) [x, y] = pure $ op "blodwen-float32" [op "-" [x, y]]
+schOp (Mul FloatType) [x, y] = pure $ op "blodwen-float32" [op "*" [x, y]]
+schOp (Div FloatType) [x, y] = pure $ op "blodwen-float32" [op "/" [x, y]]
+schOp (Neg FloatType) [x] = pure $ op "blodwen-float32" [op "-" [x]]
 schOp (Add ty) [x, y] = pure $ add (intKind ty) x y
 schOp (Sub ty) [x, y] = pure $ sub (intKind ty) x y
 schOp (Mul ty) [x, y] = pure $ mul (intKind ty) x y
@@ -187,6 +192,9 @@ schOp DoubleSqrt [x] = pure $ op "flsqrt" [x]
 schOp DoubleFloor [x] = pure $ op "flfloor" [x]
 schOp DoubleCeiling [x] = pure $ op "flceiling" [x]
 
+schOp (Cast IntegerType FloatType) [x] = pure $ op "blodwen-float32" [op "exact->inexact" [x]]
+schOp (Cast DoubleType FloatType)  [x] = pure $ op "blodwen-float32" [x]
+schOp (Cast FloatType DoubleType)  [x] = pure x
 schOp (Cast DoubleType StringType)  [x] = pure $ op "number->string" [x]
 schOp (Cast CharType StringType)    [x] = pure $ op "string" [x]
 schOp (Cast StringType DoubleType)  [x] = pure $ op "cast-string-double" [x]

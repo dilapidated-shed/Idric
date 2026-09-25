@@ -130,13 +130,13 @@ mutual
   prettyPDo : PDo' KindedName -> Doc IdrisSyntax
   prettyPDo (DoExp _ tm) = pretty tm
   prettyPDo (DoBind _ _ n rig (Just ty) tm) =
-      prettyRig rig <+> pretty0 n <++> colon <++> pretty ty <++> keyword "<-" <++> pretty tm
+      prettyRig rig <+> pretty0 n <++> colon <++> pretty ty <++> leftArrow <++> pretty tm
   prettyPDo (DoBind _ _ n rig Nothing tm) =
-      prettyRig rig <+> pretty0 n <++> keyword "<-" <++> pretty tm
+      prettyRig rig <+> pretty0 n <++> leftArrow <++> pretty tm
   prettyPDo (DoBindPat _ l (Just ty) tm alts) =
-      pretty l <++> colon <++> keyword "<-" <++> pretty tm <+> hang 4 (fillSep $ prettyAlt <$> alts)
+      pretty l <++> colon <++> leftArrow <++> pretty tm <+> hang 4 (fillSep $ prettyAlt <$> alts)
   prettyPDo (DoBindPat _ l Nothing tm alts) =
-      pretty l <++> keyword "<-" <++> pretty tm <+> hang 4 (fillSep $ prettyAlt <$> alts)
+      pretty l <++> leftArrow <++> pretty tm <+> hang 4 (fillSep $ prettyAlt <$> alts)
   prettyPDo (DoLet _ _ l rig _ tm) =
       let_ <++> prettyRig rig <+> pretty0 l <++> equals <++> pretty tm
   prettyPDo (DoLetPat _ l _ tm alts) =
@@ -147,7 +147,7 @@ mutual
 
   export
   prettyFieldPath : List String -> Doc IdrisSyntax
-  prettyFieldPath flds = concatWith (surround $ keyword "->") (pretty0 <$> flds)
+  prettyFieldPath flds = concatWith (surround arrow) (pretty0 <$> flds)
 
   prettyPFieldUpdate : PFieldUpdate' KindedName -> Doc IdrisSyntax
   prettyPFieldUpdate (PSetField path v) =
@@ -242,7 +242,7 @@ mutual
     prettyPrec d (PLam _ rig _ n ty sc) =
       let (ns, sc) = getLamNames [(rig, n, ty)] sc in
           parenthesise (d > startPrec) $ group $
-            backslash <+> prettyBindings ns <++> fatArrow <+> softline <+> pretty sc
+            lambda_ <+> prettyBindings ns <++> fatArrow <+> softline <+> pretty sc
       where
       getLamNames : List (RigCount, IPTerm, IPTerm) ->
                     IPTerm ->

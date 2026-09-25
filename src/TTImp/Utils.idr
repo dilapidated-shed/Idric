@@ -642,6 +642,7 @@ getArgName defs x bound allvars ty
             CharType => ["c","d"]
             DoubleType => ["dbl"]
             WorldType => ["wrld", "w"]
+            FloatType => ["flt"]
     findNamesM ty = pure Nothing
 
     findNames : NF vars -> Core (List String)

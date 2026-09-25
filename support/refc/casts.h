@@ -103,6 +103,11 @@ Idris2_Value *idris2_cast_Double_to_Integer(Idris2_Value *);
   (idris2_mkChar((unsigned char)idris2_vp_to_Double))
 Idris2_Value *idris2_cast_Double_to_string(Idris2_Value *);
 
+#define idris2_cast_Double_to_Float(x)                                         \
+  (idris2_mkFloat((float)idris2_vp_to_Double(x)))
+#define idris2_cast_Float_to_Double(x)                                         \
+  (idris2_mkDouble((double)idris2_vp_to_Float(x)))
+
 #define idris2_cast_Char_to_Bits8(x)                                           \
   (idris2_mkBits8((uint8_t)idris2_vp_to_Char(x)))
 #define idris2_cast_Char_to_Bits16(x)                                          \
@@ -225,5 +230,6 @@ Idris2_Value *idris2_cast_Integer_to_Int16(Idris2_Value *input);
 Idris2_Value *idris2_cast_Integer_to_Int32(Idris2_Value *input);
 Idris2_Value *idris2_cast_Integer_to_Int64(Idris2_Value *input);
 Idris2_Value *idris2_cast_Integer_to_Double(Idris2_Value *input);
+Idris2_Value *idris2_cast_Integer_to_Float(Idris2_Value *input);
 Idris2_Value *idris2_cast_Integer_to_Char(Idris2_Value *input);
 Idris2_Value *idris2_cast_Integer_to_string(Idris2_Value *input);

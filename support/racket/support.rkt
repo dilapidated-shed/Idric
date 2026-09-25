@@ -49,6 +49,11 @@
       (if (> b 0) (+ r b) (- r b))
       r)))
 
+; Keep Float values distinct from Double by rounding every value-producing
+; boundary to Racket's IEEE-754 single-flonum representation.
+(define (blodwen-float32 x)
+  (real->single-flonum (exact->inexact x)))
+
 ; flonum constants
 
 ;; /!\ this code is cursed for some reason?...

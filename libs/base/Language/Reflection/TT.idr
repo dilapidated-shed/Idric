@@ -133,6 +133,7 @@ data PrimType
     | CharType
     | DoubleType
     | WorldType
+    | FloatType
 
 %name PrimType pty
 
@@ -172,6 +173,7 @@ Show PrimType where
   show CharType = "Char"
   show DoubleType = "Double"
   show WorldType = "%World"
+  show FloatType = "Float"
 
 export
 Show Constant where
@@ -436,6 +438,7 @@ Eq PrimType where
   CharType    == CharType    = True
   DoubleType  == DoubleType  = True
   WorldType   == WorldType   = True
+  FloatType   == FloatType   = True
   _ == _ = False
 
 public export

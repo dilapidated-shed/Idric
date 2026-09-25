@@ -52,6 +52,13 @@
       (if (> b 0) (+ r b) (- r b))
       r)))
 
+; Float values are carried in Chez flonums but rounded through an
+; IEEE-754 single-precision bytevector at every value-producing boundary.
+(define (blodwen-float32 x)
+  (let ([buf (make-bytevector 4)])
+    (bytevector-ieee-single-native-set! buf 0 (exact->inexact x))
+    (bytevector-ieee-single-native-ref buf 0)))
+
 ; flonum constants
 
 (define (blodwen-calcFlonumUnitRoundoff)

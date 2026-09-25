@@ -99,6 +99,13 @@ Idris2_Value *idris2_mkDouble(double d) {
   return (Idris2_Value *)retVal;
 }
 
+Idris2_Value *idris2_mkFloat(float f) {
+  Idris2_Float *retVal = IDRIS2_NEW_VALUE(Idris2_Float);
+  retVal->header.tag = FLOAT_TAG;
+  retVal->f = f;
+  return (Idris2_Value *)retVal;
+}
+
 Idris2_Value *idris2_mkBits32_Boxed(uint32_t i) {
   Idris2_Bits32 *retVal = IDRIS2_NEW_VALUE(Idris2_Bits32);
   retVal->header.tag = BITS32_TAG;
@@ -239,6 +246,7 @@ void idris2_removeReference(Idris2_Value *elem) {
       break;
 
     case DOUBLE_TAG:
+    case FLOAT_TAG:
       /* nothing to delete, added for sake of completeness */
       break;
 

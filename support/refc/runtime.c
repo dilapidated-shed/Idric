@@ -207,6 +207,8 @@ int idris2_extractInt(Idris2_Value *v) {
     return (int)mpz_get_si(((Idris2_Integer *)v)->i);
   case DOUBLE_TAG:
     return (int)idris2_vp_to_Double(v);
+  case FLOAT_TAG:
+    return (int)idris2_vp_to_Float(v);
   default:
     return -1;
   }

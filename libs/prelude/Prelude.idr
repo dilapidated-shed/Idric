@@ -36,6 +36,7 @@ import public Builtin
 import public PrimIO
 import public Prelude.Basics as Prelude
 import public Prelude.Cast as Prelude
+import public Prelude.Display as Prelude
 import public Prelude.EqOrd as Prelude
 import public Prelude.Interfaces as Prelude
 import public Prelude.Interpolation as Prelude
@@ -46,3 +47,4 @@ import public Prelude.Show as Prelude
 import public Prelude.Types as Prelude
 import public Prelude.Uninhabited as Prelude
 import public Prelude.Float16 as Prelude
+import public Prelude.LowPrecision as Prelude

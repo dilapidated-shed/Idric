@@ -137,6 +137,7 @@ cPrimType StringType = "string"
 cPrimType CharType = "Char"
 cPrimType DoubleType = "Double"
 cPrimType WorldType = "void"
+cPrimType FloatType = "Float"
 
 ||| Generate scheme for a primitive function.
 cOp : {0 arity : Nat} -> PrimFn arity -> Vect arity String -> String

@@ -377,3 +377,25 @@ Abs Double where
 public export
 Fractional Double where
   (/) = prim__div_Double
+
+-- Float
+
+public export
+Num Float where
+  (+) = prim__add_Float
+  (*) = prim__mul_Float
+  fromInteger = prim__cast_IntegerFloat
+
+%inline
+public export
+Neg Float where
+  negate x = prim__negate_Float x
+  (-) = prim__sub_Float
+
+public export
+Abs Float where
+  abs x = if x < 0 then -x else x
+
+public export
+Fractional Float where
+  (/) = prim__div_Float

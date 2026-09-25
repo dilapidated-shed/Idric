@@ -291,6 +291,7 @@ Hashable PrimType where
     CharType    => h `hashWithSalt` 12
     DoubleType  => h `hashWithSalt` 13
     WorldType   => h `hashWithSalt` 14
+    FloatType   => h `hashWithSalt` 15
 
 export
 Hashable Constant where

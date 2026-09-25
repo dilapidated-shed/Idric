@@ -28,6 +28,7 @@ data PrimType
     | StringType
     | CharType
     | DoubleType
+    | FloatType
     | WorldType
 
 %name PrimType pty
@@ -88,6 +89,7 @@ isConstantType (UN (Basic n)) = case n of
   "String"  => Just StringType
   "Char"    => Just CharType
   "Double"  => Just DoubleType
+  "Float"   => Just FloatType
   "%World"  => Just WorldType
   _ => Nothing
 isConstantType _ = Nothing
@@ -108,6 +110,7 @@ primTypeEq IntegerType IntegerType = Just Refl
 primTypeEq StringType StringType = Just Refl
 primTypeEq CharType CharType = Just Refl
 primTypeEq DoubleType DoubleType = Just Refl
+primTypeEq FloatType FloatType = Just Refl
 primTypeEq WorldType WorldType = Just Refl
 primTypeEq _ _ = Nothing
 
@@ -146,6 +149,7 @@ Show PrimType where
   show StringType = "String"
   show CharType = "Char"
   show DoubleType = "Double"
+  show FloatType = "Float"
   show WorldType = "%World"
 
 export
@@ -181,6 +185,7 @@ Pretty IdrisSyntax PrimType where
     StringType => "String"
     CharType => "Char"
     DoubleType => "Double"
+    FloatType => "Float"
     WorldType => "%World"
 
 export
@@ -204,6 +209,7 @@ Eq PrimType where
   StringType == StringType = True
   CharType == CharType = True
   DoubleType == DoubleType = True
+  FloatType == FloatType = True
   WorldType == WorldType = True
   _ == _ = False
 
@@ -245,6 +251,7 @@ Ord PrimType where
       tag CharType    = 12
       tag DoubleType  = 13
       tag WorldType   = 14
+      tag FloatType   = 15
 
 export
 Ord Constant where
@@ -299,6 +306,7 @@ primTypeTag Int8Type = 13
 primTypeTag Int16Type = 14
 primTypeTag Int32Type = 15
 primTypeTag Int64Type = 16
+primTypeTag FloatType = 17
 
 ||| Precision of integral types.
 public export

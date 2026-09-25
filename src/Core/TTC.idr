@@ -206,6 +206,7 @@ TTC PrimType where
   toBuf CharType    = tag 11
   toBuf DoubleType  = tag 12
   toBuf WorldType   = tag 13
+  toBuf FloatType   = tag 14
 
   fromBuf = case !getTag of
     0  => pure IntType
@@ -222,6 +223,7 @@ TTC PrimType where
     11 => pure CharType
     12 => pure DoubleType
     13 => pure WorldType
+    14 => pure FloatType
     _  => corrupt "PrimType"
 
 export
