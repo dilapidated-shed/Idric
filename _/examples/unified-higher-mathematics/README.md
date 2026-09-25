@@ -61,6 +61,13 @@ including the shader Givens/Householder fixtures, ARM polar-complex experiment,
 x86 complex/projective leader, RoPE, DFT/FFT connections, and DwarfStar GPU
 rotation research. Those links are cross-references, not representation choices.
 
+The first external literature/specification sweep for low-precision packed
+Hamilton quaternions, unit rotation quaternions, polar complex values, and
+CP^n is recorded in
+[PACKED-QUATERNION-POLAR-CPN-LITERATURE.md](PACKED-QUATERNION-POLAR-CPN-LITERATURE.md).
+That note distinguishes published/specification evidence from candidate Idriç
+machine layouts; none of its proposed layouts redefine the semantic types here.
+
 The Einstein-style experiment is intentionally only a one-index kernel.
 `LowerIndex` contains a covector, `UpperIndex` contains a vector, and
 `contract_index` accepts opposite variance over the same complete named-space
