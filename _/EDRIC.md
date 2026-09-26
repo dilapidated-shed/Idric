@@ -4,7 +4,7 @@ This file is the durable handoff for the **Idriç** project. A new work thread s
 
 ## Canonical repository
 
-`https://github.com/isomorphisms/Idric`
+`https://github.com/dilapidated-shed/Idric`
 
 The repository's ASCII name is `Idric`. The intended project and language name in human-facing prose is `Idriç`; use the literal repository name where a repository coordinate, URL, or path requires it.
 
@@ -126,7 +126,7 @@ names.
 Preferred checkout:
 
 ```sh
-git clone https://github.com/isomorphisms/Idric.git /opt/Idric
+git clone https://github.com/dilapidated-shed/Idric.git /opt/Idric
 cd /opt/Idric
 ```
 
