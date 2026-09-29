@@ -206,3 +206,8 @@ A new thread working on Edric should:
 - Twelve progressive Idriç koans cover holes, dependent types, quantitative
   multiplicities, storage-neutral choices, compatibility boundaries, and a
   small Wegert model; their exercises and solutions are compiler-tested.
+
+
+## ARM/Thumb comparison reference
+
+[`ARM-THUMB-COMPILER-COMPARISONS.md`](ARM-THUMB-COMPILER-COMPARISONS.md) points to the ICK `inspiration` comparisons of GCC, Clang/LLVM, small C compilers, libFirm, CompCert, and PCC. Revisit that evidence when ARM/Thumb target representation, instruction selection, ABI handling, or optimization policy changes.
