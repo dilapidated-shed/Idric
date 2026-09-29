@@ -46,3 +46,12 @@ The exact repository names and interfaces should wait until an actual experiment
 For Android rendering experiments, prefer proving the geometry with Processing or GLES before investing in Vulkan-specific machinery.
 
 If direct GPU compilation from Idriç becomes useful, first determine whether targeting GLSL ES is sufficient. Only introduce a SPIR-V/Vulkan backend when there is a concrete reason for the extra control or portability.
+
+
+## Compiler implementation comparison reference
+
+The ICK `inspiration` branch now compares GCC with Clang/LLVM, TinyCC, chibicc, cproc/QBE, lacc, 8cc, cparser/libFirm, CompCert, PCC, slimcc, and c4, including corrected source-to-source traces rooted in real Linux-kernel and ICK/Wegert/Pauli constructs:
+
+https://github.com/dilapidated-shed/ick/tree/inspiration/inspiration
+
+Revisit that comparison before committing to a shared GPU IR or materially changing the Idriç-to-shader backend boundary. The most relevant questions are how long semantic operations should remain explicit, whether a small frontend/backend contract is enough, which optimizations belong before target selection, and what additional machinery a second target such as SPIR-V actually earns. Update this pointer when the comparison gains executable results or the GPU backend design changes materially.
