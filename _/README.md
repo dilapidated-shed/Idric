@@ -6,7 +6,10 @@ This repository is the canonical modern home of the **Idriç** compiler experime
 and handoff rules. [BRANCHES.md](BRANCHES.md) identifies the canonical compiler
 line, active review branches, archives, and separate backend repositories.
 
-At this checkpoint the fork deliberately remains ordinary Idris 2. Idriç-specific language changes should be introduced one at a time with focused tests rather than by replaying the old mechanical rewrite wholesale.
+The fork implements Idriç-specific source notation and vocabulary on an
+inherited Idris 2 compiler substrate. The current project introduction is at
+the [repository root](../README.md); the material below preserves upstream
+Idris 2 orientation and is not the current Idriç build or architecture contract.
 
 ---
 

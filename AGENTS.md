@@ -42,3 +42,7 @@ it does not define the object unless the language semantics explicitly say so.
 
 Work on a branch, keep changes narrow, and run the checks relevant to the code
 you changed before proposing it for merge.
+
+Keep the root README accurate when architecture or ownership changes. Link to
+live PRs for mutable work status; do not maintain another copied PR/branch queue
+in documentation. Historical checkpoints must be labeled as historical.
